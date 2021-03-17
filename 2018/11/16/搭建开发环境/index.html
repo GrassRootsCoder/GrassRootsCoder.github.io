@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.5" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.5">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.5" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.0.5',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+<meta name="description" content="由于公司开展新项目以及迁移部署环境，所以我就基于原有软件之上，再安装一些新软件。本篇博客的目的主要记录安装软件的过程和一些坑，以后再迁移部署时，方便入手。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="搭建开发环境">
+<meta property="og:url" content="http://yoursite.com/2018/11/16/搭建开发环境/index.html">
+<meta property="og:site_name" content="Dong Yan Blog">
+<meta property="og:description" content="由于公司开展新项目以及迁移部署环境，所以我就基于原有软件之上，再安装一些新软件。本篇博客的目的主要记录安装软件的过程和一些坑，以后再迁移部署时，方便入手。">
+<meta property="og:updated_time" content="2018-11-15T16:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="搭建开发环境">
+<meta name="twitter:description" content="由于公司开展新项目以及迁移部署环境，所以我就基于原有软件之上，再安装一些新软件。本篇博客的目的主要记录安装软件的过程和一些坑，以后再迁移部署时，方便入手。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/11/16/搭建开发环境/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>搭建开发环境 | Dong Yan Blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dong Yan Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">I want something in my life.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/16/搭建开发环境/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dong Yan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dong Yan Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">搭建开发环境</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-16T00:00:00+08:00">2018-11-16</time>
+            
+
+            
+            
+              
+                
+              
+            
+
+            
+              
+              <span class="post-meta-divider">|</span>
+              
+
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Post modified&#58;</span>
+              
+              <time title="Post modified" itemprop="dateModified" datetime="2018-11-16T00:00:00+08:00">2018-11-16</time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Software-Engineering/" itemprop="url" rel="index"><span itemprop="name">Software Engineering</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>由于公司开展新项目以及迁移部署环境，所以我就基于原有软件之上，再安装一些新软件。本篇博客的目的主要记录安装软件的过程和一些坑，以后再迁移部署时，方便入手。</p>
+<a id="more"></a>
+
+
+
+<h4 id="安装-MongoDB"><a href="#安装-MongoDB" class="headerlink" title="安装 MongoDB"></a>安装 MongoDB</h4><p>去 <a href="https://www.mongodb.com/download-center/community" target="_blank" rel="noopener">MongoDB 官网</a>找到 Linux（CentOS）的安装包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 1.进入到 src 目录下，并下载 MongoDB 安装包</span></span><br><span class="line">cd /usr/local/src</span><br><span class="line">wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.6.8.tgz</span><br><span class="line"><span class="meta">#</span><span class="bash"> 2.解压 MongoDB 安装包</span></span><br><span class="line">tar -zxvf mongodb-linux-x86_64-3.6.8.tgz</span><br><span class="line"><span class="meta">#</span><span class="bash"> 3.创建目录，并将安装包移动到目录下</span></span><br><span class="line">mkdir /usr/local/mongodb</span><br><span class="line">mv ./mongodb-linux-x86_64-3.6.8 /usr/local/mongodb/</span><br><span class="line"><span class="meta">#</span><span class="bash"> 4.进入 MongoDB 的 bin 目录下，并创建 mongodb.conf 文件</span></span><br><span class="line">cd /usr/local/mongodb/mongodb-linux-x86_64-3.6.8/bin</span><br><span class="line">vim mongodb.conf</span><br><span class="line"><span class="meta">#</span><span class="bash"> 5.在 mongodb.conf 文件中添加以下内容</span></span><br><span class="line">dbpath=/usr/local/mongodb/mongodb-linux-x86_64-3.6.8/db</span><br><span class="line">logpath=/usr/local/mongodb/mongodb-linux-x86_64-3.6.8/logs/mongodb.log</span><br><span class="line">port=27017</span><br><span class="line">fork=true</span><br><span class="line"><span class="meta">#</span><span class="bash"> nohttpinterface=<span class="literal">true</span></span></span><br></pre></td></tr></table></figure>
+
+<p>dbpath 是 MongoDB 的数据存放目录，log path 是日志存放目录，port 是端口，fork 是允许在后台启动。nohttpinterface 这个属性在 <strong><a href="https://docs.mongodb.com/manual/release-notes/3.6-compatibility/" target="_blank" rel="noopener">MongoDB 3.6 版本移除</a></strong>了，所以不用再配置。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 6.配置 MongoDB 环境变量</span></span><br><span class="line">vim /etc/profile</span><br><span class="line">export MONGODB_HOME=/usr/local/mongodb/mongodb-linux-x86_64-3.6.8</span><br><span class="line">export PATH=$MONGODB_HOME/bin:$JAVA_HOME/bin:$PATH</span><br><span class="line">source /etc/profile</span><br><span class="line"><span class="meta">#</span><span class="bash"> 7.启动 MongoDB</span></span><br><span class="line">./mongod -f mongodb.conf # 启动 MongoDB</span><br><span class="line">ps aux | grep mongodb # 查看 MongoDB 运行状态</span><br><span class="line">./mongo # 进入 MongoDB 服务</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装-Node-js"><a href="#安装-Node-js" class="headerlink" title="安装 Node.js"></a>安装 Node.js</h4><p>去 <a href="https://nodejs.org/zh-cn/download/" target="_blank" rel="noopener">Node.js 官网</a>找到 Linux（CentOS）安装包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 1.进入到 src 目录下，并下载 Node.js 安装包</span></span><br><span class="line">cd /usr/local/src</span><br><span class="line">wget https://nodejs.org/dist/v10.13.0/node-v10.13.0-linux-x64.tar.xz</span><br><span class="line"><span class="meta">#</span><span class="bash"> 2.解压 Node.js 安装包</span></span><br><span class="line">tar -zxvf node-v10.13.0-linux-x64.tar.xz</span><br><span class="line"><span class="meta">#</span><span class="bash"> 3.创建目录，并将安装包移动到目录下</span></span><br><span class="line">mkdir /usr/local/node</span><br><span class="line">mv ./node-v10.13.0-linux-x64 /usr/local/node/</span><br><span class="line"><span class="meta">#</span><span class="bash"> 4.配置 Node.js 环境变量</span></span><br><span class="line">vim /etc/profile</span><br><span class="line">export NODE_HOME=/usr/local/node/node-v10.13.0-linux-x64</span><br><span class="line">export PATH=$MONGODB_HOME/bin:$JAVA_HOME/bin:$NODE_HOME/bin:$PATH</span><br><span class="line">source /etc/profile33</span><br><span class="line"><span class="meta">#</span><span class="bash"> 5.查看 Node.js 是否安装成功</span></span><br><span class="line">node -v # 出现版本号，说明安装成功</span><br><span class="line">npm -v # 出现版本号，说明安装成功</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装-Git"><a href="#安装-Git" class="headerlink" title="安装 Git"></a>安装 Git</h4><p>CentOS 一般带有 Git，需要更新一下 Git 版本。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 1.查看 Git 相关信息</span></span><br><span class="line">yum info git</span><br><span class="line"><span class="meta">#</span><span class="bash"> </span></span><br><span class="line">Loaded plugins: fastestmirror, langpacks</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line">Installed Packages</span><br><span class="line">Name        : git</span><br><span class="line">Arch        : x86_64</span><br><span class="line">Version     : 1.8.3.1</span><br><span class="line">Release     : 14.el7_5</span><br><span class="line">Size        : 22 M</span><br><span class="line">Repo        : installed</span><br><span class="line">From repo   : updates</span><br><span class="line">Summary     : Fast Version Control System</span><br><span class="line">URL         : http://git-scm.com/</span><br><span class="line">License     : GPLv2</span><br><span class="line">Description : Git is a fast, scalable, distributed revision control system with an</span><br><span class="line">            : unusually rich command set that provides both high-level operations</span><br><span class="line">            : and full access to internals.</span><br><span class="line">            : </span><br><span class="line">            : The git rpm installs the core tools with minimal dependencies.  To</span><br><span class="line">            : install all git packages, including tools for integrating with other</span><br><span class="line">            : SCMs, install the git-all meta-package.</span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 2.使用 yum 命令安装 Git</span></span><br><span class="line">yum install -y git</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装-YApi"><a href="#安装-YApi" class="headerlink" title="安装 YApi"></a>安装 YApi</h4><p>之前安装的 MongoDB、Node.js 和 Git 是为了安装 YApi 做铺垫，目前我们可以在 YApi 官网看到<a href="https://yapi.ymfe.org/devops/index.html" target="_blank" rel="noopener">安装步骤</a>。<a href="https://github.com/YMFE/yapi" target="_blank" rel="noopener">YApi Github</a> 也提供相当多的文档和教程。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 使用可视化部署的方式安装</span></span><br><span class="line">npm install -g yapi-cli --registry https://registry.npm.taobao.org</span><br><span class="line">yapi server</span><br></pre></td></tr></table></figure>
+
+<p>之后在页面上配置好自己公司的相关信息即可。用上述方式运行有可能会出现：<strong>node: Permission denied</strong> 的错误，这里需要执行以下 shell 命令即可，之后重新安装 YApi。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm config set user 0</span><br><span class="line">npm config set unsafe-perm true</span><br></pre></td></tr></table></figure>
+
+<p>不过这样启动的方式是没有后台运行的，我们需要额外再安装 <a href="http://imweb.io/topic/57c8cbb27f226f687b365636" target="_blank" rel="noopener">PM2</a> 来完成后台运行功能。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 安装 PM2</span></span><br><span class="line">npm install -g pm2</span><br><span class="line"><span class="meta">#</span><span class="bash"> 进入到 YApi 安装目录，使用 PM2 启动</span></span><br><span class="line">cd my-yapi</span><br><span class="line">pm2 start vendors/server/app.js</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看 PM2 运行程序</span></span><br><span class="line">pm2 list</span><br><span class="line">┌──────────┬────┬─────────┬──────┬──────┬────────┬─────────┬────────┬──────┬───────────┬──────┬──────────┐</span><br><span class="line">│ App name │ id │ version │ mode │ pid  │ status │ restart │ uptime │ cpu  │ mem       │ user │ watching │</span><br><span class="line">├──────────┼────┼─────────┼──────┼──────┼────────┼─────────┼────────┼──────┼───────────┼──────┼──────────┤</span><br><span class="line">│ app      │ 0  │ 1.3.23  │ fork │ 2661 │ online │ 0       │ 2D     │ 0.1% │ 69.3 MB   │ root │ disabled │</span><br><span class="line">└──────────┴────┴─────────┴──────┴──────┴────────┴─────────┴────────┴──────┴───────────┴──────┴──────────┘</span><br><span class="line"> Use `pm2 show &lt;id|name&gt;` to get more details about an app</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/17/百岁人生/" rel="next" title="《百岁人生》">
+                <i class="fa fa-chevron-left"></i> 《百岁人生》
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/23/MySQL索引以及SQL中Explain基本使用/" rel="prev" title="MySQL 索引以及 SQL 中 Explain 基本使用">
+                MySQL 索引以及 SQL 中 Explain 基本使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg"
+                alt="Dong Yan" />
+            
+              <p class="site-author-name" itemprop="name">Dong Yan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cave19941023@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#安装-MongoDB"><span class="nav-text">安装 MongoDB</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装-Node-js"><span class="nav-text">安装 Node.js</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装-Git"><span class="nav-text">安装 Git</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装-YApi"><span class="nav-text">安装 YApi</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dong Yan</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.0.5</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.5"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.5"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.5"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.5"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.5"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

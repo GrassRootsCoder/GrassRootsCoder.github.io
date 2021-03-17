@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.5" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.5">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.5" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.0.5',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+<meta name="description" content="Chapter 6 Parallel Processors from Client to Cloud Chapter 4 The Processor Chapter 5 Large and Fast: Exploiting Memory Hierarchy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机组成与设计 硬件&#x2F;软件接口（三）">
+<meta property="og:url" content="http://yoursite.com/2018/05/08/计算机组成与设计（三）/index.html">
+<meta property="og:site_name" content="Dong Yan Blog">
+<meta property="og:description" content="Chapter 6 Parallel Processors from Client to Cloud Chapter 4 The Processor Chapter 5 Large and Fast: Exploiting Memory Hierarchy">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/6.1_MultiprocessorOrClusterOrganization.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/6.2_SoftwareAndHardwareCategorization.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/6.3_SISD%26SIMD%26MISD%26MIMD.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/6.4_SuperscalarProcessorInDifferentApproaches.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/6.5_ClassicOrganizationOfASharedMemoryMultiprocessor.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/6.6_SimplifiedBlockDiagramOfAMultithreadedSIMDProcessor.png">
+<meta property="og:updated_time" content="2018-05-14T16:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算机组成与设计 硬件&#x2F;软件接口（三）">
+<meta name="twitter:description" content="Chapter 6 Parallel Processors from Client to Cloud Chapter 4 The Processor Chapter 5 Large and Fast: Exploiting Memory Hierarchy">
+<meta name="twitter:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/6.1_MultiprocessorOrClusterOrganization.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/05/08/计算机组成与设计（三）/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>计算机组成与设计 硬件/软件接口（三） | Dong Yan Blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dong Yan Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">I want something in my life.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/08/计算机组成与设计（三）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dong Yan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dong Yan Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">计算机组成与设计 硬件/软件接口（三）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-05-08T00:00:00+08:00">2018-05-08</time>
+            
+
+            
+            
+              
+                
+              
+            
+
+            
+              
+              <span class="post-meta-divider">|</span>
+              
+
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Post modified&#58;</span>
+              
+              <time title="Post modified" itemprop="dateModified" datetime="2018-05-15T00:00:00+08:00">2018-05-15</time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Computer-Science/" itemprop="url" rel="index"><span itemprop="name">Computer Science</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Chapter-6-Parallel-Processors-from-Client-to-Cloud"><a href="#Chapter-6-Parallel-Processors-from-Client-to-Cloud" class="headerlink" title="Chapter 6 Parallel Processors from Client to Cloud"></a>Chapter 6 Parallel Processors from Client to Cloud</h2><p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/6.1_MultiprocessorOrClusterOrganization.png" alt="6.1_MultiprocessorOrClusterOrganization.png"></p>
+<a href="/2018/03/05/计算机组成与设计（一）/" title="Chapter 4 The Processor">Chapter 4 The Processor</a> <br><a href="/2018/04/22/计算机组成与设计（二）/" title="Chapter 5 Large and Fast: Exploiting Memory Hierarchy">Chapter 5 Large and Fast: Exploiting Memory Hierarchy</a>
+
+<a id="more"></a>
+
+
+
+<h3 id="6-1-Introduction"><a href="#6-1-Introduction" class="headerlink" title="6.1 Introduction"></a>6.1 Introduction</h3><p>随着计算机的发展，需要将多个较小计算机组合在一起变成计算能力强大的计算机，这就是多处理器（Multiprocessor），它至少包含两个处理器。对于多处理器有两种描述方式：</p>
+<ul>
+<li>进程级并行（Process-level Parallelism）：通过多处理器，同时运行多个独立程序。</li>
+<li>并行处理程序（Parallel Processing Program）：单一程序运行在多个处理器之上。</li>
+</ul>
+<p>在摩尔定律的推动下，目前所有的台式机和服务器都是多核微处理器（Multicore Microprocessor），在单一集成电路上包含多个处理器（Core）。这些处理器通常是共享内存处理器（Shared Memory Processor，SMP），多个Core共享一个物理地址空间。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/6.2_SoftwareAndHardwareCategorization.png" alt="6.2_SoftwareAndHardwareCategorization.png"></p>
+<p>微处理器的发展带来了一些名词，分别是<strong>顺序（Sequential）</strong>、<strong>并发（Concurrent）</strong>、<strong>串行（Serial）</strong>和<strong>并行（Parallel）</strong>。</p>
+<p>对于软件（Software）而言，MatLab编写的矩阵乘法是顺序执行（运行单一功能），而Windows Vista操作系统是并发执行（同时运行多个功能）。</p>
+<p>对于硬件（Hardware）而言，单核微处理器（Intel Pentium 4，<a href="https://zh.wikipedia.org/wiki/%E5%A5%94%E8%85%BE4" target="_blank" rel="noopener">奔腾4</a>）是串行，多核微处理器（Intel Core i7，<a href="https://zh.wikipedia.org/wiki/Intel_Core_i7" target="_blank" rel="noopener">酷睿i7</a>）是并行。</p>
+<h3 id="6-2-The-Difficulty-of-Creating-Parallel-Processing-Programs"><a href="#6-2-The-Difficulty-of-Creating-Parallel-Processing-Programs" class="headerlink" title="6.2 The Difficulty of Creating Parallel Processing Programs"></a>6.2 The Difficulty of Creating Parallel Processing Programs</h3><p>创建并行处理程序的难处在于：必须使用<strong>并行处理程序（在并行硬件上运行顺序软件或者并发软件）</strong>才能在多处理器上获取更高性能或者功耗利用率；否则，不如在单处理器上使用顺序程序，因为顺序程序更容易编写。由于单处理器设计技术（如超标量和乱序执行）充分利用了指令级并行，不需要程序员修改代码，就能够在新计算机上获得更多的性能。</p>
+<p>编写并行处理程序需要注意：<strong>调度、将任务分割成可并行的部分，负载均衡、同步时间和通信开销等因素。</strong>所以想要将多核微处理器的性能全部使用上，那么对于程序员的要求就非常高，在单核和多核上运行的代码，有着完全不同的编写规范。当阅读完本章节内容，对于并行处理问题就会有一个大致的理解。</p>
+<h3 id="6-3-SISD-MIMD-SIMD-SPMD-and-Vector"><a href="#6-3-SISD-MIMD-SIMD-SPMD-and-Vector" class="headerlink" title="6.3 SISD, MIMD, SIMD, SPMD and Vector"></a>6.3 SISD, MIMD, SIMD, SPMD and Vector</h3><p>在20世纪60年代提出了并行硬件的一种分类方法，一直沿用至今。以指令流和数据流的数量作为依据。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/6.3_SISD%26SIMD%26MISD%26MIMD.png" alt="6.3_SISD%26SIMD%26MISD%26MIMD.png"></p>
+<p>MIMD计算机中，可以编写独立的程序运行在不同的处理器上，然后这些程序之间可以相互协调完成一个大型目标。不过程序员一般仅编写单一的程序，将其运行在MIMD计算机上，然后使用条件控制语句，将不同的处理器执行不同的代码块。相当于一个程序运行上所有的处理器之上，这样的编程风格为<strong>单程序多数据（Single Program Multiple Data，SPMD）</strong>。</p>
+<p>最接近MISD的处理器应该是“流处理器”，在流处理器中对一个单独的数据流执行一系列操作：从网络中解析输入，分析数据，解压数据，查找匹配等等。该类型的处理器比较少出现。</p>
+<p>SIMD更加常见一些，它可以对向量数据进行操作。一个单一的SIMD指令可以把64个数相加，只需要把64个数据流发送到64个ALU，就可以在一个时钟周期内得到64个和。SIMD的优点在于所有并行执行单元都是同步的，对源自同一个PC的同一个指令做出响应。</p>
+<h4 id="SIMD-in-x86-Multimedia-Extensions"><a href="#SIMD-in-x86-Multimedia-Extensions" class="headerlink" title="SIMD in x86: Multimedia Extensions"></a>SIMD in x86: Multimedia Extensions</h4><p>在第三章中有关于对x86指令集中的多媒体扩展（MMX）指令的产生的描述。随着操作和寄存器位宽的变大，多媒体指令的操作码数量也在增加，现在已经有数百条SSE和AVX指令（第三章）。</p>
+<h4 id="Vector"><a href="#Vector" class="headerlink" title="Vector"></a>Vector</h4><p>SIMD的一个更加古老和优雅的称呼是：向量体系（Vector Architecture）。向量系统结构的基本理念是从存储器中收集数据元，并将它们按顺序放到一大组寄存器中，然后在寄存器中使用流水化的执行单元对它们依次操作，最后将结果写回寄存器中。向量体系的关键特征是拥有一组向量寄存器，可能拥有32个向量寄存器，每个寄存器包含64个64位宽的数据元。</p>
+<p>总的来说，向量体系是执行数据平行处理程序的一种有效途径；相对多媒体扩展，向量与编译器技术更加接近；并且相对于对x86体系结构进行多媒体扩展，向量技术更加容易随着时间的推移得到改善。</p>
+<h3 id="6-4-Hardware-Multithreading"><a href="#6-4-Hardware-Multithreading" class="headerlink" title="6.4 Hardware Multithreading"></a>6.4 Hardware Multithreading</h3><p>硬件多线程（Hardware Multithreading）是<strong>在线程阻塞时处理器可切换到另一线程的实现，</strong>也是MIMD的相关概念。MIMD依靠多个<a href="https://zh.wikipedia.org/wiki/%E7%BA%BF%E7%A8%8B" target="_blank" rel="noopener">线程</a>（Thread）或者<a href="https://zh.wikipedia.org/wiki/%E8%A1%8C%E7%A8%8B" target="_blank" rel="noopener">进程</a>（Process）来使多个处理器处于忙碌状态，而硬件多线程允许多个线程以重叠的方式共享一个处理器的功能单元，为了支持共享，处理器必须为每个线程复制独立的状态。</p>
+<p>强调一下，<strong>线程切换</strong>相对于<strong>进程切换</strong>更加有效，线程切换是实时的，而进程切换一般需要数百个到数千个时钟周期。可以查看Wiki有关线程和进程的内容，更容易理解。</p>
+<ul>
+<li>线程：一个线程包含PC，寄存器状态和内存栈。是轻量级的进程；多个线程共享一个地址空间。</li>
+<li>进程：一个进程包含一个或者多个线程、地址空间和操作系统。因此切换进程需要操作系统的介入。</li>
+</ul>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/6.4_SuperscalarProcessorInDifferentApproaches.png" alt="6.4_SuperscalarProcessorInDifferentApproaches.png"></p>
+<p>硬件多线程的主要实现方法有两种：</p>
+<ul>
+<li>细粒度多线程（Fine-grained Multithreading，Fine MT）：<strong>每条指令执行之后都进行线程切换。</strong>优点在于：同时隐藏由短阻塞和长阻塞引起的吞吐量损失，因为当一个线程阻塞时可以执行其他线程的指令。缺点在于：降低了单个线程的执行速度，因为就绪状态的线程会因为其他线程而延迟执行。</li>
+<li>粗粒度多线程（Coarse-grained Multithreading，Coarse MT）：<strong>仅在一些重要事情（最后一级缓存缺失）之后进行线程切换。</strong>优点在于：不会降低单个线程的执行速度，因为仅在当前线程遇到高开销阻塞时才会发射其他线程的指令。缺点在于：隐藏吞吐量损失的能力受限，特别是源自流水线启动开销的短阻塞。</li>
+</ul>
+<p>硬件多线程还有一个变种实现，就是同时多线程（Simultaneous Multithreading，SMT）。它使用多发射动态调度流水线处理器的资源来挖掘线程级并行，并同时保持指令级并行。</p>
+<p>在SMT中，线程级并行和指令级并行都得到充分利用，在一个时钟周期多个线程共同使用发射槽。理想情况下，发射槽的使用仅受多个线程间资源失衡和资源可用性的限制，实际上，其他因素还是挺多的。</p>
+<p><strong>本小节内容主要说的是单个处理器如何使用多线程。</strong></p>
+<h3 id="6-5-Multicore-and-Other-Shared-Memory-Multiprocessors"><a href="#6-5-Multicore-and-Other-Shared-Memory-Multiprocessors" class="headerlink" title="6.5 Multicore and Other Shared Memory Multiprocessors"></a>6.5 Multicore and Other Shared Memory Multiprocessors</h3><p>目前阶段的主要难度在于：单个芯片上数量不断增长的处理器如何达到摩尔定律的增长。</p>
+<p>为了达到这个增长，首要问题在于对原有程序重写，使之能在并行硬件上能够运行。目前解决访问：一种方法是为所有的处理器提供一个共享的单一物理地址空间，以便程序不必考虑它们的数据在哪，只要执行就好了。另一种办法是每个处理器采用独立的地址空间，则必须进行显示共享。当物理地址空间公用时，通常由硬件提供Cache一致性。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/6.5_ClassicOrganizationOfASharedMemoryMultiprocessor.png" alt="6.5_ClassicOrganizationOfASharedMemoryMultiprocessor.png"></p>
+<p>现在为程序员提供跨越所有处理器的单一物理地址空间的多处理器为<strong>共享内存多处理器（Shared Memory Multiprocessor）</strong>。如果想要更加精确的描述，应该叫共享地址多处理器（Shared-address Multiprocessor）。即使这些处理器共享同一个物理地址空间，也仍然可以在的虚拟地址空间单独运行。</p>
+<p>由于处理器并行执行，当它们处理共享数据时，需要进行协调；否则，处理器可能会在另一个处理器执行完之前就开始操作数据，这个时候数据还是旧数据。必须提供一套独立的同步机制，可以给每个共享变量添加锁（Lock）。在一个时刻只能有一个处理器获得锁，其他处理器需要等待锁释放。</p>
+<p><strong>本小节内容主要说的是多个处理器如何保证运行。</strong></p>
+<h3 id="6-6-Introduction-to-Graphics-Processing-Unit"><a href="#6-6-Introduction-to-Graphics-Processing-Unit" class="headerlink" title="6.6 Introduction to Graphics Processing Unit"></a>6.6 Introduction to Graphics Processing Unit</h3><p>在体系结构中添加SIMD指令目的处理图形显示，随着PC和游戏终端的快速增长，需要处理越来越多图形显示问题，因此图形处理器的地位慢慢上升，最后命名为<a href="https://zh.wikipedia.org/zh/%E5%9C%96%E5%BD%A2%E8%99%95%E7%90%86%E5%99%A8" target="_blank" rel="noopener">图形处理单元</a>（Graphics Processing Unit，GPU）。</p>
+<p>有关GPU详细内容可以参考本书的附录C以及维基百科。</p>
+<p>GPU和CPU几个主要差别：</p>
+<ul>
+<li>GPU是补充CPU的加速器，因此不必执行CPU的所有任务。</li>
+<li>GPU解决的问题规模通常为几百MB到GB，而不是几百GM到TB。</li>
+</ul>
+<p>体系设计风格的不同：</p>
+<ul>
+<li>GPU不像CPU一样依赖多级缓存来隐藏访问存储器的长延迟。</li>
+<li>GPU的主存是面向带宽而不是面向延迟的。</li>
+<li>每个GPU相比于CPU有更多的线程，并且拥有更多的处理器。</li>
+</ul>
+<h4 id="An-Introduction-to-the-NVIDIA-GPU-Architecture"><a href="#An-Introduction-to-the-NVIDIA-GPU-Architecture" class="headerlink" title="An Introduction to the NVIDIA GPU Architecture"></a>An Introduction to the NVIDIA GPU Architecture</h4><p><a href="https://developer.nvidia.com/cuda-gpus" target="_blank" rel="noopener">NVIDIA官方介绍</a></p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/6.6_SimplifiedBlockDiagramOfAMultithreadedSIMDProcessor.png" alt="6.6_SimplifiedBlockDiagramOfAMultithreadedSIMDProcessor.png"></p>
+<p>多线程SIMD处理器与向量处理器相似，不过前者有更多的并行单元，后者只有少数几个高度并行化的功能单元。GPU是一个由多个多线程SIMD处理器组成的MIMD处理器。上图就是简化的多线程SIMD处理器的结构图。</p>
+<p>GPU硬件有两层硬件调度器：</p>
+<ul>
+<li>线程块调度器（Thread block scheduler）将线程块分配到多线程SIMD处理器上。</li>
+<li>当SIMD线程准备就绪时，SIMD处理器内部的SIMD线程调度器进行调度。</li>
+</ul>
+<p>SIMD线程（SIMD thread）是由硬件产生、管理、调度并执行的机器目标代码。它包含相互独立的SIMD指令，这些SIMD线程有自己的PC并且运行在一个多线程SIMD处理器上。</p>
+<p>SIMD线程调度器（）含有一个控制器，该控制器可以告诉调度器有哪些SIMD指令线程已经准备就绪可以执行了，并且将这些线程送给分派单元。</p>
+<h3 id="6-7-Clusters-Warehouse-Scale-Computers-and-Other-Message-Passing-Multiprocessors"><a href="#6-7-Clusters-Warehouse-Scale-Computers-and-Other-Message-Passing-Multiprocessors" class="headerlink" title="6.7 Clusters, Warehouse Scale Computers, and Other Message-Passing Multiprocessors"></a>6.7 Clusters, Warehouse Scale Computers, and Other Message-Passing Multiprocessors</h3><p>这章节的内容容易理解，主要为<strong>集群</strong>、<strong>MapReduce</strong>。</p>
+<p>集群（<a href="https://zh.wikipedia.org/wiki/%E8%AE%A1%E7%AE%97%E6%9C%BA%E9%9B%86%E7%BE%A4" target="_blank" rel="noopener">维基百科</a>）</p>
+<p>MapReduce（<a href="https://zh.wikipedia.org/wiki/MapReduce" target="_blank" rel="noopener">维基百科</a>，<a href="https://www.zhihu.com/question/23345991" target="_blank" rel="noopener">知乎</a>）</p>
+<h3 id="6-8-Introduction-to-Multiprocessor-Network-Topologies"><a href="#6-8-Introduction-to-Multiprocessor-Network-Topologies" class="headerlink" title="6.8 Introduction to Multiprocessor Network Topologies"></a>6.8 Introduction to Multiprocessor Network Topologies</h3><p>网络拓扑（<a href="https://zh.wikipedia.org/wiki/%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91" target="_blank" rel="noopener">维基百科</a>）</p>
+<h3 id="6-9-Communicating-to-the-Outside-World-Cluster-Networking"><a href="#6-9-Communicating-to-the-Outside-World-Cluster-Networking" class="headerlink" title="6.9 Communicating to the Outside World: Cluster Networking"></a>6.9 Communicating to the Outside World: Cluster Networking</h3><p>本书网上章节讲述了用来连接集群节点的网络硬件和软件。</p>
+<h3 id="6-10-Multiprocessor-Benchmarks-and-Performance-Models"><a href="#6-10-Multiprocessor-Benchmarks-and-Performance-Models" class="headerlink" title="6.10 Multiprocessor Benchmarks and Performance Models"></a>6.10 Multiprocessor Benchmarks and Performance Models</h3><p>感觉离自己挺远的，如果感兴趣的话，各位同学可以去找找资料。</p>
+<h3 id="6-11-Real-Stuff-Benchmarking-and-Rooflines-of-the-Intel-Core-i7-960-and-the-NVIDIA-Tesla-GPU"><a href="#6-11-Real-Stuff-Benchmarking-and-Rooflines-of-the-Intel-Core-i7-960-and-the-NVIDIA-Tesla-GPU" class="headerlink" title="6.11 Real Stuff: Benchmarking and Rooflines of the Intel Core i7 960 and the NVIDIA Tesla GPU"></a>6.11 Real Stuff: Benchmarking and Rooflines of the Intel Core i7 960 and the NVIDIA Tesla GPU</h3><p>同上小节。</p>
+<h3 id="6-12-Going-Faster-Multiple-Processors-and-Matrix-Multiply"><a href="#6-12-Going-Faster-Multiple-Processors-and-Matrix-Multiply" class="headerlink" title="6.12 Going Faster: Multiple Processors and Matrix Multiply"></a>6.12 Going Faster: Multiple Processors and Matrix Multiply</h3><p>大意内容：修改了DGEMM程序，告诉计算机将最外层for循环的任务分配给所有线程去执行。</p>
+<h3 id="6-13-Fallacies-and-Pitfalls"><a href="#6-13-Fallacies-and-Pitfalls" class="headerlink" title="6.13 Fallacies and Pitfalls"></a>6.13 Fallacies and Pitfalls</h3><p>谬误（Fallacies）：Amdahl定律不适用于并行计算机。</p>
+<p>谬误（Fallacies）：峰值性能可代表实际性能。</p>
+<p>陷阱（Pitfalls）：在利用和优化多处理器体系结构时不开发软件。</p>
+<p>谬误（Fallacies）：可以在不提升存储器带宽的前提下得到好的向量计算性能。</p>
+<h3 id="6-14-Concluding-Remarks"><a href="#6-14-Concluding-Remarks" class="headerlink" title="6.14 Concluding Remarks"></a>6.14 Concluding Remarks</h3><p>信息技术业的未来与并行计算机密切相关，因此我们需要了解更多的并行技术。</p>
+<ul>
+<li>云计算早已兴起（<a href="https://zh.wikipedia.org/wiki/%E9%9B%B2%E7%AB%AF%E9%81%8B%E7%AE%97" target="_blank" rel="noopener">维基百科</a>）。</li>
+<li>并行处理在科学计算和工程计算等领域中非常普通。</li>
+</ul>
+<h3 id="6-15-Historical-Perspective-and-Further-Reading"><a href="#6-15-Historical-Perspective-and-Further-Reading" class="headerlink" title="6.15 Historical Perspective and Further Reading"></a>6.15 Historical Perspective and Further Reading</h3><p>在本节的网络内容上主要给出了近50年来多处理器的发展历史。</p>
+<h3 id="6-16-Exercises"><a href="#6-16-Exercises" class="headerlink" title="6.16 Exercises"></a>6.16 Exercises</h3><p>～</p>
+<h2 id="Summary-and-Outlook"><a href="#Summary-and-Outlook" class="headerlink" title="Summary and Outlook"></a>Summary and Outlook</h2><p>这本书籍前前后后看了两遍有余，对于硬件层面的理解加深了很多，从指令到CPU，再到缓存、内存和硬盘，真的是受益匪浅。计算机这个行业为什么能够如此吸引人，为什么仅仅只有半个多世纪的发展就能够到如此地步，这本书从硬件的方面告诉我们。</p>
+<p>云计算，这个词想必都听过，从Google的三篇理论论文（Google File System, MapReduce, BigTable）开始直至今天，依然是未来计算机发展的重点方向。我作为一个IT行业的普通从业者，更多的是享受大数据时代带来的便利，而那些顶尖人才是这个时代的开启者，我想要了解他们在做什么，思考什么。虽然距离他们非常遥远，甚至永远无法追上，但是我们依然要进步，要看到以前看不见的风景。</p>
+<p>IT行业的技术更新换代太快，加上信息容量爆炸，我们无时无刻都在接收新东西，不过这些新东西其实大部分都是没什么用处的，看过之后也不会有什么印象，也无法让人深思。所以我选择了基础性知识，不被“技术潮流”给扰乱自己的视线，每天的时间都被垃圾信息给充满。</p>
+<p>当基础性知识有了一定积累后，自然就能区别出市面上技术的优劣，也不会“随大流”学习技术。这些知识更多的给人一种沉浸，让人缺少浮躁，沉下心去追求自己想要的。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/22/计算机组成与设计（二）/" rel="next" title="计算机组成与设计 硬件/软件接口（二）">
+                <i class="fa fa-chevron-left"></i> 计算机组成与设计 硬件/软件接口（二）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/10/一个孤独漫步者的遐想/" rel="prev" title="《一个孤独漫步者的遐想》">
+                《一个孤独漫步者的遐想》 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg"
+                alt="Dong Yan" />
+            
+              <p class="site-author-name" itemprop="name">Dong Yan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cave19941023@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Chapter-6-Parallel-Processors-from-Client-to-Cloud"><span class="nav-text">Chapter 6 Parallel Processors from Client to Cloud</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-Introduction"><span class="nav-text">6.1 Introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-The-Difficulty-of-Creating-Parallel-Processing-Programs"><span class="nav-text">6.2 The Difficulty of Creating Parallel Processing Programs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-SISD-MIMD-SIMD-SPMD-and-Vector"><span class="nav-text">6.3 SISD, MIMD, SIMD, SPMD and Vector</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SIMD-in-x86-Multimedia-Extensions"><span class="nav-text">SIMD in x86: Multimedia Extensions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Vector"><span class="nav-text">Vector</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-Hardware-Multithreading"><span class="nav-text">6.4 Hardware Multithreading</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-Multicore-and-Other-Shared-Memory-Multiprocessors"><span class="nav-text">6.5 Multicore and Other Shared Memory Multiprocessors</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-6-Introduction-to-Graphics-Processing-Unit"><span class="nav-text">6.6 Introduction to Graphics Processing Unit</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#An-Introduction-to-the-NVIDIA-GPU-Architecture"><span class="nav-text">An Introduction to the NVIDIA GPU Architecture</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-7-Clusters-Warehouse-Scale-Computers-and-Other-Message-Passing-Multiprocessors"><span class="nav-text">6.7 Clusters, Warehouse Scale Computers, and Other Message-Passing Multiprocessors</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-8-Introduction-to-Multiprocessor-Network-Topologies"><span class="nav-text">6.8 Introduction to Multiprocessor Network Topologies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-9-Communicating-to-the-Outside-World-Cluster-Networking"><span class="nav-text">6.9 Communicating to the Outside World: Cluster Networking</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-10-Multiprocessor-Benchmarks-and-Performance-Models"><span class="nav-text">6.10 Multiprocessor Benchmarks and Performance Models</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-11-Real-Stuff-Benchmarking-and-Rooflines-of-the-Intel-Core-i7-960-and-the-NVIDIA-Tesla-GPU"><span class="nav-text">6.11 Real Stuff: Benchmarking and Rooflines of the Intel Core i7 960 and the NVIDIA Tesla GPU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-12-Going-Faster-Multiple-Processors-and-Matrix-Multiply"><span class="nav-text">6.12 Going Faster: Multiple Processors and Matrix Multiply</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-13-Fallacies-and-Pitfalls"><span class="nav-text">6.13 Fallacies and Pitfalls</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-14-Concluding-Remarks"><span class="nav-text">6.14 Concluding Remarks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-15-Historical-Perspective-and-Further-Reading"><span class="nav-text">6.15 Historical Perspective and Further Reading</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-16-Exercises"><span class="nav-text">6.16 Exercises</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary-and-Outlook"><span class="nav-text">Summary and Outlook</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dong Yan</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.0.5</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.5"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.5"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.5"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.5"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.5"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

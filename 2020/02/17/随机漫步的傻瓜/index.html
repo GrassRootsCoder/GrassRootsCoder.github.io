@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.5" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.5">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.5" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.0.5',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+<meta name="description" content="随机漫步的傻瓜刚进入职场的头两年，我一直迫切的想要成功、想要走得更快，为了达成这个目的我看了很多书，也看了一些成功人士分享的经验，甚至为了得到更专业和真实的经验还参与过很多付费内容，最后将收获的这些“经验”进行整理、分析和付出实践。经过两年后也就是现在，我并没有取得非常大的成功，只能说是比以前过得要好，中途也放弃了很多当时看起来无比正确，可实际上却没什么用的经验。回想过去，可真是被收了很多智商税呢">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《随机漫步的傻瓜》">
+<meta property="og:url" content="http://yoursite.com/2020/02/17/随机漫步的傻瓜/index.html">
+<meta property="og:site_name" content="Dong Yan Blog">
+<meta property="og:description" content="随机漫步的傻瓜刚进入职场的头两年，我一直迫切的想要成功、想要走得更快，为了达成这个目的我看了很多书，也看了一些成功人士分享的经验，甚至为了得到更专业和真实的经验还参与过很多付费内容，最后将收获的这些“经验”进行整理、分析和付出实践。经过两年后也就是现在，我并没有取得非常大的成功，只能说是比以前过得要好，中途也放弃了很多当时看起来无比正确，可实际上却没什么用的经验。回想过去，可真是被收了很多智商税呢">
+<meta property="og:updated_time" content="2020-02-16T16:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《随机漫步的傻瓜》">
+<meta name="twitter:description" content="随机漫步的傻瓜刚进入职场的头两年，我一直迫切的想要成功、想要走得更快，为了达成这个目的我看了很多书，也看了一些成功人士分享的经验，甚至为了得到更专业和真实的经验还参与过很多付费内容，最后将收获的这些“经验”进行整理、分析和付出实践。经过两年后也就是现在，我并没有取得非常大的成功，只能说是比以前过得要好，中途也放弃了很多当时看起来无比正确，可实际上却没什么用的经验。回想过去，可真是被收了很多智商税呢">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/02/17/随机漫步的傻瓜/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>《随机漫步的傻瓜》 | Dong Yan Blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dong Yan Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">I want something in my life.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/17/随机漫步的傻瓜/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dong Yan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dong Yan Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《随机漫步的傻瓜》</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-02-17T00:00:00+08:00">2020-02-17</time>
+            
+
+            
+            
+              
+                
+              
+            
+
+            
+              
+              <span class="post-meta-divider">|</span>
+              
+
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Post modified&#58;</span>
+              
+              <time title="Post modified" itemprop="dateModified" datetime="2020-02-17T00:00:00+08:00">2020-02-17</time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/所思所想/" itemprop="url" rel="index"><span itemprop="name">所思所想</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="随机漫步的傻瓜"><a href="#随机漫步的傻瓜" class="headerlink" title="随机漫步的傻瓜"></a>随机漫步的傻瓜</h2><p>刚进入职场的头两年，我一直迫切的想要成功、想要走得更快，为了达成这个目的我看了很多书，也看了一些成功人士分享的经验，甚至为了得到更专业和真实的经验还参与过很多付费内容，最后将收获的这些“经验”进行整理、分析和付出实践。经过两年后也就是现在，我并没有取得非常大的成功，只能说是比以前过得要好，中途也放弃了很多当时看起来无比正确，可实际上却没什么用的经验。回想过去，可真是被收了很多智商税呢（笑。</p>
+<p>并不是说经验无用，而是我没有明白理清逻辑，当时我犯了个错误，没有理解“<a href="https://zh.wikipedia.org/wiki/%E5%80%96%E5%AD%98%E8%80%85%E5%81%8F%E8%AA%A4" target="_blank" rel="noopener">幸存者偏差</a>”这个逻辑谬误。多少在网上分享经验或者开设付费内容的人往往都是成功的，从他们的成功经验得出的结论是很单一的，不足以反映出真实情况。以及多数失败者不会选择在网络上发声，或者说不会被人关注，而成功者即使发声不多，也会被媒体大肆渲染。这一来一回，让真实信息更加远离现实，看到的不是根源而是表象。</p>
+<p>最要命的是那些成功者也不一定是靠实力成功的，只是运气比较好罢了，可他们却不这样认为，把运气说成实力，将“随机事件”看待成“非随机事件”。而我们这些围观者将他们的经验汇集起来只能得到错误结论，<strong>得到一个错误结论，比没有结论更加可怕。</strong></p>
+<p>什么是“随机事件”和“非随机事件”？如何理解随机或者概率？那么就仔细阅读该书吧。</p>
+<a id="more"></a>
+
+
+
+<h3 id="混淆真相和噪音"><a href="#混淆真相和噪音" class="headerlink" title="混淆真相和噪音"></a>混淆真相和噪音</h3><p>本书主要想表达的内容是：让人理解随机或者概率，不要将“随机事件”看待成“非随机事件”。明白人是无法对抗运气或者命运的，我们能做的事情有限。当你迫切想要得到某样东西，最后却得不到时，放平心态，等待幸运女神的眷顾。</p>
+<p>作者在书中举了交易员的例子，如果碰上市场行情好，那么大部分交易员都可以赚到钱，而市场行情不好，则连本带利全部亏出去，甚至以后无法从事交易员职位。这些交易员在行情好的情况，无论怎么操作，赚的钱都不会少，他们则把成功归结于自己的实力，通过操作得来的。如果此时你问他们成功的原因，把这些原因集结起来，你会发现他们分析得非常正确，让你觉得他们真强。等到行情不好的时候，那么他们也会因为运气而跌入谷底。</p>
+<blockquote>
+<p>“<a href="https://www.oldschoolvalue.com/investing-strategy/warren-buffett-quotes/" target="_blank" rel="noopener">It’s only when the tide goes out that you learn who has been swimming naked.</a>”（翻译：只有当浪潮消散时，您才能知道谁在裸泳。）</p>
+</blockquote>
+<p>遗憾的是现实太复杂，人根本没有办法分清楚随机和非随机，如果潮水一直没有褪去，那么裸泳的人（运气好的人）永远也不会被看见，而当他吹嘘自己的实力时，你也无法反驳他。人总是被信息给玩弄呢。</p>
+<h3 id="怀疑信息可信度"><a href="#怀疑信息可信度" class="headerlink" title="怀疑信息可信度"></a>怀疑信息可信度</h3><p>透过书本看实现生活，实现生活中有没有类似的例子呢？</p>
+<p>比如：老板总是喜欢说<strong>努力、奋斗</strong>，通过这些你才能取得成功，可实际上努力和奋斗并不是成功的所有必要因素，有时候只是因为“运气”原因才成功，最后将成功归于自己的努力。如果只是努力、奋斗，最后的结果可能就是成为奋斗逼吧。</p>
+<p>在读书时期的某些学霸和老师也如此，多复习，多练习，只要学不死就往死里学，然而这些根本不是考高分的必要因素。成功者固然不可能是懒汉，可努力真的只是影响成功的一点因素。（我深刻怀疑：成功是百分之九十九的汗水加百分之一的天赋，这句话）</p>
+<p>之前在网络上也流传着这样的话，“X0 后是垮掉的一代”，“现在的年轻人不努力啊”。成功的路很窄，只能有一部分人能走过去，走过去之后这条路就再也不通了，后来的人找不到其他的路，只能询问前方已经成功的人，他们却告诉你要努力、奋斗（因为他们自己也不知道自己是怎么成功的），就像是人生导师一般。。。。。。最后，你真的无法反驳他。。。</p>
+<p>成功的位置就那么多，比你来得早的人已经占领，你毫无办法。<strong>你没有做错什么，你只是比别人来得晚。</strong></p>
+<hr>
+<p>文章的结尾写了作者对于运气的看法</p>
+<blockquote>
+<p>关于人生在世应该有什么样的行为，读者应该已经知道我会怎么建议和如何说教。我们说过，人有情绪反应时，合乎理性的观念很难听进耳里；走出教室，我们就不回用到理性的大脑。一些自助励志书即使不是胡说八道的人写的，大致也没什么效果。启发人心而且“友善的”好建议和具说服力的说教，如果不能拨动我们的心弦，便将稍纵即逝。斯多噶哲学有趣的地方，在于它强调尊严和个人的美感，而这是我们基因中的一部分。下次碰到厄运时，不妨开始强调个人举止的优雅。你应该表现出不管在什么状况下，都“知道如何生存”。</p>
+<p>命运女神唯一不能控制的东西，是你的行为。</p>
+</blockquote>
+<p>中国有句古话，天时地利人和，即使天时和地利都没有降临于你，人和必须要做到。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/28/拖延心理学/" rel="next" title="《拖延心理学》">
+                <i class="fa fa-chevron-left"></i> 《拖延心理学》
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/09/400 Bad Request/" rel="prev" title="400 Bad Request">
+                400 Bad Request <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg"
+                alt="Dong Yan" />
+            
+              <p class="site-author-name" itemprop="name">Dong Yan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cave19941023@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#随机漫步的傻瓜"><span class="nav-text">随机漫步的傻瓜</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#混淆真相和噪音"><span class="nav-text">混淆真相和噪音</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#怀疑信息可信度"><span class="nav-text">怀疑信息可信度</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dong Yan</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.0.5</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.5"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.5"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.5"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.5"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.5"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

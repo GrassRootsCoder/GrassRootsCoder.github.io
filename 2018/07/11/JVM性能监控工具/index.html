@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.5" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.5">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.5" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.0.5',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+<meta name="description" content="本篇博客主要用于说明如何监控JVM内部运行的信息，使用相关工具（主要还是VisualVM，JDK提供的相关命令不在范围内）来帮助我们了解和解决问题。  最近开的博客比较多，很多坑都没有填完，7月份就对JVM做一个了解（其实光看一本《深入理解Java虚拟机》还远远不够，只能说是一个阶段性的了解，而非真的非常理解JVM）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM性能监控工具">
+<meta property="og:url" content="http://yoursite.com/2018/07/11/JVM性能监控工具/index.html">
+<meta property="og:site_name" content="Dong Yan Blog">
+<meta property="og:description" content="本篇博客主要用于说明如何监控JVM内部运行的信息，使用相关工具（主要还是VisualVM，JDK提供的相关命令不在范围内）来帮助我们了解和解决问题。  最近开的博客比较多，很多坑都没有填完，7月份就对JVM做一个了解（其实光看一本《深入理解Java虚拟机》还远远不够，只能说是一个阶段性的了解，而非真的非常理解JVM）。">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.0_VisualVM.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.1_JavaTools.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.2_ThreadWaiting.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.3_CPUUsingInThreadWaiting.jpg">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.7_JavaHeapSpaceOutOfMemory.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.4_DeadlockForThread.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.5_CPUUsingInDeadlock.jpg">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.6_Classes%26Metaspace.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.8_VisualVMPlugins.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.9_VisualGC.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.10_BufferMonitor.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.11_ThreadsInspector.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.12_Tracer.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.13_GCRuns.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.17_DownloadJMXRemoteJar.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.14_RemoteLogin.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.15_PartOneJMX.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.16_PartTwoJMX.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.18_JstatdRemote.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.19_ObjectAllocationToEden.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.20_BigObjectAllocationToOld.png">
+<meta property="og:updated_time" content="2018-07-19T16:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM性能监控工具">
+<meta name="twitter:description" content="本篇博客主要用于说明如何监控JVM内部运行的信息，使用相关工具（主要还是VisualVM，JDK提供的相关命令不在范围内）来帮助我们了解和解决问题。  最近开的博客比较多，很多坑都没有填完，7月份就对JVM做一个了解（其实光看一本《深入理解Java虚拟机》还远远不够，只能说是一个阶段性的了解，而非真的非常理解JVM）。">
+<meta name="twitter:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.0_VisualVM.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/11/JVM性能监控工具/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>JVM性能监控工具 | Dong Yan Blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dong Yan Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">I want something in my life.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/11/JVM性能监控工具/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dong Yan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dong Yan Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JVM性能监控工具</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-11T00:00:00+08:00">2018-07-11</time>
+            
+
+            
+            
+              
+                
+              
+            
+
+            
+              
+              <span class="post-meta-divider">|</span>
+              
+
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Post modified&#58;</span>
+              
+              <time title="Post modified" itemprop="dateModified" datetime="2018-07-20T00:00:00+08:00">2018-07-20</time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Computer-Science/" itemprop="url" rel="index"><span itemprop="name">Computer Science</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本篇博客主要用于说明如何监控JVM内部运行的信息，使用相关工具（主要还是<a href="https://en.wikipedia.org/wiki/VisualVM" target="_blank" rel="noopener">VisualVM</a>，JDK提供的相关命令不在范围内）来帮助我们了解和解决问题。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.0_VisualVM.png" alt="JVM.0_VisualVM.png"></p>
+<p>最近开的博客比较多，很多坑都没有填完，7月份就对JVM做一个了解（其实光看一本《深入理解Java虚拟机》还远远不够，只能说是一个阶段性的了解，而非真的非常理解JVM）。</p>
+<a id="more"></a>
+
+
+
+<h2 id="JVM内部性能监控"><a href="#JVM内部性能监控" class="headerlink" title="JVM内部性能监控"></a>JVM内部性能监控</h2><p>对于我们大部分程序员而言，即使不知道JVM内部是怎么运行，也依然能够做开发。不过想要走得更远一点的话，JVM的监控还是需要了解的。</p>
+<h3 id="JDK提供的相关工具"><a href="#JDK提供的相关工具" class="headerlink" title="JDK提供的相关工具"></a>JDK提供的相关工具</h3><p>JDK本身自带了很多工具，在/Library/Java/JavaVirtualMachines/jdk1.8.0_171.jdk/Contents/Home/bin（Mac系统）目录下，这些工具不是本篇博客的重点，所以需要了解这些内容的同学可以自行Google或者看原书。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.1_JavaTools.png" alt="JVM.1_JavaTools.png"></p>
+<h3 id="VisualVM"><a href="#VisualVM" class="headerlink" title="VisualVM"></a>VisualVM</h3><p>能够监控JVM的工具有很多，有商业的（比如：<a href="https://www.ej-technologies.com/products/jprofiler/overview.html" target="_blank" rel="noopener">JProfiler</a>），也有开源的。本篇博客主要使用VisualVM去监控JVM内部运行情况。</p>
+<h4 id="安装VisualVM"><a href="#安装VisualVM" class="headerlink" title="安装VisualVM"></a>安装VisualVM</h4><p>从<a href="https://visualvm.github.io/" target="_blank" rel="noopener">VisualVM官网</a>上下载安装包，安装即可。过程非常简单。</p>
+<p><strong>这里需要<a href="https://visualvm.github.io/graal.html" target="_blank" rel="noopener">注意一下</a>，从JDK 9开始，Java VisualVM被移植到<a href="http://www.oracle.com/technetwork/oracle-labs/program-languages/downloads/index.html" target="_blank" rel="noopener">Graal VisualVM</a>上，这个是由Oracle提供的一个工具。写这篇博客的时候，我使用的JDK 8，如果有同学使用JDK 9以上的，需要注意VM工具的选择。</strong></p>
+<h4 id="VisualVM基本介绍"><a href="#VisualVM基本介绍" class="headerlink" title="VisualVM基本介绍"></a>VisualVM基本介绍</h4><p>VisualVM主要监控的CPU、Memory、Thread以及Class，在这些基础之前可以使用VisualVM提供的简单功能，比如：快照区、堆区域比较等。</p>
+<p><strong>CPU</strong>：CPU的使用率并不是可以很好的控制，就Java普通的Web项目而言，一般也不会用多少的占用率。CPU的占用率主要是计算，如果使用多线程执行了算法或者排序，一下就能提升上去了。（很多博客都说死锁或者线程等待会占用很多CPU，然而现实并不是这样的）</p>
+<p>这里就演示线程等待的情况，死锁在Thread部分展示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.cave.jvm.memory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadWait</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Thread t1 = <span class="keyword">new</span> MyThread(<span class="string">"t1"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">synchronized</span> (t1) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                t1.start();</span><br><span class="line"></span><br><span class="line">                t1.wait();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyThread</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyThread</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">"start"</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                MyThread.sleep(<span class="number">1000000</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.2_ThreadWaiting.png" alt="JVM.2_ThreadWaiting.png"></p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.3_CPUUsingInThreadWaiting.jpg" alt="JVM.3_CPUUsingInThreadWaiting.jpg"></p>
+<hr>
+<p><strong>Memory</strong>：在VisualVM中，Memory主要包含两个区域：Head和Metaspace（这两个区域存放什么内容自己查看JVM相关博客）。想让Head溢出就无限创建对象，想让Metaspace溢出需要加载无限.Class（通过动态代理，创建出.Class并且加载）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.cave.filemove;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * VM options: -Xms20m -Xmx20m -XX:+HeapDumpOnOutOfMemoryError</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HeapOOM</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">OOMObject</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        List&lt;OOMObject&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">            list.add(<span class="keyword">new</span> OOMObject());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码执行后，会在项目的目录下生成java_pidxxxxx.hprof文件，将这个文件使用<a href="https://www.eclipse.org/mat/" target="_blank" rel="noopener">MAT</a>（Memory Analyzer Tool）打开就能够看到发生OutOfMemory时JVM内部的运行信息。（由于发生OOM的速度太快，VisualVM还没有展示Head的信息就已经退出程序了，所以只能使用MAT来查看）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">java.lang.OutOfMemoryError: Java heap space</span><br><span class="line">Dumping heap to java_pid29886.hprof ...</span><br><span class="line">Heap dump file created [<span class="number">28012352</span> bytes in <span class="number">0.125</span> secs]</span><br><span class="line">Exception in thread <span class="string">"main"</span> java.lang.OutOfMemoryError: Java heap space</span><br><span class="line">	at java.util.Arrays.copyOf(Arrays.java:<span class="number">3210</span>)</span><br><span class="line">    ......</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.7_JavaHeapSpaceOutOfMemory.png" alt="JVM.7_JavaHeapSpaceOutOfMemory.png"></p>
+<p>当知道了Head中哪个对象引起的OOM后，回去代码中重新理清楚逻辑，修改代码就可以避免OOM了。（一般而言，发生OOM都是代码编写有问题）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.cave;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.cglib.proxy.Enhancer;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cglib.proxy.MethodInterceptor;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cglib.proxy.MethodProxy;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * VM options: -XX:MetaspaceSize=4m -XX:MaxMetaspaceSize=9m</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MetaspaceOOM</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">OOMObject</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            Enhancer enhancer = <span class="keyword">new</span> Enhancer();</span><br><span class="line">            enhancer.setSuperclass(OOMObject.class);</span><br><span class="line">            enhancer.setUseCache(<span class="keyword">false</span>);</span><br><span class="line">            enhancer.setCallback(<span class="keyword">new</span> MethodInterceptor() &#123;</span><br><span class="line">                <span class="function"><span class="keyword">public</span> Object <span class="title">intercept</span><span class="params">(Object o, Method method, Object[] objects, MethodProxy methodProxy)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line">            enhancer.create();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于Metaspace里面放的是类的元信息，我们使用<strong>CGLib</strong>不断的创建新类，这样Metaspace就被无限的类的元信息给填充，最后会放生溢出。（这部分的溢出发生得非常快，也来不及从VisualVM中观察）一般而言，只要不随意加载类的元信息，Metaspace基本不会溢出。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread <span class="string">"main"</span> org.springframework.cglib.core.CodeGenerationException: java.lang.reflect.InvocationTargetException--&gt;<span class="keyword">null</span></span><br><span class="line">	at org.springframework.cglib.core.AbstractClassGenerator.generate(AbstractClassGenerator.java:<span class="number">345</span>)</span><br><span class="line">	at org.springframework.cglib.proxy.Enhancer.generate(Enhancer.java:<span class="number">492</span>)</span><br><span class="line">	at org.springframework.cglib.core.AbstractClassGenerator$ClassLoaderData.get(AbstractClassGenerator.java:<span class="number">114</span>)</span><br><span class="line">	at org.springframework.cglib.core.AbstractClassGenerator.create(AbstractClassGenerator.java:<span class="number">291</span>)</span><br><span class="line">	at org.springframework.cglib.proxy.Enhancer.createHelper(Enhancer.java:<span class="number">480</span>)</span><br><span class="line">	at org.springframework.cglib.proxy.Enhancer.create(Enhancer.java:<span class="number">305</span>)</span><br><span class="line">	at com.cave.MetaspaceOOM.main(MetaspaceOOM.java:<span class="number">41</span>)</span><br><span class="line">Caused by: java.lang.reflect.InvocationTargetException</span><br><span class="line">	at sun.reflect.GeneratedMethodAccessor1.invoke(Unknown Source)</span><br><span class="line">	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:<span class="number">43</span>)</span><br><span class="line">	at java.lang.reflect.Method.invoke(Method.java:<span class="number">498</span>)</span><br><span class="line">	at org.springframework.cglib.core.ReflectUtils.defineClass(ReflectUtils.java:<span class="number">459</span>)</span><br><span class="line">	at org.springframework.cglib.core.AbstractClassGenerator.generate(AbstractClassGenerator.java:<span class="number">336</span>)</span><br><span class="line">	... <span class="number">6</span> more</span><br><span class="line">Caused by: java.lang.OutOfMemoryError: Metaspace</span><br><span class="line">	at java.lang.ClassLoader.defineClass1(Native Method)</span><br><span class="line">	at java.lang.ClassLoader.defineClass(ClassLoader.java:<span class="number">763</span>)</span><br><span class="line">	... <span class="number">11</span> more</span><br><span class="line"></span><br><span class="line">Process finished with exit code <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>Thread</strong>：Java的<a href="https://en.wikipedia.org/wiki/Java_concurrency" target="_blank" rel="noopener">Multi Thread</a>是一个应用比较广泛的技术，虽然能够让程序的执行效率提高，但是也带来了性能消耗、代码编写困难和安全机制（锁机制）等问题。PS：多线程最难的问题应该就是安全机制，如果添加了锁，性能方面就比较差，如果没有锁就会有数据冲突。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 演示"死锁"</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Deadlock</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">" start the example ----- "</span>);</span><br><span class="line">        <span class="keyword">final</span> Object obj_1 = <span class="keyword">new</span> Object();</span><br><span class="line">        <span class="keyword">final</span> Object obj_2 = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(<span class="string">"t1"</span>) &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (obj_1) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">synchronized</span> (obj_2) &#123;</span><br><span class="line">                        System.out.println(<span class="string">"thread t1 done."</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        Thread t2 = <span class="keyword">new</span> Thread(<span class="string">"t2"</span>) &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (obj_2) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">synchronized</span> (obj_1) &#123;</span><br><span class="line">                        System.out.println(<span class="string">"thread t2 done."</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        t1.start();</span><br><span class="line">        t2.start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码执行后，在VisualVM的Threads界面中能看到Deadlock的提示：</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.4_DeadlockForThread.png" alt="JVM.4_DeadlockForThread.png"></p>
+<p>注意下方t1和t2的描述（Threads inspector，是VisualVM的插件，需要自己去安装才有），t1等待的锁在t2中，t2等待的锁在t1中。同时，CPU的占用率也比较低。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.5_CPUUsingInDeadlock.jpg" alt="JVM.5_CPUUsingInDeadlock.jpg"></p>
+<p>当有了提示之后，再回去修改代码，就可以解决死锁的问题（当然，这只是一个非常简单的Demo，目的是演示Threads的作用）。</p>
+<hr>
+<p><strong>Class</strong>：这部分内容是展示JVM加载了多少个类，如果使用CGLib动态生成Class，Class的数量就会急剧上升。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.6_Classes%26Metaspace.png" alt="JVM.6_Classes%26Metaspace.png"></p>
+<p>由于Metaspace里面存放的是类的元信息，所以Classes的曲线和Metaspace相似。</p>
+<hr>
+<p>快照：相当于某一个时刻JVM内部运行信息。</p>
+<h4 id="VisualVM-Plugins"><a href="#VisualVM-Plugins" class="headerlink" title="VisualVM Plugins"></a>VisualVM Plugins</h4><p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.8_VisualVMPlugins.png" alt="JVM.8_VisualVMPlugins.png"></p>
+<p>VisualVM有非常多的插件，我使用的版本有24个，本篇博客只介绍我使用的4个插件，其余插件同学们可以自己去Google或者自己下载手动的尝试一下。</p>
+<p><strong>Visual GC</strong>：显示JVM内部类的存储情况以及类编译、类加载、垃圾收集的执行时间。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.9_VisualGC.png" alt="JVM.9_VisualGC.png"></p>
+<p>从上图可以看出JDK8.0 HotSpot虚拟机使用的是分代回收算法，Old Gen，Eden Space，Survivor 0和1等区域。Compile，Class Loader和GC（最后触发GC的原因）。</p>
+<hr>
+<p><strong>VisualVM-BufferMonitor</strong>：显示缓存池的内容，包括直接（Direct）和映射（Mapped）。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.10_BufferMonitor.png" alt="JVM.10_BufferMonitor.png"></p>
+<hr>
+<p><strong>Threads Inspector</strong>：在Threads界面中，右上角勾选Inspector后，在下方就可以看到该插件的内容了。当勾选了某一个线程时，在右边的框中会显示勾选线程的详细内容。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.11_ThreadsInspector.png" alt="JVM.11_ThreadsInspector.png"></p>
+<p>其实打印线程的快照也能够看到线程的详细内容，该插件只是提供了筛选功能，只看自己想看的线程。</p>
+<hr>
+<p><strong>Tracer-JVM Probers</strong>：跟踪JIT，GC，NIO和I/O等信息。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.12_Tracer.png" alt="JVM.12_Tracer.png"></p>
+<p>勾选想要跟踪的信息，然后点击Start，在Timeline中就能看到这些信息随着时间的变化。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.13_GCRuns.png" alt="JVM.13_GCRuns.png"></p>
+<p>PS：在GC的跟踪信息中，可以看到HotSpot虚拟机使用PS Scavenge和PS MarkSweep收集器。（如果是查看IDEA的收集器，也就是OpenJDK的收集器，是ParNew和CMS）</p>
+<h4 id="VisualVM监控Tomcat"><a href="#VisualVM监控Tomcat" class="headerlink" title="VisualVM监控Tomcat"></a>VisualVM监控Tomcat</h4><p>目前远程监控Tomcat的方式有两种：JMX和Jstatd。这两种方式都有一些缺陷，一般而言都是需要两种方式一起使用的。（不过，我在Mac上使用Jstatd的方式连接有问题，弄了几个小时都没办法解决，这个坑以后再补上吧）</p>
+<p><strong>JMX</strong>需要在Tomcat的bin目录下创建setenv.sh（CentOS系统）的文件，然后输入一下代码，最好再修改一下setenv.sh的权限：</p>
+<p>（#!/bin/bash == #!/bin/sh，sh是bash的简写）</p>
+<p>方式1，监控的时候需要输入密码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">export</span> JAVA_OPTS=<span class="string">"-Djava.rmi.server.hostname=&#123;your_ip_address&#125;</span></span><br><span class="line"><span class="string">-Dcom.sun.management.jmxremote.ssl=false </span></span><br><span class="line"><span class="string"># 这里使用得是相对路径，每次都要在tomcat/bin目录下启动才行，可以改成绝对路径</span></span><br><span class="line"><span class="string">-Dcom.sun.management.jmxremote.password.file=../conf/jmxremote.password </span></span><br><span class="line"><span class="string">-Dcom.sun.management.jmxremote.access.file=../conf/jmxremote.access"</span></span><br></pre></td></tr></table></figure>
+
+<p>接着在conf目录下修改server.xml文件，添加下面的代码：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Listener</span> <span class="attr">className</span>=<span class="string">"org.apache.catalina.mbeans.JmxRemoteLifecycleListener"</span> <span class="attr">rmiRegistryPortPlatform</span>=<span class="string">"&#123;any_port1&#125;"</span> <span class="attr">rmiServerPortPlatform</span>=<span class="string">"&#123;any_port2&#125;"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后从JRE目录下复制jmxremote.password和jxmremote.access到conf目录下，同时修改这两个文件的权限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp <span class="variable">$JAVA_HOME</span>/jre/lib/management/jmxremote.password.template jmxremote.password</span><br><span class="line">cp <span class="variable">$JAVA_HOME</span>/jre/lib/management/jmxremote.access jmxremote.access</span><br></pre></td></tr></table></figure>
+
+<p>编辑jmxremote.password文件，添加账号密码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;your_username&#125; &#123;your_password&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编辑jxmremote.access文件，添加读写：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;your_username&#125;  readwrite</span><br></pre></td></tr></table></figure>
+
+<p>IP、Port和账号密码根据自己的需求修改，然后打开相应的防火墙。这个时候需要去Tomcat官方下载JMX Remote.jar，放在tomcat/lib目录下。我使用的版本是8.0.53，要注意版本是否匹配。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.17_DownloadJMXRemoteJar.png" alt="JVM.17_DownloadJMXRemoteJar.png"></p>
+<p>启动Tomcat就能够连接通了。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.14_RemoteLogin.png" alt="JVM.14_RemoteLogin.png"></p>
+<p>添加JMX连接，使用Username和Password登录，这两个数据在jmxremote.password中</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.15_PartOneJMX.png" alt="JVM.15_PartOneJMX.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里是没有在tomcat/bin目录启动而引起的错误，所以jmxremote.access可以写成绝对路径</span></span><br><span class="line">Caused by: java.io.FileNotFoundException: ../conf/jmxremote.access (No such file or directory)</span><br><span class="line">        at java.io.FileInputStream.open0(Native Method)</span><br></pre></td></tr></table></figure>
+
+<p>方式2，监控的时候不需要输入密码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">export</span> JAVA_OPTS=<span class="string">"-Djava.rmi.server.hostname=&#123;your_ip_address&#125;</span></span><br><span class="line"><span class="string">-Dcom.sun.management.jmxremote </span></span><br><span class="line"><span class="string">-Dcom.sun.management.jmxremote.port=&#123;any_port&#125;</span></span><br><span class="line"><span class="string">-Dcom.sun.management.jmxremote.rmi.port=&#123;any_port&#125;</span></span><br><span class="line"><span class="string">-Dcom.sun.management.jmxremote.ssl=false </span></span><br><span class="line"><span class="string">-Dcom.sun.management.jmxremote.authenticate=false"</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.16_PartTwoJMX.png" alt="JVM.16_PartTwoJMX.png"></p>
+<p>IP和Port按照自己的需求修改一下，把防火墙也要开启相应的Port，然后直接启动Tomcat，在VisualVM中添加远程主机，接着添加JMX连接即可，非常的快捷。<strong>可惜，非常好用的插件Visual GC不支持JMX的方式。</strong></p>
+<hr>
+<p><strong>Jstatd</strong>：需要在jdk的bin目录下创建jstatd.policy文件（这个文件名称随意，后面命令输入正确的名称即可），然后在该文件中输入以下代码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">grant codebase <span class="string">"file:<span class="variable">$&#123;java.home&#125;</span>/../lib/tools.jar"</span> &#123;</span><br><span class="line"></span><br><span class="line"> permission java.security.AllPermission;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>补充：${java.home}这个并不是CentOS上的JAVA_HOME，这个是Java自带的变量，指向JRE，可以使用下面的代码来看看结果</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jinfo <span class="variable">$&#123;PID&#125;</span> | grep java.home</span><br><span class="line"><span class="comment"># 这里的PID只要是一个正在运行的Java进程就行</span></span><br><span class="line"><span class="comment"># 可以使用ps aux | grep java，找到对应的PID即可</span></span><br></pre></td></tr></table></figure>
+
+<p>接着运行jstatd文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">jstatd -J-Djava.security.policy=./jstatd.policy -J-Djava.rmi.server.hostname=&#123;your_ip_address&#125; &amp;</span><br><span class="line"><span class="comment"># 如果不指定port，默认1099</span></span><br><span class="line"><span class="comment"># -p 1100 ：指定port为1100</span></span><br><span class="line"><span class="comment"># &amp; 这个是在后台运行jstatd，否则就无法继续操作CentOS</span></span><br></pre></td></tr></table></figure>
+
+<p>如果没有任何报错的话，就说明jstatd是正常启动的，可以使用jps -l和netstat -anp | grep jstatd查看：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">jps -l</span><br><span class="line">-----------</span><br><span class="line">1426 sun.tools.jstatd.Jstatd</span><br><span class="line">1915 sun.tools.jps.Jps</span><br><span class="line"></span><br><span class="line">netstat -anp | grep jstatd</span><br><span class="line">-----------</span><br><span class="line">tcp6       0      0 :::1099                 :::*                    LISTEN      1426/./jstatd       </span><br><span class="line">tcp6       0      0 :::39598                :::*                    LISTEN      1426/./jstatd       </span><br><span class="line">unix  2      [ ]         STREAM     CONNECTED     16297    1426/./jstatd</span><br></pre></td></tr></table></figure>
+
+<p>需要注意，这里显示了两个端口，<strong>一定要这两个端口都要打开才能够连接jstatd</strong>，我之前就是没有开放第二个端口导致浪费了很多时间。如果觉得麻烦，可以直接关闭防火墙～</p>
+<p>接下来在本地的终端输入以下代码，如果没有报错就说明VisualVM的jstatd方式能正常连接。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">jps &#123;your_ip_address&#125;</span><br><span class="line">-------------</span><br><span class="line">2057 Bootstrap</span><br><span class="line">5370 Jstatd</span><br></pre></td></tr></table></figure>
+
+<p>当你把IP地址输入时，就会变成下图的样子，然后在Tomcat的图表就能看到Visual GC了，只不过又不支持CPU监控了，所以需要JMX和Jstatd一起配置功能才完全。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.18_JstatdRemote.png" alt="JVM.18_JstatdRemote.png"></p>
+<h3 id="VisualVM观察JVM内存分配和回收策略"><a href="#VisualVM观察JVM内存分配和回收策略" class="headerlink" title="VisualVM观察JVM内存分配和回收策略"></a>VisualVM观察JVM内存分配和回收策略</h3><p>JVM内存是如何分配的，需要明白几个条件。首先，不同的JVM会有不同的收集器。其次，收集器不同也会影响到内存分配策略。所以，同学们先确认一下自己的JVM以及收集器。</p>
+<p>我个人的版本是：Java HotSpot(TM) 64-Bit Server VM，PS Scavenge/PS MarkSweep。</p>
+<p>因为我们测试的是内存分配和回收策略，所以要理解Minor GC和Full GC 或者 Major GC。</p>
+<ul>
+<li>Minor GC：指的是新生代垃圾收集，出现的次数比较频繁，回收时间比较短。</li>
+<li>Full GC / Major GC：指的是老年代垃圾收集，回收时间比较长。</li>
+</ul>
+<p>同学们在自己机器上测试的时候就需要自己思考了，不同的机器差异虽说不会特别大，不过有些数据还是会有很大出入的，根据测试出来的数据和之前的理论知识得出自己的结论。</p>
+<h4 id="对象优先在Eden分配"><a href="#对象优先在Eden分配" class="headerlink" title="对象优先在Eden分配"></a>对象优先在Eden分配</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.cave.jvm.memory;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * VM options:-Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectAllocationToEden</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SIZE_1MB = <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] objectAllocation1 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * SIZE_1MB];</span><br><span class="line">        <span class="keyword">byte</span>[] objectAllocation2 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * SIZE_1MB];</span><br><span class="line">        <span class="keyword">byte</span>[] objectAllocation3 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * SIZE_1MB]; <span class="comment">// 出现Minor GC</span></span><br><span class="line">        <span class="keyword">byte</span>[] objectAllocation4 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4</span> * SIZE_1MB];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>-Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8</strong>。这一段参数的含义是：限制堆区域大小为20M，切不可扩展，新生代和老年代区域各位10M；当GC执行时，把GC日志打印在控制台上；将新生代的Eden和Survivor按照8:1划分，Eden=8M，Survivor 0=1M，Survivor 1=1M。</p>
+<p>当我们使用<strong>Debug模式</strong>执行上述代码，一步一步创建byte数组，在VisualVM的Visual GC插件中可以看到内存图。在我们创建3个2M的数组后，代码执行到准备创建第4个数组时发生了Minor GC（执行GC的理由是<strong>分配失败</strong>，<strong>Allocation Failure</strong>），将4M大小的数组放入Old区域，然后在Eden区域放入4M大小的数组。也就是说，<strong>这4个数组都是优先放入Eden区域，当Eden区域余留内存不够分配新对象时，执行一次Minor GC将Eden区域数据放入Old区域，之后再将新对象放入Eden区域。</strong></p>
+<p>大家可以根据 Visual GC 和 GC日志来理解一下刚刚的描述。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.19_ObjectAllocationToEden.png" alt="JVM.19_ObjectAllocationToEden.png"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[GC (Allocation Failure) [PSYoungGen: 6459K-&gt;615K(9216K)] 6459K-&gt;4719K(19456K), 0.0051101 secs] [Times: user=0.03 sys=0.00, real=0.00 secs] </span><br><span class="line">Heap</span><br><span class="line"> PSYoungGen      total 9216K, used 6998K [0x00000007bf600000, 0x00000007c0000000, 0x00000007c0000000)</span><br><span class="line">  eden space 8192K, 77% used [0x00000007bf600000,0x00000007bfc3bf40,0x00000007bfe00000)</span><br><span class="line">  from space 1024K, 60% used [0x00000007bfe00000,0x00000007bfe99ca0,0x00000007bff00000)</span><br><span class="line">  to   space 1024K, 0% used [0x00000007bff00000,0x00000007bff00000,0x00000007c0000000)</span><br><span class="line"> ParOldGen       total 10240K, used 4104K [0x00000007bec00000, 0x00000007bf600000, 0x00000007bf600000)</span><br><span class="line">  object space 10240K, 40% used [0x00000007bec00000,0x00000007bf002020,0x00000007bf600000)</span><br><span class="line"> Metaspace       used 3147K, capacity 4568K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 339K, capacity 392K, committed 512K, reserved 1048576K</span><br></pre></td></tr></table></figure>
+
+<h4 id="大对象直接进入老年代"><a href="#大对象直接进入老年代" class="headerlink" title="大对象直接进入老年代"></a>大对象直接进入老年代</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.cave.jvm.memory;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * VM options:-Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BigObjectAllocationToOld</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SIZE_1MB = <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] objectAllocation = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">6</span> * SIZE_1MB];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>JVM参数还是和上次一样，由于我在新生代使用的是PS Scavenge收集器，所以不存在PretenureSizeThreshold参数（PS Scavenge收集器也不需要设置这个参数），因此我直接创建一个内存大于Eden区域余留的内存的数组，这样就直接进入Old区域。Eden区域有8M，但是JVM运行的时候会加载一些自带的类和实例，所以Eden区域的8M并不是完全能让程序员来使用的，<strong>6M大小的数组与JVM自带的实例刚好大于8M，这时数组分配内存就会直接进入Old区域，而非触发Minor GC来清理Eden的内存。</strong></p>
+<p>在Visual GC的GC Time中Last Cause: No GC可以表示没有执行GC，6M的数组直接进入Old区域。</p>
+<p>PS：Serial和ParNew这两个收集器可以设置该参数，所以如果想按照原书上的方式去理解“大对象直接进入老年代”这个分配策略的话，需要使用ParNew + CMS的组合配置。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/JVM.20_BigObjectAllocationToOld.png" alt="JVM.20_BigObjectAllocationToOld.png"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Heap</span><br><span class="line"> PSYoungGen      total 9216K, used 7127K [0x00000007bf600000, 0x00000007c0000000, 0x00000007c0000000)</span><br><span class="line">  eden space 8192K, 87% used [0x00000007bf600000,0x00000007bfcf5f98,0x00000007bfe00000)</span><br><span class="line">  from space 1024K, 0% used [0x00000007bff00000,0x00000007bff00000,0x00000007c0000000)</span><br><span class="line">  to   space 1024K, 0% used [0x00000007bfe00000,0x00000007bfe00000,0x00000007bff00000)</span><br><span class="line"> ParOldGen       total 10240K, used 0K [0x00000007bec00000, 0x00000007bf600000, 0x00000007bf600000)</span><br><span class="line">  object space 10240K, 0% used [0x00000007bec00000,0x00000007bec00000,0x00000007bf600000)</span><br><span class="line"> Metaspace       used 3178K, capacity 4496K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 349K, capacity 388K, committed 512K, reserved 1048576K</span><br></pre></td></tr></table></figure>
+
+<h4 id="长期存活的对象将进入老年代"><a href="#长期存活的对象将进入老年代" class="headerlink" title="长期存活的对象将进入老年代"></a>长期存活的对象将进入老年代</h4><p>由于HotSpot虚拟机采用的是分代算法，所以必须知道哪些对象属于新生代，哪些对象属于老年代，虚拟机给每个对象一个<strong>年龄计数器</strong>。一个新对象最初会被分配在Eden区域，当该对象“熬过”一次Minor GC，并且Survivor区域还有足够的空间，则移动到Survivor区域，年龄计数器设置为1。在Survivor区域每“熬过”一次Minor GC，年龄计数器加1，当达到一定数值时移动到Old区域。</p>
+<p>这个数值可以用MaxTenuringThreshold参数设置，不过该参数只能在Serial和ParNew收集器中使用。</p>
+<p>以上分配策略只是在Serial和ParNew收集器中成立，PS Scavenge收集器不使用上述策略。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.cave.jvm.memory;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * VM options:-Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8</span></span><br><span class="line"><span class="comment"> *            -XX:MaxTenuringThreshold=1</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LongTermSurvivalToOld</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SIZE_1MB = <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] objectAllocation1 = <span class="keyword">new</span> <span class="keyword">byte</span>[SIZE_1MB / <span class="number">4</span>];</span><br><span class="line">        <span class="keyword">byte</span>[] objectAllocation2 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4</span> * SIZE_1MB];</span><br><span class="line">        <span class="keyword">byte</span>[] objectAllocation3 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4</span> * SIZE_1MB];</span><br><span class="line">        objectAllocation3 = <span class="keyword">null</span>;</span><br><span class="line">        objectAllocation3 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4</span> * SIZE_1MB];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Heap</span><br><span class="line"> PSYoungGen      total 9216K, used 6563K [0x00000007bf600000, 0x00000007c0000000, 0x00000007c0000000)</span><br><span class="line">  eden space 8192K, 80% used [0x00000007bf600000,0x00000007bfc68fa8,0x00000007bfe00000)</span><br><span class="line">  from space 1024K, 0% used [0x00000007bff00000,0x00000007bff00000,0x00000007c0000000)</span><br><span class="line">  to   space 1024K, 0% used [0x00000007bfe00000,0x00000007bfe00000,0x00000007bff00000)</span><br><span class="line"> ParOldGen       total 10240K, used 8192K [0x00000007bec00000, 0x00000007bf600000, 0x00000007bf600000)</span><br><span class="line">  object space 10240K, 80% used [0x00000007bec00000,0x00000007bf400020,0x00000007bf600000)</span><br><span class="line"> Metaspace       used 3284K, capacity 4496K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 361K, capacity 388K, committed 512K, reserved 1048576K</span><br></pre></td></tr></table></figure>
+
+<h4 id="动态对象年龄判定"><a href="#动态对象年龄判定" class="headerlink" title="动态对象年龄判定"></a>动态对象年龄判定</h4><p>在上一个分配策略中我们提到了对象在到达一定的年龄后，就会被移动到Old区域。不过有时候不用到达那个年龄也会移动到Old区域，条件在于：<strong>Survivor区域中相同年龄的所有对象的大小总和大于Survivor区域大小的一半，年龄大于或者等于该年龄的对象直接进入Old区域。</strong></p>
+<p>不过，这个策略不适用于PS Scavenge收集器。</p>
+<h4 id="空间分配担保"><a href="#空间分配担保" class="headerlink" title="空间分配担保"></a>空间分配担保</h4><p>在JDK 6 Update 24版本之前指的是：在发生Minor GC之前，虚拟机会先检查老年代最大连续空间是否大于新生代所有对象的总空间，如果是，那么Minor GC执行则是安全的。如果不是，则会查看<strong>HandlePromotionFailure参数</strong>设置的是是否允许担保失败。如果允许失败，那么虚拟机会检查老年代最大连续空间是否大于新生代历次晋升到老年代对象的平均大小，如果大于，则会执行一次Minor GC，虽然会有一定的风险。如果小于，或者不允许失败，那么就会执行一次Full GC。</p>
+<p>在JDK 6 Update 24版本之后，HandlePromotionFailure参数不再影响虚拟机的空间分配担保策略，策略变为：只要老年代的连续空间大于新生代对象总大小或者历次晋升的平均大小就会进行Minor GC，否则进行Full GC。</p>
+<hr>
+<p>以上就是使用VisualVM来监控JVM，已经JVM内部运行时一部分内容，其实这方面的知识点非常，多到可以一直研究下去，但是我不打算继续深入了，“点到为止”说的就是如此，当你觉得这些知识点够用的时候就不用继续往下学习了。学以致用，在今后的工作中使用到这些之后，理解就会慢慢加深。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/01/孤独/" rel="next" title="《孤独》">
+                <i class="fa fa-chevron-left"></i> 《孤独》
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/26/SpringBoot Part-A/" rel="prev" title="SpringBoot Part-A">
+                SpringBoot Part-A <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg"
+                alt="Dong Yan" />
+            
+              <p class="site-author-name" itemprop="name">Dong Yan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cave19941023@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM内部性能监控"><span class="nav-text">JVM内部性能监控</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JDK提供的相关工具"><span class="nav-text">JDK提供的相关工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VisualVM"><span class="nav-text">VisualVM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#安装VisualVM"><span class="nav-text">安装VisualVM</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VisualVM基本介绍"><span class="nav-text">VisualVM基本介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VisualVM-Plugins"><span class="nav-text">VisualVM Plugins</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VisualVM监控Tomcat"><span class="nav-text">VisualVM监控Tomcat</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VisualVM观察JVM内存分配和回收策略"><span class="nav-text">VisualVM观察JVM内存分配和回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#对象优先在Eden分配"><span class="nav-text">对象优先在Eden分配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#大对象直接进入老年代"><span class="nav-text">大对象直接进入老年代</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#长期存活的对象将进入老年代"><span class="nav-text">长期存活的对象将进入老年代</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态对象年龄判定"><span class="nav-text">动态对象年龄判定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#空间分配担保"><span class="nav-text">空间分配担保</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dong Yan</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.0.5</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.5"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.5"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.5"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.5"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.5"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

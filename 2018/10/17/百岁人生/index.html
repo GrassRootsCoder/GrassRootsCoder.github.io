@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.5" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.5">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.5" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.0.5',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+<meta name="description" content="百岁人生随着人的寿命越来越长，经济和生产力越来越发达，我们会多出很多时间和精力。人作为生物的一个种类，繁衍生息是必然的，除去繁衍这部分以后我们还能做什么呢？就目前的状态而言，完成繁衍确实会占用我们大部分时间和精力，但是相比我们的父辈这部分的占用比例有所下降，我们会多于出很多的时间和精力，因此有必要去想象一下未来的样子，而非将这些时间和精力浪费在重复的工作或者退休的无聊生活上，这应该就是长寿带来的礼">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《百岁人生》">
+<meta property="og:url" content="http://yoursite.com/2018/10/17/百岁人生/index.html">
+<meta property="og:site_name" content="Dong Yan Blog">
+<meta property="og:description" content="百岁人生随着人的寿命越来越长，经济和生产力越来越发达，我们会多出很多时间和精力。人作为生物的一个种类，繁衍生息是必然的，除去繁衍这部分以后我们还能做什么呢？就目前的状态而言，完成繁衍确实会占用我们大部分时间和精力，但是相比我们的父辈这部分的占用比例有所下降，我们会多于出很多的时间和精力，因此有必要去想象一下未来的样子，而非将这些时间和精力浪费在重复的工作或者退休的无聊生活上，这应该就是长寿带来的礼">
+<meta property="og:updated_time" content="2018-10-16T16:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《百岁人生》">
+<meta name="twitter:description" content="百岁人生随着人的寿命越来越长，经济和生产力越来越发达，我们会多出很多时间和精力。人作为生物的一个种类，繁衍生息是必然的，除去繁衍这部分以后我们还能做什么呢？就目前的状态而言，完成繁衍确实会占用我们大部分时间和精力，但是相比我们的父辈这部分的占用比例有所下降，我们会多于出很多的时间和精力，因此有必要去想象一下未来的样子，而非将这些时间和精力浪费在重复的工作或者退休的无聊生活上，这应该就是长寿带来的礼">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/10/17/百岁人生/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>《百岁人生》 | Dong Yan Blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dong Yan Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">I want something in my life.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/17/百岁人生/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dong Yan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dong Yan Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《百岁人生》</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-17T00:00:00+08:00">2018-10-17</time>
+            
+
+            
+            
+              
+                
+              
+            
+
+            
+              
+              <span class="post-meta-divider">|</span>
+              
+
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Post modified&#58;</span>
+              
+              <time title="Post modified" itemprop="dateModified" datetime="2018-10-17T00:00:00+08:00">2018-10-17</time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/所思所想/" itemprop="url" rel="index"><span itemprop="name">所思所想</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="百岁人生"><a href="#百岁人生" class="headerlink" title="百岁人生"></a>百岁人生</h2><p>随着人的寿命越来越长，经济和生产力越来越发达，我们会多出很多时间和精力。人作为生物的一个种类，繁衍生息是必然的，除去繁衍这部分以后我们还能做什么呢？就目前的状态而言，完成繁衍确实会占用我们大部分时间和精力，但是相比我们的父辈这部分的占用比例有所下降，我们会多于出很多的时间和精力，因此有必要去想象一下未来的样子，而非将这些时间和精力浪费在重复的工作或者退休的无聊生活上，这应该就是长寿带来的礼物而非诅咒。</p>
+<p>我们对于长寿的理解关系到长寿带给我们的价值，假设人的一生相当于经营一家公司，想让公司存活70年和存活100年是需要有不同的策略，以70年的经营方式来管理100年的公司，肯定是不现实。这就造就了社会对于90后的刻板印象。比如，跳槽频繁、没有那么听话、结婚延后等印象。造成这些现象的原因是90后采取了不同的方式对待人生，这些新的方式需要新的眼光来看待。</p>
+<p>90后相比之前的前辈而言，整个人生具有更加的不确定性，为了把握这些不确定性会将更多重要的选择延后，这些重要的选择会导致在长时间的工作或者退休中是否会无趣，所以在做选择之前需有更多的时间了解自己。多出来的这些时间意味着我们在社会上的生活成本也增加了，如果没有生活成本支撑我们了解自己，那么长寿带给我们的价值也就越来越小。所以，对于<strong>财产、教育、工作</strong>需要谨慎的规划。</p>
+<a id="more"></a>
+
+
+
+<h3 id="财产"><a href="#财产" class="headerlink" title="财产"></a>财产</h3><p>财产这方面对于刚刚毕业的人而言，其实是没有多余的钱可以支配的。在自己的本钱不是很充足的情况下，可以多学习一些理财方面的知识，以及计算自己的生活支出，做好成本规划，通过一段时间的积累攒足起步本金。</p>
+<p>在自己本金不是很多的时候进行投资是不明智的，因为投资的收益受本金多少的影响，所以在初始阶段把金钱投资在自己身上是收益最大的。就如同之前说的学习理财知识、旅游和继续进修等，等积累的资金到一定程度后，就可以开始进行投资了。</p>
+<p>对于理财这方面来说，市面上有太多太多的资料和学习资源，可以找一些感兴趣的书籍来学习下。我个人看了一些书籍和Live，也进行了一些投资，最后的总体收益感觉不是很大，很多情况下受市场的波动影响，运气不好时，投哪些，哪些亏。</p>
+<p>最后，一定要有自己的储蓄，因为社会的不确定性增加了很多，永远不知道自己的这份工作接下来会怎么样，为了保证能稳定的发展，需要足够的资金帮助我们完成过渡。这个过渡有可能是我们需要时间去学习新的知识，以便将来从事高薪岗位，这些岗位需要很强的技术支持，或者找到一家合适自己的公司，不可避免会进行很多次跳槽，在这段时间中收入不够稳定。</p>
+<h3 id="教育"><a href="#教育" class="headerlink" title="教育"></a>教育</h3><p>大多数人大学毕业之后就投入到工作中了，之后也很少有机会再回去学校里面学习，或者说还有自主学习的意识，这导致了一个严重的问题，当我们的生命延长后，工作时间必然也是随着增加的，那么我们在大学期间学习的知识足够支撑我们长久的工作吗？同时现在技术的发展也是飞快，很难保证一个行业今后所需要的知识，所以，我们对于教育需要有足够的重视。</p>
+<p>当然，整个社会也是这样提醒我们的。每年的考研人数都是“再创新高”，《得到》和《极客时间》等音频学习APP，还有各种培训班，以及公开网课等。这些产品或者机构的出现原因是什么？很明显的表示市场有这方面的需求，整个市场开始重视知识了，然后衍生出这些产品。现代人都得进行一些进修，目的是更加的了解自己，为自己的将来做好准备。</p>
+<p>我觉得这种现象在很大程度上是好的，学习的过程中会让我们进行更多的思考，而思考会让我们更加了解某一样东西，让人变得更加的理性。思考得更多，注意到更多的变化，才会消除很多社会上的一些歧视和刻板印象。</p>
+<p>我想“终生学习”这个词大家都听过，虽然我们并不一定都能做到，但是可以尝试的在人生的任何时间点中，去学习一下，让自己得到进步和思考，看待问题更加理性。</p>
+<h3 id="工作"><a href="#工作" class="headerlink" title="工作"></a>工作</h3><p>今后的工作要求会逐步提高，因为机器会替代很多重复、简单的工作，所以我们有必要保持学习，以免找不到合适的工作。同时，我们的工作时长也会增加，这一点无法避免，因为我们活得越来越久啦。长久的工作必然也会导致无聊和厌倦，这种时候如果工作就是我们的兴趣，那么我们会接受这些的情况。</p>
+<p>工作的时间延长只是其中一部分，还有一个更加重要的部分是工作的强度和连续性也会提高。国内有“著名”的996形式，每天12个小时待在公司，连续6天，而且待在公司的时间里压力随着职位会越来越高。我们很难想象出公司会让一个下班就走，上班轻松的人担任高层岗位的职员，随着压力越来越大，工作带给我们的收益也会降低，头发越来越少也是一个比较严重的问题，90后开始脱发啦，这样的新闻已经见怪不怪了。</p>
+<p>如果有人一心是想在事业上有所成就的话，这样高强度的工作无可厚非，这是人的追求。但是在这样的环境下，那些只想着普普通通过日子的人就比较惨了，如果不按照公司的形式走，很有可能在公司会待不下去。对于这样的问题书中也给出了一些建议，就是员工这个团体应该有一个统一的方向，而不是一部分加班，一部分下班，团队内部统一想法后，才能让公司作出改变，否则就变成窝里斗。</p>
+<p>我个人还是对工作挺喜欢的，因为从事的内容没有那么枯燥，同时也是我比较感兴趣的方向。如果一个人对目前的工作不感兴趣，加上工作时间的延长以及工作内容的无聊，衍生出离职或者抱怨也是正常的情况。所以，对于工作的选择很重要，因为今后的工作不再想以前一样，可能工作会占用我们更多的时间和精力，要选择一个合适自己的工作才能长久的坚持下去。</p>
+<h3 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h3><p>生活这部分才是我们重要的，它包含了非常多的内容。因为长寿的关系，我们不会像以前那样过三段人生，也就是学习-工作-退休的生活。工作时间的延长导致了需要更多的时间去学习新东西，才能从事新工作，不管是学习还是退休也都需要更多的资金来支撑我们，理财方面的知识也不可或缺。</p>
+<p>出生时间越晚的人，他们的人生不可能像传统那样的三段人生，今后的人生会更加多段且没有可参考的例子，很难判断出一个选择到底会怎么影响我们今后的生活。所以，更多的思考时间是必须的，要更加深刻的了解自己。当我们选择错一个行业时，带来的影响可能会是几年甚至十几年，在年轻的时候失去非常多的机会。</p>
+<p>没有一个人敢认定几年后的自己是什么样子的，也不会存在一个标准答案，因此这本书带给我的是更多的思考，究竟如何做选择才能将长寿变成礼物。希望，大家在读了本书后，能够去思考自己的百岁人生。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/06/Java Crawler/" rel="next" title="Java Crawler">
+                <i class="fa fa-chevron-left"></i> Java Crawler
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/16/搭建开发环境/" rel="prev" title="搭建开发环境">
+                搭建开发环境 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg"
+                alt="Dong Yan" />
+            
+              <p class="site-author-name" itemprop="name">Dong Yan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cave19941023@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#百岁人生"><span class="nav-text">百岁人生</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#财产"><span class="nav-text">财产</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#教育"><span class="nav-text">教育</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#工作"><span class="nav-text">工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生活"><span class="nav-text">生活</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dong Yan</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.0.5</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.5"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.5"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.5"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.5"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.5"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

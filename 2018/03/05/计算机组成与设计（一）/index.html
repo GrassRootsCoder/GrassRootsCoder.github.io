@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.5" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.5">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.5" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.0.5',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+<meta name="description" content="Chapter 4 The Processor Chapter 5 Large and Fast: Exploiting Memory Hierarchy Chapter 6 Parallel Processors from Client to Cloud">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机组成与设计 硬件&#x2F;软件接口（一）">
+<meta property="og:url" content="http://yoursite.com/2018/03/05/计算机组成与设计（一）/index.html">
+<meta property="og:site_name" content="Dong Yan Blog">
+<meta property="og:description" content="Chapter 4 The Processor Chapter 5 Large and Fast: Exploiting Memory Hierarchy Chapter 6 Parallel Processors from Client to Cloud">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.1_%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BA%94%E5%B1%82%E7%BB%93%E6%9E%84%E4%B9%8B%E5%A4%84%E7%90%86%E5%99%A8.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.2_MIPS%E6%8C%87%E4%BB%A4%E6%8A%BD%E8%B1%A1%E5%9B%BE.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.3_%E7%8A%B6%E6%80%81%E5%85%83%E7%B4%A0%E3%80%81%E7%BB%84%E5%90%88%E9%80%BB%E8%BE%91%E5%92%8C%E6%97%B6%E9%92%9F%E5%91%A8%E6%9C%9F.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.4_PC%26IM%26ADD.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.5_Registers%26ALU.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.6_DataMemoryUnit%26SignExtensionUnit.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.7_BranchCondition.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.8_SimpleDatapathForMIPS.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.9_ThreeInstructionFormat.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.13_ALUOp%26Funct%26ALUContro.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.14_OP%26MainControlUnit.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.10_SimpleDatapathWithTheControlUnit.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.11_JumpInstruction.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.12_Pipeline%26non-Pipeline.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.15_PipelineVersionOfLoadInstruction.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.16_EX%26MEM%26WBControl.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.17_PipelineDatapathWithControl.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.18_PipelineDependenceInFiveInstruction.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.19_PipelineForward.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.20_UseForward.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.21_TheControlValuesForForwarding.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.22_PipelineSequenceOfInstructions.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.23_StallsIntoThePipeline.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.24_PipelineWithForwardingAndHazardDetection.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.25_TheImpactOfThePipelineOnTheBranchInstruction.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.26_TheStatesInA2-bitPredictionSaheme.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.27_TheFinalDatapathAndControl.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.28_TheDatapathWithControlToHandleException.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.29_StaticTwo-issuePipelineInOperation.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.30_AStaticTwo-issueDatapath.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.31_TheThreePrimaryUnits.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.32_ARMCortex-A8andIntelCorei7-920.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.33_TheA8Pipeline.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.34_TheCorei7PipelineWithMemoryComponents.png">
+<meta property="og:updated_time" content="2018-05-07T16:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算机组成与设计 硬件&#x2F;软件接口（一）">
+<meta name="twitter:description" content="Chapter 4 The Processor Chapter 5 Large and Fast: Exploiting Memory Hierarchy Chapter 6 Parallel Processors from Client to Cloud">
+<meta name="twitter:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.1_%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BA%94%E5%B1%82%E7%BB%93%E6%9E%84%E4%B9%8B%E5%A4%84%E7%90%86%E5%99%A8.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/05/计算机组成与设计（一）/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>计算机组成与设计 硬件/软件接口（一） | Dong Yan Blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dong Yan Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">I want something in my life.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/05/计算机组成与设计（一）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dong Yan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dong Yan Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">计算机组成与设计 硬件/软件接口（一）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-05T00:00:00+08:00">2018-03-05</time>
+            
+
+            
+            
+              
+                
+              
+            
+
+            
+              
+              <span class="post-meta-divider">|</span>
+              
+
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Post modified&#58;</span>
+              
+              <time title="Post modified" itemprop="dateModified" datetime="2018-05-08T00:00:00+08:00">2018-05-08</time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Computer-Science/" itemprop="url" rel="index"><span itemprop="name">Computer Science</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Chapter-4-The-Processor"><a href="#Chapter-4-The-Processor" class="headerlink" title="Chapter 4 The Processor"></a>Chapter 4 The Processor</h2><p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.1_%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BA%94%E5%B1%82%E7%BB%93%E6%9E%84%E4%B9%8B%E5%A4%84%E7%90%86%E5%99%A8.png" alt="计算机五层结构之处理器"></p>
+<a href="/2018/04/22/计算机组成与设计（二）/" title="Chapter 5 Large and Fast: Exploiting Memory Hierarchy">Chapter 5 Large and Fast: Exploiting Memory Hierarchy</a> <br><a href="/2018/05/08/计算机组成与设计（三）/" title="Chapter 6 Parallel Processors from Client to Cloud">Chapter 6 Parallel Processors from Client to Cloud</a>
+
+<a id="more"></a>
+
+<p>&lt;计算机组成与设计&gt;这一系列的博客是个人的读书笔记，其中的内容不像原书那样俱全，所以想了解所有内容的同学，还是得自己去看原书。当你在看原书感到困惑时，希望本系列博客能够帮助你解决困惑，作为你读书学习之路上的伙伴。</p>
+<p>由于篇幅以及个人兴趣原因，前三章内容没有相应的笔记，需要自己去看原书。</p>
+<p><strong><a href="https://zh.wikipedia.org/wiki/MIPS%E6%9E%B6%E6%A7%8B" target="_blank" rel="noopener">MIPS指令集</a></strong>，由John L.Hennessy以及David A.Patterson完成MIPS处理器，并且创立了公司，创作者本人编写了本书，我能够感受到书籍中对于指令的清晰理解，指令的控制和数据的运算。同时两位作者获取了2017年的图灵奖，有幸能读到他们的书籍。</p>
+<h3 id="4-1-Introduction"><a href="#4-1-Introduction" class="headerlink" title="4.1 Introduction"></a>4.1 Introduction</h3><p>处理器核心部件：控制器（Control）和数据通路（Datapath），该章节讲述了这两个部件的基本组成，构建一个简单的指令执行过程。</p>
+<p><strong>MIPS指令集的基本分类</strong></p>
+<ul>
+<li>存储器访问指令：load word（取字，lw），store word（存字，sw）</li>
+<li>计算&amp;逻辑指令（R-type）：add，sub，AND，OR，set on less then（小于则，slt）</li>
+<li>分支和跳转指令：branch equal（beq），jump（j）</li>
+</ul>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.2_MIPS%E6%8C%87%E4%BB%A4%E6%8A%BD%E8%B1%A1%E5%9B%BE.png" alt="4.2_MIPS指令抽象图"></p>
+<p><strong>MIPS指令的概述</strong></p>
+<ol>
+<li>向PC（Program counter，程序计步器）发送一个代码，获取到指令。</li>
+<li>根据指令类型选择读取一个还是两个寄存器，如果是lw指令，读取一个寄存器，如果是其他指令，读取两个寄存器。</li>
+</ol>
+<p>这两个步骤是所有指令都会执行的，之后的操作根据指令的类型再做具体的操作。MIPS指令占32bit，因此每次执行完指令PC+4（一个指令的长度），如果是分支指令则使用Mux将PC指向分支后的指令地址。</p>
+<p><a href="https://zh.wikipedia.org/wiki/%E6%95%B0%E6%8D%AE%E9%80%89%E6%8B%A9%E5%99%A8" target="_blank" rel="noopener">Mux</a>（数据选择器，Multiplexer）：从多个输入信号中选择一个信号进行输出的部件。
+<a href="https://baike.baidu.com/item/%E7%AE%97%E6%9C%AF%E9%80%BB%E8%BE%91%E5%8D%95%E5%85%83" target="_blank" rel="noopener">ALU</a>（算术逻辑单元，Arithmetic&amp;Logical Unit）：进行二进制的算术运算，使用补码的形式。Zero标志用来判断两个数是否相等。
+<a href="https://zh.wikipedia.org/wiki/%E5%8A%A0%E6%B3%95%E5%99%A8" target="_blank" rel="noopener">Add</a>（加法器，Adder）：用于执行加法运算。</p>
+<h3 id="4-2-Logic-Design-Conventions"><a href="#4-2-Logic-Design-Conventions" class="headerlink" title="4.2 Logic Design Conventions"></a>4.2 Logic Design Conventions</h3><p>在MIPS指令集中分为两种元素组合元素（Combinational Element）和状态元素（State Element）</p>
+<ul>
+<li>组合元素：执行元素，类似于AND门或者ALU。输出由输入决定。</li>
+<li>状态元素：存储元素，类似于寄存器或者存储器。</li>
+</ul>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.3_%E7%8A%B6%E6%80%81%E5%85%83%E7%B4%A0%E3%80%81%E7%BB%84%E5%90%88%E9%80%BB%E8%BE%91%E5%92%8C%E6%97%B6%E9%92%9F%E5%91%A8%E6%9C%9F.png" alt="4.3_状态元素、组合逻辑和时钟周期"></p>
+<p>时钟方法（clocking methodology）：规定了信号可以读出和写入的时间。在一个时钟周期内，状态元素1经过组合逻辑到达状态元素2，从状态元素1到状态元素2的时间决定了时钟周期的长度。如果状态元素并不是每个时钟周期都进行改变，那么就需要一个<strong>控制信号</strong>，当信号有效时进行改变，无效时不进行改变。</p>
+<h3 id="4-3-Building-a-Datapath"><a href="#4-3-Building-a-Datapath" class="headerlink" title="4.3 Building a Datapath"></a>4.3 Building a Datapath</h3><p>本小节讲述了实现每条指令所需要的<strong>数据通路部件</strong>以及<strong>控制信号</strong>，要执行<strong>任何一条指令</strong>，首先要从指令存储器（Instruction Memory）中获取到指令（Instruction），为了准备执行下一条指令，PC需要移动4个字节。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.4_PC%26IM%26ADD.png" alt="4.4_PC&amp;IM&amp;ADD"></p>
+<p>PC：程序计步器，用于保存当前指令的地址。
+Instruction Memory：指令存储器是只读的，输入地址决定了输出哪种指令。在MIPS指令集中，所有的指令都存放在该存储器中。
+Add：用来计算下一条指令的地址。</p>
+<h4 id="R-type-Instruction"><a href="#R-type-Instruction" class="headerlink" title="R-type Instruction"></a>R-type Instruction</h4><figure class="highlight mips"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">add </span>$<span class="built_in">t1</span>, $<span class="built_in">t2</span>, $<span class="built_in">t3</span>  <span class="comment"># 读取$t2和$t3的数值，相加后写回$t1中。</span></span><br></pre></td></tr></table></figure>
+
+<p>R-type类型指令需要3个寄存器操作数，要从寄存器堆中读取2个数据字（data words），写回1个数据字。<strong>读取</strong>，需要一个读取寄存器号的<strong>输入</strong>和一个从寄存器堆读出结果的<strong>输出</strong>。<strong>写回</strong>，需要一个写入寄存器号的<strong>输入</strong>和一个写入数据的<strong>输入</strong>。寄存器堆中一共存放32个寄存器，5bit的范围刚好是32，其他端口都是32bit。
+因此，一共需要4个输入（3个寄存器号和1个写数据），2个输出（寄存器中数据）以及写入信号（RegWrite）。由于寄存器堆的读取总是对应着寄存器号，因此不需要读取信号（与后面的数据存储器单元不同）。</p>
+<p>ALU负责逻辑运算，里面的具体操作需要根据指令的<strong>ALU operation</strong>来完成，其中Zero标志用于实现分支指令。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.5_Registers%26ALU.png" alt="4.5_Registers&amp;ALU"></p>
+<p>Registers：寄存器堆用于存放所有寄存器，由于写入信号是沿边触发的，因此读取和写入可以在同一周期中执行，读取操作讲读取写入之前的内容，写入的数据需要到下个周期才能读取。
+ALU：在4.1中有解释。4bit操作数载4.4中有解释。</p>
+<h4 id="Store-amp-Load-Instruction"><a href="#Store-amp-Load-Instruction" class="headerlink" title="Store &amp; Load Instruction"></a>Store &amp; Load Instruction</h4><figure class="highlight mips"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将基址寄存器$t2的内容与指令中的16位带符号偏移地址相加，得到数据存储器单元地址。</span></span><br><span class="line"><span class="keyword">lw </span>$<span class="built_in">t1</span>, offset_value($<span class="built_in">t2</span>) <span class="comment"># 将数据存储器单元中相应地址的数据写入到$t1中。</span></span><br><span class="line"><span class="keyword">sw </span>$<span class="built_in">t1</span>, offset_value($<span class="built_in">t2</span>) <span class="comment"># 将$t1中的内容写入到数据存储器单元中相应的地址。</span></span><br></pre></td></tr></table></figure>
+
+<p>Store &amp; Load 指令需要一个数据存储器单元的<strong>访问地址输入</strong>，如果是<strong>存储指令</strong>需要一个写入数据的<strong>输入</strong>，如果是取出指令需要一个读取数据结果的<strong>输出</strong>。数据存储器单元需要一个读取信号，因为可能会读取一个无效地址（与寄存器堆不同）。写入和读取都是独立的，任何一个周期只能有其中一个信号。</p>
+<p>符号扩展器用于将16bit数据转换成32bit，方便操作数的计算。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.6_DataMemoryUnit%26SignExtensionUnit.png" alt="4.6_DataMemoryUnit&amp;SignExtensionUnit"></p>
+<p>Data memory unit：存储数据的单元，在存储器章节中详细解释。
+Sign extension unit：通过复制数据项的高位bit来增加数据项的大小。</p>
+<h4 id="Branch-Instruction"><a href="#Branch-Instruction" class="headerlink" title="Branch Instruction"></a>Branch Instruction</h4><figure class="highlight mips"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">beq </span>$<span class="built_in">t1</span>, $<span class="built_in">t2</span>, offset <span class="comment"># 将寄存器t1和t2中数据进行比较，如果结果相同就跳转到分支目标地址上。分支地址要经过符号扩展器后，才添加到PC中。</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在MIPS指令中规定了分支指令的跳转地址在PC+4之上计算。</li>
+<li>还需要描述</li>
+</ul>
+<p>根据两个寄存器号读取数据，使用ALU进行操作，将结果通过Zero输出到分支控制逻辑，同时将offset中的数据扩展到32bit，与PC+4后的地址相加得到分支目标地址，最后根据Zero的结果进行分支的跳转。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.7_BranchCondition.png" alt="4.7_BranchCondition"></p>
+<p>下面的数据通路能在单时钟周期内完成基础指令（Load-Store Words, ALU, Branch），把之前我们所解析的部件全部连接在一起，<strong>对于数据的输入冲突的地方需要添加Mux来解决问题，同时每个Mux需要一个控制信号</strong>。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.8_SimpleDatapathForMIPS.png" alt="4.8_SimpleDatapathForMIPS"></p>
+<h3 id="4-4-A-Simple-Implementation-Scheme"><a href="#4-4-A-Simple-Implementation-Scheme" class="headerlink" title="4.4 A Simple Implementation Scheme"></a>4.4 A Simple Implementation Scheme</h3><p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.9_ThreeInstructionFormat.png" alt="4.9_ThreeInstructionFormat"></p>
+<p>在opcode（31:26）中包含了Main Control Unit所有信息，其中<strong>ALUOp</strong>（2 bit）信号会根据<strong>funct</strong> field来生成ALU Operation（4 bit），有3个1 bit的信号去控制Mux（<strong>RegDst</strong>, <strong>ALUSrc</strong>, <strong>MemtoReg</strong>），有3个1 bit的信号去控制读写寄存器堆和数据存储单元（<strong>RegWrite</strong>, <strong>MemRead</strong>, <strong>MemWrite</strong>），以及1个1 bit的信号控制分支（<strong>Branch</strong>）。</p>
+<p>R-type Instruction中的shamt field暂时忽略。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.13_ALUOp%26Funct%26ALUContro.png" alt="4.13_ALUOp%26Funct%26ALUContro.png"></p>
+<p><strong>ALU control用于控制ALU执行相关的操作</strong>，想要具体了解去查看本书的附录B。除了R-type指令有funct字段，其他类型指令没有该字段，因此Funct field为XXXXXX表示无效。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.14_OP%26MainControlUnit.png" alt="4.14_OP%26MainControlUnit.png"></p>
+<p>由op生成的9bit控制信号，对于Registers和Data Memory，0表示无效，1表示有效；对于Mux，x表示无效。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.10_SimpleDatapathWithTheControlUnit.png" alt="4.10_SimpleDatapathWithTheControlUnit"></p>
+<p>R-type、Load、Store、Branch指令的数据通路，根据Main Control Unit的<strong>控制信号</strong>决定<strong>数据部件</strong>的使用。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.11_JumpInstruction.png" alt="4.11_JumpInstruction"></p>
+<p><strong>Jump Instruction</strong>只有两个字段，0-25bit跳转的地址，26-31的opcode。26bit的目标地址左移2bit，然后与PC+4的高4bit拼接，形成32bit的目标地址。</p>
+<p>目前为止，MIPS基本指令都已经全部实现，在单周期设计中，时钟周期对所有指令等长，由执行时间最长的那条指令决定时钟周期，这样对于那些执行时间较短的指令有性能上的浪费。因此，后面会引进流水线技术，让每一个部件都能使用，流水线效率高于单周期循环。</p>
+<h3 id="4-5-An-Overview-of-Pipelining"><a href="#4-5-An-Overview-of-Pipelining" class="headerlink" title="4.5 An Overview of Pipelining"></a>4.5 An Overview of Pipelining</h3><p>流水线技术是将一个指令分多个步骤执行，实现多条指令重叠执行的技术。如果指令数量够多，那么可以保证数据通路中的所有数据部件都在执行指令，这样就提高了指令执行的吞吐率，单位时间内执行的指令数量增多。在本章节中，MIPS指令执行被分为5个步骤（step）</p>
+<ol>
+<li>从存储器中获取指令（Instruction Fetch）</li>
+<li>指令译码，读取寄存器（Instruction Decode）</li>
+<li>执行操作或者计算地址（Execute）</li>
+<li>从数据存储器中读取操作数（Memory Access）</li>
+<li>将结果写回寄存器（Write Back）</li>
+</ol>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.12_Pipeline%26non-Pipeline.png" alt="4.12_Pipeline&amp;non-Pipeline"></p>
+<p>流水线规定每个步骤的执行时间必须相同，因此步骤执行时间就按照时间最长的步骤来规定。从单指令上来看，采用流水线技术的执行时间大于非流水线，但是从多指令上来看，流水线技术的总体执行时间远远小于非流水线。流水线技术提高性能在于<strong>增加指令的吞吐率</strong>，而不是单条指令的执行时间。</p>
+<p>流水线冒险：使用了流水线机制以后，下一条指令无法在下一个周期中执行，这就会引发冒险问题。</p>
+<ul>
+<li>结构冒险：<strong>因缺乏硬件支持</strong>而导致指令不能在预定的时钟周期内执行。<ul>
+<li>由硬件解决。</li>
+</ul>
+</li>
+<li>数据冒险：<strong>因无法提供指令执行所需数据</strong>而导致指令不能在预定的时钟周期内执行。详细在4.7<ul>
+<li>前推（forwarding）或者旁路（bypassing）。从<strong>内部寄存器</strong>取出数据，而非寄存器和存储器。</li>
+<li>阻塞（stall）或者气泡（bubble）。流水线阻塞一个步骤。</li>
+</ul>
+</li>
+<li>控制冒险：<strong>因取得的指令不是所需的指令</strong>而导致指令不能在预定的时钟周期内执行。详细在4.8<ul>
+<li>阻塞（stall）。流水线阻塞一个步骤。</li>
+<li>预测（predict）。预测分支的结果，并沿着预测方向执行。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-6-Pipelined-Datapath-and-Control"><a href="#4-6-Pipelined-Datapath-and-Control" class="headerlink" title="4.6 Pipelined Datapath and Control"></a>4.6 Pipelined Datapath and Control</h3><p>在4.5中提到MIPS指令划分为五个步骤，其中两个步骤会引发冒险。</p>
+<ol>
+<li>WB。把结果写回寄存器堆中。（引发数据冒险）</li>
+<li>选择下一个PC的值。是PC自增还是MEM的分支地址。（引发控制冒险）</li>
+</ol>
+<h4 id="Pipelined-Datapath"><a href="#Pipelined-Datapath" class="headerlink" title="Pipelined Datapath"></a>Pipelined Datapath</h4><p>执行多条指令时，为了保证多条指令之间的数据不发生错乱以及共享数据，我们要在<strong>每个步骤之间添加“流水线寄存器”（以步骤的名称命名：IF/ID，ID/EX，EX/MEM，MEM/WB）</strong>，从指令中读取出来的数据存在放寄存器中。每一个时钟周期中，一个流水线寄存器中的数据会传递到下一个流水线寄存器中。<strong>在WB步骤中，没有流水线寄存器</strong>，对于流水线寄存器来说，更新后的状态是多余的，之后的指令直接去寄存器中读取即可。</p>
+<p>每经过一个时钟周期，必须将数据存放在流水线寄存器中，否则当下个指令执行时，数据将发生丢失的情况。同时每个数据部件在一个时钟周期内只能在一个流水级中执行，否则会发生结构冒险。</p>
+<p>Load Instruction使用了五级流水线，因此详细解读该类型指令。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.15_PipelineVersionOfLoadInstruction.png" alt="4.15_PipelineVersionOfLoadInstruction.png"></p>
+<p><strong>Load Instruction</strong>指令的流程图（缺少控制信号），注意<strong>Write Register信息的传递</strong>。对于Registers和Data Memory来说，左边蓝色表示Write，右边蓝色表示Read。Registers在ID阶段是Read，在WB阶段是Write。</p>
+<ol>
+<li>IF：使用PC中的地址获取（Read）到Instruction Memory中的指令；PC+4计算下一条指令地址（这里显示的是单指令，因此没有使用Add做+4运算）；将这两个数据存入IF/ID流水线寄存器中。</li>
+<li>ID：将16bit立即数扩展为32bit立即数；根据Read Register1读取到的Read Data1数据；由于Write Register在WB阶段才使用，因此必须把该信息一直传递到MEM/WB流水线寄存器中（之后的指令会刷新IF/ID中的数据，导致Write Register丢失），IF/ID之后的流水线寄存器需要增加5bit宽度；将这三个数据以及自增PC地址存入ID/EX流水线寄存器中。</li>
+<li>EX：将扩展后的立即数和Read Data1使用ALU进行计算；将计算后的地址、Write Register和自增PC地址存入EX/MEM流水线寄存器中。</li>
+<li>MEM：根据地址读取Data Memory中的数据；将Read Data和Write Register存入MEM/WB流水线寄存器中。</li>
+<li>WB：根据Write Regiser将Write Data写入。</li>
+</ol>
+<h4 id="Pipelined-Control"><a href="#Pipelined-Control" class="headerlink" title="Pipelined Control"></a>Pipelined Control</h4><p>为了在流水线数据通路中完善控制问题，需要在相应的流水级中添加对应的控制信号。采用流水线技术并没有改变控制信号的含义，因此只需要将控制信号分组，传递到不同的流水线寄存器中即可。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.16_EX%26MEM%26WBControl.png" alt="4.16_EX%26MEM%26WBControl.png"></p>
+<ol>
+<li>IF：读取指令和写PC总是有效的，因此不需要控制信号。</li>
+<li>ID：与前一步骤相似，每个时钟周期完成的工作相同，不需要控制信号。</li>
+<li>EX：RegDst、ALUOp、ALUSrc。</li>
+<li>MEM：Branch、MemRead、MemWrite。</li>
+<li>WB：RegWrite、MemtoReg。</li>
+</ol>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.17_PipelineDatapathWithControl.png" alt="4.17_PipelineDatapathWithControl.png"></p>
+<p>只需要扩展ID/EX、EX/MEM、MEM/WB流水线寄存器即可，将控制信号存入寄存器，然后在每个流水级使用。</p>
+<h3 id="4-7-Data-Hazards-Forwarding-versus-Stalling"><a href="#4-7-Data-Hazards-Forwarding-versus-Stalling" class="headerlink" title="4.7 Data Hazards: Forwarding versus Stalling"></a>4.7 Data Hazards: Forwarding versus Stalling</h3><h4 id="Data-Hazards-and-Forwards"><a href="#Data-Hazards-and-Forwards" class="headerlink" title="Data Hazards and Forwards"></a>Data Hazards and Forwards</h4><p>在之前的章节中，执行的指令都是相互独立的，也就是说其中任何一条指令没有用到其他指令的计算结果。在实际中这明显不太现实，所以我们来看看指令之间相互依赖的情况。</p>
+<figure class="highlight mips"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sub </span>  $<span class="number">2</span>, $<span class="number">1</span>,$<span class="number">3</span>   <span class="comment"># Register $2 written by sub</span></span><br><span class="line"><span class="keyword">and </span>  $<span class="number">12</span>,$<span class="number">2</span>,$<span class="number">5</span>   <span class="comment"># 1st operand($2) depends on sub</span></span><br><span class="line"><span class="keyword">or </span>   $<span class="number">13</span>,$<span class="number">6</span>,$<span class="number">2</span>   <span class="comment"># 2nd operand($2) depends on sub</span></span><br><span class="line"><span class="keyword">add </span>  $<span class="number">14</span>,$<span class="number">2</span>,$<span class="number">2</span>   <span class="comment"># 1st($2) &amp; 2nd($2) depend on sub</span></span><br><span class="line"><span class="keyword">sw </span>   $<span class="number">15</span>,<span class="number">100</span>($<span class="number">2</span>) <span class="comment"># Base ($2) depends on sub</span></span><br></pre></td></tr></table></figure>
+
+<p>寄存器$2在5条指令中都出现了，后面4条指令需要第一条指令的结果，当采用流水线机制时，就会发生冒险。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.18_PipelineDependenceInFiveInstruction.png" alt="4.18_PipelineDependenceInFiveInstruction.png"></p>
+<p>寄存器$2在第五个时钟周期才写入到寄存器中，在此之前的周期中都是无效的数据，第二和第三条指令就发生了数据冒险，第四条指令行好在周期的后半部分才读取寄存器，前半部分是写入（第五个时钟周期，前半部分寄存器写入，后半部分寄存器读取，这中间不会有影响），第五条指令完全没有影响。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.19_PipelineForward.png" alt="4.19_PipelineForward.png"></p>
+<p>在第三个时钟周期结束时，SUB指令在EX/MEM阶段已经计算出AND指令在ID/EX阶段需要的数据；在第四个时钟周期结束时，SUB指令在MEM/WB阶段要写回的数据是OR指令在ID/EX阶段需要的数据。这个时候添加一个旁路（Forward）机制，就可以直接从流水线寄存器中获取到数据，而不用等SUB指令执行结束。</p>
+<p>如何判断是否要从流水线寄存器中获取数据呢？目前为止，需要在ID/EX阶段获取到的数据有可能在EX/MEM和MEM/WB阶段中，那么就可以得出以下判断。</p>
+<figure class="highlight mips"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1a. EX/MEM.RegisterRd = ID/EX.RegisterRs</span><br><span class="line">1b. EX/MEM.RegisterRd = ID/EX.RegisterRt</span><br><span class="line">2a. MEM/WB.RegisterRd = ID/EX.RegisterRs</span><br><span class="line">2b. MEM/WB.RegisterRd = ID/EX.RegisterRt</span><br><span class="line"><span class="comment">#（Rt：第一个操作数，Rs：第二个操作数，Rd：结果操作数，在R-tpye指令中）</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.20_UseForward.png" alt="4.20_UseForward.png"></p>
+<p>添加了旁路单元的流水线数据通路，在EX阶段多了3个Mux多选器。与ALU相连的Mux，根据Forwarding Unit的控制信号去流水线寄存器或者寄存器堆中获取数据（控制第一个Mux的信号是ForwardA，第二个Mux的信号是ForwardB）。下方有两个Rt信号，一个连接Mux，一个连接Forwarding Unit，实际上是一个信号。</p>
+<p>并不是每条指令都需要写回寄存器，所以还需要添加一个RegWrite信号的判断，在EX和MEM都需要检测该信号是否有效。在MIPS中要求$0始终为0（sll $0, $1, 2），需要避免$0非零结果旁路，添加EX和MEM的RegisterRd≠0的判断。根据这两个条件，可以得出EX和MEM冒险判断信号：</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.21_TheControlValuesForForwarding.png" alt="4.21_TheControlValuesForForwarding.png"></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>. EX冒险：</span><br><span class="line">   if (EX/MEM.RegWrite</span><br><span class="line">   and (EX/MEM.RegisterRd ≠ 0)</span><br><span class="line">   and (EX/MEM.RegisterRd = ID/EX.RegisterRs)) ForwardA = 10</span><br><span class="line">   </span><br><span class="line">   if (EX/MEM.RegWrite</span><br><span class="line">   and (EX/MEM.RegisterRd ≠ 0)</span><br><span class="line">   and (EX/MEM.RegisterRd = ID/EX.RegisterRt)) ForwardB = 10</span><br><span class="line"><span class="number">2</span>. MEM冒险：</span><br><span class="line">   if (MEM/WB.RegWrite</span><br><span class="line">   and (MEM/WB.RegisterRd ≠ 0)</span><br><span class="line">** and not(EX/MEM.RegWrite and (EX/MEM.RegisterRd ≠ 0)</span><br><span class="line">     and (EX/MEM.RegisterRd ≠ ID/EX.RegisterRs)) **</span><br><span class="line">   and (MEM/WB.RegisterRd = ID/EX.RegisterRs)) ForwardA = 01</span><br><span class="line">   </span><br><span class="line">   if (MEM/WB.RegWrite</span><br><span class="line">   and (MEM/WB.RegisterRd ≠ 0)</span><br><span class="line">** and not(EX/MEM.RegWrite and (EX/MEM.RegisterRd ≠ 0)</span><br><span class="line">     and (EX/MEM.RegisterRd ≠ ID/EX.RegisterRt)) **</span><br><span class="line">   and (MEM/WB.RegisterRd = ID/EX.RegisterRt)) ForwardB = 01</span><br></pre></td></tr></table></figure>
+
+<p>在MEM冒险中用**包含起来的代码意思是：一组指令连续对同一个寄存器进行操作，这样的情况下，在MEM阶段的结果是最新的，所以要在MEM阶段的旁路获取到。</p>
+<figure class="highlight mips"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">add </span>$<span class="number">1</span>,$<span class="number">1</span>,$<span class="number">2</span></span><br><span class="line"><span class="keyword">add </span>$<span class="number">1</span>,$<span class="number">1</span>,$<span class="number">3</span></span><br><span class="line"><span class="keyword">add </span>$<span class="number">1</span>,$<span class="number">1</span>,$<span class="number">4</span> <span class="comment">#根据之前的判断，这里的寄存器$1应该从第一条指令中获取，但是第二条指令也对寄存器$1进行了操作，因此，要从第二条指令获取最新结果</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Data-Hazards-and-Stalls"><a href="#Data-Hazards-and-Stalls" class="headerlink" title="Data Hazards and Stalls"></a>Data Hazards and Stalls</h4><p>当一条指令想要读取前一条Load指令写入的寄存器时，使用Forward就无法解决冒险问题，因为Load指令在第五个时钟周期才读取出数据，但是当前指令在第四个时钟周期就需要该数据，所以必须采用阻塞机制。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.22_PipelineSequenceOfInstructions.png" alt="4.22_PipelineSequenceOfInstructions.png"></p>
+<p>在数据通路中添加Hazard detection unit，在ID阶段工作，如果当前是Load指令，并且检测到下一条指令在EX阶段就需要使用到Load指令的目的寄存器，就将指令阻塞一个时钟周期。这样之后的指令就可以正常执行了。</p>
+<figure class="highlight mips"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">if (ID/EX.MemRead and</span><br><span class="line">  ((ID/EX.RegisterRt = IF/ID.RegisterRs) or</span><br><span class="line">    (ID/EX.RegisterRt = IF/ID.RegisterRt)))</span><br><span class="line">    stall the pipeline</span><br><span class="line"><span class="comment"># ID/EX.MemRead 表示当前是Load指令</span></span><br><span class="line"><span class="comment"># ID/EX.RegisterRt 表示Load指令的目的寄存器</span></span><br><span class="line"><span class="comment"># IF/ID.RegisterRs 表示下一条指令的第二个操作数</span></span><br><span class="line"><span class="comment"># IF/ID.RegisterRt 表示下一条指令的第一个操作数</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.23_StallsIntoThePipeline.png" alt="4.23_StallsIntoThePipeline.png"></p>
+<p>为了完成指令阻塞，需要<strong>在被阻塞指令的EX阶段插入空指令</strong>（不进行任何操作的指令，也叫气泡），将EX、MEM和WB阶段的9个控制信号都清除，这样就形成了一条什么操作都不执行的指令，即空指令；由于是在ID阶段执行检测，那么ID阶段和IF阶段一样要被阻塞，否则已经读取的指令会丢失，必须让PC和IF/ID流水线寄存器的内容保持不变，这样下次从PC中获取的指令就是之前被阻塞的指令。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.24_PipelineWithForwardingAndHazardDetection.png" alt="4.24_PipelineWithForwardingAndHazardDetection.png"></p>
+<p>Hazard detection unit需要4个输入信号，来执行判断操作，需要3个输出，来完成阻塞。</p>
+<h3 id="4-8-Control-Hazards"><a href="#4-8-Control-Hazards" class="headerlink" title="4.8 Control Hazards"></a>4.8 Control Hazards</h3><p>使用流水线机制后，每个时钟周期都会取指令，Branch指令在MEM阶段才能确定是否跳转地址，这样就会存在控制冒险。目前控制冒险还没有有效的解决办法，只能提高冒险解决的正确率。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.25_TheImpactOfThePipelineOnTheBranchInstruction.png" alt="4.25_TheImpactOfThePipelineOnTheBranchInstruction.png"></p>
+<p><strong>1.假设分支不发生，后面的指令正常执行；如果分支发生，丢弃掉已经执行的指令，然后按照分支地址继续执行。</strong>丢弃指令，只需要将初始信号清除，与数据冒险的阻塞一样。Branch指令在MEM阶段才得出结果，那么需要清除IF、ID和EX阶段的控制信号。（中间有三条指令无效）</p>
+<p>由于分支判断的计算一般都比较简单，没有必要等到MEM阶段才得出结果，可以使用一些额外的ALU来完成计算，<strong>将分支判断从MEM阶段提前到ID阶段。</strong>加入一个IF.Flush的控制信号，目的是将IF/ID流水线寄存器的指令字段置为0。第一种策略是<strong>静态预测</strong>，正确率只有50%，而第二种策略是<strong>动态预测</strong>。</p>
+<p><strong>2.通过指令的地址观察上一次分支是否发生，如果发生，直接从分支地址开始执行。</strong>采用分支预测缓存（branch prediction buffer），记录一小块按照分支指令的地址低位索引的存储器区，可以用少量的数据位表示最近是否有分支发生。如果预测错误，那么就取反原来的预测方向。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.26_TheStatesInA2-bitPredictionSaheme.png" alt="4.26_TheStatesInA2-bitPredictionSaheme.png"></p>
+<p>如果因为一次预测错误就取反，那么在性能上会存在一些缺陷，可以使用<a href="https://zh.wikipedia.org/wiki/%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA" target="_blank" rel="noopener">有限状态机</a>来完善预测，当预测失败两次之后，才改变预测。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.27_TheFinalDatapathAndControl.png" alt="4.27_TheFinalDatapathAndControl.png"></p>
+<h3 id="4-9-Exceptions"><a href="#4-9-Exceptions" class="headerlink" title="4.9 Exceptions"></a>4.9 Exceptions</h3><p>在MIPS中，<strong>异常</strong>（Exception）指的是控制流中任何意外的改变，不管是处理器的内部还是外部；<strong>中断</strong>（interrupt）指的是由外部引起的事件。目前可能产生的两种异常是：未定义指令的执行和算术溢出。</p>
+<p>任何异常发生都必须进行的处理：使用异常程序计步器（Exception Program Counter，EPC）记录发生异常指令的地址，并把控制权交给操作系统的特定地址；使用原因寄存器（Cause Register）记录异常的原因。</p>
+<p>在流水线机制中，异常可以被看作是控制冒险。当分支预测发生错误时，将IF、ID和EX阶段的控制信号都清除，新加入ID.Flush和EX.Flush。还要需要有一个PC Mux，用于从8000 0180 hex（MIPS异常地址）开始取指令。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.28_TheDatapathWithControlToHandleException.png" alt="4.28_TheDatapathWithControlToHandleException.png"></p>
+<h3 id="4-10-Parallelism-via-Instructions"><a href="#4-10-Parallelism-via-Instructions" class="headerlink" title="4.10 Parallelism via Instructions"></a>4.10 Parallelism via Instructions</h3><p>水流线机制挖掘了指令间潜在的并行性，指令级并行（instruction-level parallelism，ILP）。存在两种办法增加指令级并行：第一种是增加流水线的深度以重叠更多的指令；第二种是复制计算机内部部件的数量，让每个流水线阶段可以启动更多的指令，也可以叫做<strong>多发射</strong>（Multiple Issue）。</p>
+<p>实现多发射处理器有两种方式：静态多发射（Static Multiple Issue）在执行前的编译阶段作出决策；动态多发射（Dynamic Multiple Issue）由处理器在执行阶段作出决策。在概念上的区分，在实际中并不是绝对，两种多发射处理器都是相互使用对方的技术，没有技术上的独立。</p>
+<p>完成多发射处理器必须处理两个问题：往发射槽（Issue Slot）中发射多条指令，如何确定指令的条数以及何种类型的指令；处理数据冒险和控制冒险。</p>
+<p>为了更大程度上提高指令的并行，引入推测（speculation）这个概念：编译器或者处理器推测指令结果以消除执行其他指令对该结果的依赖。可以推测分支指令的结果，直接执行分支后的指令。或者将指令提前执行，Store指令在Load指令之前，推测Store和Load不是访问相同寄存器，就可以把Load指令放在Store指令之前。</p>
+<p>当推测错误时的恢复机制对编译器和处理器来说是不同的，编译器会插入额外的指令来确认推测的结果并提供恢复例程；处理器会缓存推测的结果直到结果被确认，发生错误时会清除缓存并且重新执行正确的指令序列。</p>
+<h4 id="Static-Multiple-Issue"><a href="#Static-Multiple-Issue" class="headerlink" title="Static Multiple Issue"></a>Static Multiple Issue</h4><p>静态多发射处理器使用编译器静态预测分支结果，代码调度和减少冒险。可以在一个时钟周期内发射多条指令，这个指令集合可以叫做发射包（Issue Packet）。静态多发射处理器也可以叫做：<a href="https://zh.wikipedia.org/wiki/%E8%B6%85%E9%95%BF%E6%8C%87%E4%BB%A4%E5%AD%97" target="_blank" rel="noopener">超长指令字</a>（Very Long Instruction Word，VLIW）。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.29_StaticTwo-issuePipelineInOperation.png" alt="4.29_StaticTwo-issuePipelineInOperation.png"></p>
+<p>双发射MIPS处理器可以在每个时钟周期执行两条指令，要求ALU或者分支指令需要放在Load和Store指令之前，如果没有成对的指令就使用空指令（non）替代。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.30_AStaticTwo-issueDatapath.png" alt="4.30_AStaticTwo-issueDatapath.png"></p>
+<p>为了完成两条指令并行，需要在数据通路中添加额外硬件：冒险检测和阻塞逻辑，以及寄存器堆（Registers）的额外读写端口。在一个时钟周期内，需要为两条指令读取需要的寄存器，以及写回寄存器，同时ALU计算出两条指令的结果。</p>
+<h4 id="Dynamic-Multiple-Issue"><a href="#Dynamic-Multiple-Issue" class="headerlink" title="Dynamic Multiple Issue"></a>Dynamic Multiple Issue</h4><p>动态多发射处理器也可以叫做<a href="https://zh.wikipedia.org/wiki/%E8%B6%85%E7%B4%94%E9%87%8F" target="_blank" rel="noopener">超标量处理器</a>（Superscalar），使每个时钟周期执行的指令数量超过一条。尽管动态多发射处理器主要依赖处理器的决策，它仍然依赖编译器处理一些指令，达到指令乱序的效果。超标量的动态发射决策基础是<strong>动态流水线调度</strong>（Dynamic Pipeline Scheduling），选择某个时钟周期执行指令，尽量不产生冒险和阻塞。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.31_TheThreePrimaryUnits.png" alt="4.31_TheThreePrimaryUnits.png"></p>
+<p>超标量处理器中，流水线主要被分为3个单元：Instruction fetch and decode unit，Functional units，Commit unit。<strong>指令获取和译码单元</strong>，主要负责获取和译码指令，并且把指令发送到相应的功能单元中。<strong>功能单元</strong>，存在多个不同的功能单元（Integer，Floating point，Load-store），每个单元有自己的保留站（Reservation station），保存操作和操作数，当包含了所有的操作数以后就开始执行，将结果发送到该结果对应的保留站和提交单元。<strong>提交单元</strong>，会缓存（重排序缓存区，reorder buffer）功能单元的结果，当结果确认无误后就写会寄存器或者存储器。</p>
+<p>在本小节中，动态多发射处理器的执行过程分2步骤：</p>
+<ol>
+<li>发射指令时，先复制到对应功能单元的保留站。如果该指令的操作数都在保留站或者缓存区中可用，那么这些操作数立即被复制到该保留站中，等待指令执行。除非所有的操作数和执行单元可用，否则指令一直缓存在保留站中。当指令发射后，其操作数对应的寄存器不再需要，可以被其他指令重写。</li>
+<li>如果操作数不在保留站或者缓存区中，那么就应该被某个功能单元执行计算后得到结果。硬件会帮助完成这个过程。当功能单元执行计算后，结果直接放入对应的保留站中，从而跳过寄存器堆。</li>
+</ol>
+<p>重复以上两个步骤可以做到<strong>寄存器重命名</strong>，如果某个指令被阻塞，可以先跳过该指令，直接执行之后的指令，这种执行方式叫做乱序执行（out-of-order execution）。为了让程序表现得和正常执行一样，在指令获取和译码单元会记录发射指令之间的相互依赖关系，同时提交单元要按照这个顺序依次写回寄存器和存储器中，这样的提交方案叫做顺序提交（in order commit）。</p>
+<p>有关指令级并行的内容更多的可以查看另外一本教材：<strong>《Computer Architecture: A Quantitative Approach》</strong></p>
+<h3 id="4-11-Real-Stuff-The-ARM-Cortex-A8-and-Intel-Core-i7-Pipelines"><a href="#4-11-Real-Stuff-The-ARM-Cortex-A8-and-Intel-Core-i7-Pipelines" class="headerlink" title="4.11 Real Stuff: The ARM Cortex-A8 and Intel Core i7 Pipelines"></a>4.11 Real Stuff: The ARM Cortex-A8 and Intel Core i7 Pipelines</h3><p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.32_ARMCortex-A8andIntelCorei7-920.png" alt="4.32_ARMCortex-A8andIntelCorei7-920.png"></p>
+<p>上图是ARM A8和Intel Core i7 920的基本配置。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.33_TheA8Pipeline.png" alt="4.33_TheA8Pipeline.png"></p>
+<p>ARM Cortex-A8处理器采用动态多发射技术，其流水线调度为静态顺序，将流水线分为三个阶段：获取指令（Fetch）、编译指令（Decode）和指令执行（Execution）。</p>
+<p>在Fetch阶段中，三个流水级每次获取两条指令，地址生成单元（Address Generate Unit，AGU）使用分支目标缓存（Branch Targer Buffer，BTB）、全局历史缓存（Global History Buffer，GHB）和返回栈（Return Stack）进行分支预测以保持获取队列（Fetch Queue）满状态，能够存放12条指令。当分支预测失败时，会造成13个周期的误预测开销。</p>
+<p>在Decode阶段中，使用五个流水级确定一对指令之间是否存在依赖，导致执行顺序需要改变，并且确定将指令送至哪条执行流水线。</p>
+<p>在Execution阶段中，提供了一条处理Load和Store指令的流水线、两条处理算术操作流水线，其中只有第一条流水线可以处理乘法。三条流水线都提供了全旁路机制。指令对中的任何一条指令都可以发射到LS pipe中。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/4.34_TheCorei7PipelineWithMemoryComponents.png" alt="4.34_TheCorei7PipelineWithMemoryComponents.png"></p>
+<p>Intel Core i7的执行流程：</p>
+<ol>
+<li>获取指令硬件（Instruction fetch）使用一个多级分支目标缓存。预测错误开销15个时钟周期。预译码（Pre-decode）从32KB指令缓存（Instruction cache）获取16Byte。</li>
+<li>将16Byte放入预缓存（fetch buffer），并将其转换成独立的x86指令。因为x86指令的长度可以是1-15Byte，预译码（Pre-decode）必须确定指令长度，该过程非常复杂。最后将x86指令放入18入口指令队列（18-Entry instruction queue）。</li>
+<li>微操作译码（Micro-op decode）将x86指令翻译成微操作。有三个译码器将x86指令直接翻译成一个微操作。而对于操作复杂的x86指令，则使用一个微代码引擎产生一个微操作序列；每个周期可以生成4个微操作，直到必须的操作序列生成为止。然后把微操作按照x86指令的顺序放入28入口微操作循环流检测缓存（28-Entry micro-op loop stream detect buffer）中。</li>
+<li>微操作缓存（Micro-op buffer）执行循环流检测（loop stream detect），如果有一个小的指令序列包含一个循环，就直接从缓存器中发射微操作，减少了指令预取和译码。</li>
+<li>执行基本指令发射，在将微操作发射到保留站（reservation station）之前，在寄存器表（Register table）中查找寄存器位置、进行寄存器重命名（Register alias）、分配重排序缓存入口（Allocator reorder buffer）和从寄存器堆或乱序缓存中获取结果。</li>
+<li>i7使用被六个功能单元（Functional Unit）共享的36入口的集中式保留站（36-Entry centralized reservation station）。每个时钟周期可以向功能单元分派6个微操作。</li>
+<li>每个功能单元执行微操作，可以将结果送往寄存器提交部件（Retirement register file），在已知指令不再预测的情况下更新寄存器状态、还可以送往任何一个等待的保留站。重排序缓存（reorder buffer）和指令对应的入口标记已完成。</li>
+<li>当一条或多条指令被重排序缓存（reorder buffer）标记已完成时，将执行寄存器提交部件中未写入的操作，将指令从重排序缓存中移除。</li>
+</ol>
+<h3 id="4-12-Going-Faster-Instruction-level-Parallelism-and-Matrix-Multiply"><a href="#4-12-Going-Faster-Instruction-level-Parallelism-and-Matrix-Multiply" class="headerlink" title="4.12 Going Faster: Instruction-level Parallelism and Matrix Multiply"></a>4.12 Going Faster: Instruction-level Parallelism and Matrix Multiply</h3><p>大意内容：通过循环展开使得多发射乱序执行处理器有更多的指令用于调度，从而对指令级并行有影响。</p>
+<h3 id="4-13-Advanced-Topic-An-Introduction-to-Digital-Design-Using-a-Hardware-Design-Language-to-Describe-and-Model-a-Pipeline-and-More-Pipelining-Illustrations"><a href="#4-13-Advanced-Topic-An-Introduction-to-Digital-Design-Using-a-Hardware-Design-Language-to-Describe-and-Model-a-Pipeline-and-More-Pipelining-Illustrations" class="headerlink" title="4.13 Advanced Topic: An Introduction to Digital Design Using a Hardware Design Language to Describe and Model a Pipeline and More Pipelining Illustrations"></a>4.13 Advanced Topic: An Introduction to Digital Design Using a Hardware Design Language to Describe and Model a Pipeline and More Pipelining Illustrations</h3><p>在本书的配套网站上展示如何使用一种硬件设计语言（Verilog）分别从行为级和可综合级描述MIPS控制。<strong>（英文原书有详细的解释）</strong></p>
+<h3 id="4-14-Fallacies-and-Pitfalls"><a href="#4-14-Fallacies-and-Pitfalls" class="headerlink" title="4.14 Fallacies and Pitfalls"></a>4.14 Fallacies and Pitfalls</h3><p>误谬（Fallacies）：流水线是一种简单的结构。</p>
+<p>误谬（Fallacies）：流水线概念的实现与工艺无关。</p>
+<p>陷阱（Pitfalls）：没有考虑指令集的设计反过来会影响流水线。</p>
+<h3 id="4-15-Concluding-Remarks"><a href="#4-15-Concluding-Remarks" class="headerlink" title="4.15 Concluding Remarks"></a>4.15 Concluding Remarks</h3><p>本章讲述了处理器的数据通路和控制通路的设计，从指令集系统和对工艺基本特性的理解开始。实现了MIPS指令集单周期的数据和控制通路，之后引入了流水线的概念，以及如何处理流水线机制中的各种冒险问题。再之后，介绍了指令级并行，多发射技术允许每个时钟周期执行多条指令，添加额外的数据通路硬件。</p>
+<h3 id="4-16-Histories-Perspective-and-Further-Reading"><a href="#4-16-Histories-Perspective-and-Further-Reading" class="headerlink" title="4.16 Histories Perspective and Further Reading"></a>4.16 Histories Perspective and Further Reading</h3><p>在本书的配套网站中，讨论了第一个流水线处理器、最早的超标量处理器、乱序执行与推测执行技术的发展以及同时期编译器技术的发展。</p>
+<h3 id="4-17-Exercises"><a href="#4-17-Exercises" class="headerlink" title="4.17 Exercises"></a>4.17 Exercises</h3><p>～</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/22/计算机组成与设计（二）/" rel="prev" title="计算机组成与设计 硬件/软件接口（二）">
+                计算机组成与设计 硬件/软件接口（二） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg"
+                alt="Dong Yan" />
+            
+              <p class="site-author-name" itemprop="name">Dong Yan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cave19941023@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Chapter-4-The-Processor"><span class="nav-text">Chapter 4 The Processor</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Introduction"><span class="nav-text">4.1 Introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-Logic-Design-Conventions"><span class="nav-text">4.2 Logic Design Conventions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Building-a-Datapath"><span class="nav-text">4.3 Building a Datapath</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#R-type-Instruction"><span class="nav-text">R-type Instruction</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Store-amp-Load-Instruction"><span class="nav-text">Store &amp; Load Instruction</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Branch-Instruction"><span class="nav-text">Branch Instruction</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-A-Simple-Implementation-Scheme"><span class="nav-text">4.4 A Simple Implementation Scheme</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-An-Overview-of-Pipelining"><span class="nav-text">4.5 An Overview of Pipelining</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-Pipelined-Datapath-and-Control"><span class="nav-text">4.6 Pipelined Datapath and Control</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Pipelined-Datapath"><span class="nav-text">Pipelined Datapath</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Pipelined-Control"><span class="nav-text">Pipelined Control</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-Data-Hazards-Forwarding-versus-Stalling"><span class="nav-text">4.7 Data Hazards: Forwarding versus Stalling</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Data-Hazards-and-Forwards"><span class="nav-text">Data Hazards and Forwards</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Data-Hazards-and-Stalls"><span class="nav-text">Data Hazards and Stalls</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-Control-Hazards"><span class="nav-text">4.8 Control Hazards</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-9-Exceptions"><span class="nav-text">4.9 Exceptions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-10-Parallelism-via-Instructions"><span class="nav-text">4.10 Parallelism via Instructions</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Static-Multiple-Issue"><span class="nav-text">Static Multiple Issue</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dynamic-Multiple-Issue"><span class="nav-text">Dynamic Multiple Issue</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-11-Real-Stuff-The-ARM-Cortex-A8-and-Intel-Core-i7-Pipelines"><span class="nav-text">4.11 Real Stuff: The ARM Cortex-A8 and Intel Core i7 Pipelines</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-12-Going-Faster-Instruction-level-Parallelism-and-Matrix-Multiply"><span class="nav-text">4.12 Going Faster: Instruction-level Parallelism and Matrix Multiply</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-13-Advanced-Topic-An-Introduction-to-Digital-Design-Using-a-Hardware-Design-Language-to-Describe-and-Model-a-Pipeline-and-More-Pipelining-Illustrations"><span class="nav-text">4.13 Advanced Topic: An Introduction to Digital Design Using a Hardware Design Language to Describe and Model a Pipeline and More Pipelining Illustrations</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-14-Fallacies-and-Pitfalls"><span class="nav-text">4.14 Fallacies and Pitfalls</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-15-Concluding-Remarks"><span class="nav-text">4.15 Concluding Remarks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-16-Histories-Perspective-and-Further-Reading"><span class="nav-text">4.16 Histories Perspective and Further Reading</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-17-Exercises"><span class="nav-text">4.17 Exercises</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dong Yan</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.0.5</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.5"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.5"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.5"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.5"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.5"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

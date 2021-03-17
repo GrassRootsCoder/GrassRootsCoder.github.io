@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.5" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.5">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.5" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.0.5',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+<meta name="description" content="Chapter 5 Large and Fast: Exploiting Memory Hierarchy Chapter 4 The Processor Chapter 6 Parallel Processors from Client to Cloud">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机组成与设计 硬件&#x2F;软件接口（二）">
+<meta property="og:url" content="http://yoursite.com/2018/04/22/计算机组成与设计（二）/index.html">
+<meta property="og:site_name" content="Dong Yan Blog">
+<meta property="og:description" content="Chapter 5 Large and Fast: Exploiting Memory Hierarchy Chapter 4 The Processor Chapter 6 Parallel Processors from Client to Cloud">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.1_TheFiveClassicComponentsOfAComputer%E2%80%94Memory.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.3_TheStructureOfAMemoryHierarchy.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.2_UpperAndLowerLevel.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.4_InternalOrganizationOfADRAM.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.5_DirectMapped.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.6_CacheEntry.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.7_The16KBCachesInTheIntrinsityFastMATH.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.8_MemoryToCacheAssociativePlacement.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.9_Virtual%26PhysicalAddress.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.10_MappingFromAVirtualToAPhysicalAddress.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.11_PageTableToPhysicalAddress.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.12_ThePageTableMaps.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.13_TheTLBActsAsACache.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.14_TLBAndCacheReadOperations.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.15_ProcessingAReadOrAWrite-through.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.16_MIPSControlRegisters.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.17_L1L2PagedMemeoryTLBFeature.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.18_CacheStorageType.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.19TheCacheMissRatesForCache.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.20_CacheLocationMethod.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.21_TheMissRateCanBeBrokenIntoThreeSourcesOfMisses.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.22_FourStatesOfTheSimpleController.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.23_TheCacheCoherenceProblem.png">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.24_WriteInvalidateProtocolWithWriteBack.png">
+<meta property="og:updated_time" content="2018-05-07T16:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算机组成与设计 硬件&#x2F;软件接口（二）">
+<meta name="twitter:description" content="Chapter 5 Large and Fast: Exploiting Memory Hierarchy Chapter 4 The Processor Chapter 6 Parallel Processors from Client to Cloud">
+<meta name="twitter:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.1_TheFiveClassicComponentsOfAComputer%E2%80%94Memory.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/22/计算机组成与设计（二）/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>计算机组成与设计 硬件/软件接口（二） | Dong Yan Blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dong Yan Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">I want something in my life.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/22/计算机组成与设计（二）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dong Yan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dong Yan Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">计算机组成与设计 硬件/软件接口（二）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-04-22T00:00:00+08:00">2018-04-22</time>
+            
+
+            
+            
+              
+                
+              
+            
+
+            
+              
+              <span class="post-meta-divider">|</span>
+              
+
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Post modified&#58;</span>
+              
+              <time title="Post modified" itemprop="dateModified" datetime="2018-05-08T00:00:00+08:00">2018-05-08</time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Computer-Science/" itemprop="url" rel="index"><span itemprop="name">Computer Science</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Chapter-5-Large-and-Fast-Exploiting-Memory-Hierarchy"><a href="#Chapter-5-Large-and-Fast-Exploiting-Memory-Hierarchy" class="headerlink" title="Chapter 5 Large and Fast: Exploiting Memory Hierarchy"></a>Chapter 5 Large and Fast: Exploiting Memory Hierarchy</h2><p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.1_TheFiveClassicComponentsOfAComputer%E2%80%94Memory.png" alt="5.1_TheFiveClassicComponentsOfAComputer%E2%80%94Memory.png"></p>
+<a href="/2018/03/05/计算机组成与设计（一）/" title="Chapter 4 The Processor">Chapter 4 The Processor</a> <br><a href="/2018/05/08/计算机组成与设计（三）/" title="Chapter 6 Parallel Processors from Client to Cloud">Chapter 6 Parallel Processors from Client to Cloud</a>
+
+<a id="more"></a>
+
+<h3 id="5-1-Introduction"><a href="#5-1-Introduction" class="headerlink" title="5.1 Introduction"></a>5.1 Introduction</h3><p>处理器和存储器之间的关系就好像是书桌和书柜一样，从书柜去拿书，有往返时间以及搜索书籍时间，从书桌拿书没有往返时间，同时书桌上的书比较少，搜索起来比较简单。书桌不能过于大，否则搜索的时间会增加。因此，不能要求缓存的容量很大，又要保证搜索时间很短。构建存储器的依据是局部性原理：</p>
+<ul>
+<li>时间局部性（temporal locality）：某个数据项被访问之后，可能很快被再次访问。</li>
+<li>空间局部性（spatial locality）：某个数据项被访问之后，与其地址相近的数据项可能很快被再次访问。</li>
+</ul>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.3_TheStructureOfAMemoryHierarchy.png" alt="5.3_TheStructureOfAMemoryHierarchy.png"></p>
+<p>可以利用局部性原理将计算机存储器组织称为<strong>存储器层次结构</strong>（memory hierarchy）。越靠近处理器的存储器访问速度越快，容量越小；离处理器越远的存储器，访问速度越慢，容量越大。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.2_UpperAndLowerLevel.png" alt="5.2_UpperAndLowerLevel.png"></p>
+<p>在存储器层次结构中，每两层存储器被认为一个是高层次，另一个是低层次。存储信息交换的最小单元称为块（block）或行（line），<strong>通常在层次之间进行交换</strong>。如果处理器需要的数据在高层次存储器中可以找到，则称为一次命中；没有找到则是一次缺失，同时访问低层次存储器找到需要的那一块数据。</p>
+<ul>
+<li>命中率（hit rate）：在高层次存储器中找到目标数据项的存储访问比例。</li>
+<li>缺失率（miss rate）：在高层次存储器中没有找到目标数据项的存储访问比例。（1 - 命中率）</li>
+<li>命中时间（hit time）：访问某层次存储器结构所需要的时间，包括判断当前访问是否命中，还是缺失所需的时间。</li>
+<li>缺失代价（miss penalty）：将相应数据项从低层次存储器替换到高层次存储器所需的时间。</li>
+</ul>
+<p><a href="https://zh.wikipedia.org/wiki/CPU%E7%BC%93%E5%AD%98" target="_blank" rel="noopener">CPU Cache 维基百科相关内容</a></p>
+<h3 id="5-2-Memory-Technologies"><a href="#5-2-Memory-Technologies" class="headerlink" title="5.2 Memory Technologies"></a>5.2 Memory Technologies</h3><p>目前构建存储器层次结构主要使用四种技术：<a href="https://zh.wikipedia.org/wiki/%E9%9D%99%E6%80%81%E9%9A%8F%E6%9C%BA%E5%AD%98%E5%8F%96%E5%AD%98%E5%82%A8%E5%99%A8" target="_blank" rel="noopener">静态随机存取存储器</a>（Static Random Access Memory，SRAM）、<a href="https://zh.wikipedia.org/wiki/%E5%8A%A8%E6%80%81%E9%9A%8F%E6%9C%BA%E5%AD%98%E5%8F%96%E5%AD%98%E5%82%A8%E5%99%A8" target="_blank" rel="noopener">动态随机存取存储器</a>（Dynamic Random Access Memory，DRAM）、<a href="https://zh.wikipedia.org/wiki/%E9%97%AA%E5%AD%98" target="_blank" rel="noopener">闪存</a>（Flash Memory）和<a href="https://zh.wikipedia.org/wiki/%E7%A1%AC%E7%9B%98" target="_blank" rel="noopener">磁盘</a>（Disk Memory）。（只是存储器技术，不是具体的产品）</p>
+<p><strong>SRAM</strong>中所谓的“静态”，是指这种存储器只要保持通电，里面储存的数据就可以恒常保持。相对之下，动态随机存取存储器（DRAM）里面所储存的数据就需要周期性地更新。然而，当电力供应停止时，SRAM储存的数据还是会消失（被称为volatile memory），这与在断电后还能储存资料的ROM或闪存是不同的。SRAM的一个基本存储单元通常由6-8个晶体管组成。</p>
+<p><strong>DRAM</strong>中存储单元使用电容保存电荷的方式来存储数据，DRAM的一个基本存储单元由1个晶体管组成，所以它比SRAM密度高得多，价格也便宜很多。因为是在电容上保存电荷，不能长久的保持数据，所以需要周期性的刷新。对于单元进行刷新，需要将数据读取出来再写回去即可。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.4_InternalOrganizationOfADRAM.png" alt="5.4_InternalOrganizationOfADRAM.png"></p>
+<p>如果对每个单元都进行刷新，就没有多余的时间去进行正常的访问操作了。因此，DRAM采用了两级译码结构，可以在一个读周期后紧跟一个写周期，一次刷新一行。</p>
+<p>DRAM以Bank（存储块）方式组织，在DDR3中有4个Bank。每个bank有多个Row（行）组成。Pre（预充电）命令能够打开或者关闭一个bank。Act（激活）命令可以读取一行地址，将对应的数据存入到Buffer（缓冲器）中。缓冲器与SRAM相似，在下一行被访问前，可以通过改变地址来访问缓冲器中的任何一个Bit。每个bank都有自己的Buffer。</p>
+<p><strong>Flash Memory</strong>是一种<a href="https://zh.wikipedia.org/wiki/EEPROM" target="_blank" rel="noopener">EEPROM</a>（Electrically erasable programmable read only memory，电可擦可编程只读内存）。大多数闪存产品都有一个控制器，用来将写操作从已经写入很多次的块中映射到写入次数较少的块中，从而使写操作尽量分散。</p>
+<p><strong>Disk Memory</strong>参考维基百科。</p>
+<h3 id="5-3-The-Basics-of-Caches"><a href="#5-3-The-Basics-of-Caches" class="headerlink" title="5.3 The Basics of Caches"></a>5.3 The Basics of Caches</h3><p>额外扩展<a href="https://en.wikipedia.org/wiki/Memory_hierarchy" target="_blank" rel="noopener">Memory Hierarchy</a>：Processor Register, <a href="https://en.wikipedia.org/wiki/CPU_cache" target="_blank" rel="noopener">Cache</a>, <a href="https://en.wikipedia.org/wiki/Computer_data_storage#Primary_storage" target="_blank" rel="noopener">Main memory</a>(RAM), Disk Storage(ROM).</p>
+<p>Cache存在于CPU与主存之间，CPU想要读取一个数据，先从Cache中寻找，如果命中，则直接返回Cache中的数据；如果缺失，则从主存中寻找，并把找到的数据放在Cache中。为完成Cache存取数据，需要解决两个问题：如何确定一个数据项是否在Cache中？如果存在于Cache，如何找到该数据项？</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.5_DirectMapped.png" alt="5.5_DirectMapped.png"></p>
+<p>可以采用<strong>直接映射（Direct Mapped）</strong>的Cache结构。映射方法：（块地址）mod（Cache的块地址）。存储器中的00001，01001，10001，11001映射到缓存中的001，这样的结构导致一个Cache地址对应多个Memory地址，如何确定Cache中的数据项是否就是CPU请求需要的？可以添加一个<strong>标记（tag）</strong>，占2bit，记录Memory地址中的高两位，因为低三位地址是相同的，所以只需要记录高两位地址就可以判断一个数据项。在处理器刚刚启动时，Cache中没有任何数据项，标记中的数据没有任何意义，因此需要一个<strong>有效位（valid bit）</strong>来标识Cache是否包含一个有效地址。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.6_CacheEntry.png" alt="5.6_CacheEntry.png"></p>
+<p>在<a href="http://logos.cs.uic.edu/366/notes/mips%20quick%20tutorial.htm" target="_blank" rel="noopener">MIPS体系</a>中，word占4byte，每个地址至少有两位用来指定字中的一个字节，选择块中的字节至少有两位被忽略。在上图中，Cache的块大小为one word（4byte = 32bit），很少有Cache块的大小是一个word。Cache大小的计算（<a href="https://zh.wikipedia.org/wiki/CPU%E7%BC%93%E5%AD%98" target="_blank" rel="noopener">维基百科</a>）。</p>
+<ul>
+<li>32位地址</li>
+<li>直接映射Cache</li>
+<li>Cache块的数量2^n（有1024个Cache块，2^10），n=10</li>
+<li>Cache块的大小2^m字，有两位是偏移信息</li>
+<li>Tag：32 - (n + m +2) = 32 - (10 + 0 + 2)  = 20</li>
+</ul>
+<p>通常计算Cache命名大小只考虑Data大小，忽略Tag和Valid bit。因此，上图为4KBCache（1024个索引 = 2^10，32bit = 4byte，4B * 2^10 = 4KB）。</p>
+<p>当<strong>Cache缺失</strong>时，处理器发生阻塞，直到从存储器中取出数据后才作出响应。Cache缺失的处理步骤：</p>
+<ol>
+<li>PC原始值（当前PC - 4）送至存储器中。</li>
+<li>通知主存执行一次读操作，等待主存完成操作。</li>
+<li>写Cache数据项，将主存读取到的数据项写入Cache中。</li>
+<li>重启指令执行，从Cache中读取数据。</li>
+</ol>
+<p><strong>Cache写操作</strong>的处理，总共有三种解决方案：</p>
+<ol>
+<li>写直达（write-through）：写操作同时更新Cache和主存，保持两者一直。</li>
+<li>写缓存（write-buffer）：将需要写入主存的数据项保存在缓存队列中。</li>
+<li>写回（write-back）：写操作执行时，新值只会写入Cache中，只有当修改过的块被替换时，才写入主存中。</li>
+</ol>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.7_The16KBCachesInTheIntrinsityFastMATH.png" alt="5.7_The16KBCachesInTheIntrinsityFastMATH.png"></p>
+<p>内置FastMATH处理器（使用的是组相联映射）的16KBCache（256个索引 = 2^8，512bit = 64byte，64B * 2^8 = 16KB），包含256块，每块512Bit（16个字）。有4bit（2-5位）作为块偏移，用于Mux对块中字的选择。</p>
+<p>为了利用空间局部性，Cache的块必须大于1个字，较大的块可以减低Cache缺失率，减少Cache中与数据存储量有关的标记存储量。当Cache块容量增大时，必然带来Cache缺失时代价的增加，块容量与Cache缺失代价成正比关系。</p>
+<h3 id="5-4-Measuring-and-Improving-Cache-Performance"><a href="#5-4-Measuring-and-Improving-Cache-Performance" class="headerlink" title="5.4 Measuring and Improving Cache Performance"></a>5.4 Measuring and Improving Cache Performance</h3><p>改进Cache性能的方式目前有两种：第一种是通过减少存储器中不同数据块争用cache中相同位置的概率来降低缺失率。第二种是通过在存储器层次结构中额外增加一层来减少缺失代价。</p>
+<blockquote>
+<p>CPU时间 = (CPU执行时钟周期数 + 存储器阻塞时钟周期数) × 时钟周期</p>
+</blockquote>
+<p>存储器阻塞的主要原因来自于cache的缺失，在实际中又分为读、写操作。</p>
+<blockquote>
+<p>存储器阻塞时钟周期数 = 读操作阻塞时钟周期数 + 写操作阻塞时钟周期数</p>
+<p>读操作阻塞时钟周期数 = (读的次数 ÷ 程序数) × 读缺失率 × 读缺失代价</p>
+<p>写操作阻塞时钟周期数 = [(写的次数 ÷ 程序数) × 写缺失率 × 写缺失代价] + 写缓存区阻塞</p>
+</blockquote>
+<p>接下来介绍两个存储器到缓存的映射方式，在5.3节讲述了直接映射（Direct mapped）。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.8_MemoryToCacheAssociativePlacement.png" alt="5.8_MemoryToCacheAssociativePlacement.png"></p>
+<p>组相联（Set associative）：块可以放到Cache中的部分位置（至少两个）。</p>
+<p>全相联（Fully associative）：块可以放到Cache中的任意位置。</p>
+<p>在组相联中找到对应的Cache块，需要通过Index找到包含对应块的组，然后通过Tag来检测对应的块。如果Cache容量保持不变，<strong>相联度每增加2倍，Cache组所包含的块数也增加2倍，同时Cache组的组数减少2倍。</strong>在全相联中，只有一组有效，所以不需要索引，每次访问需要和Cache所有块的Tag进行比较。</p>
+<p>全相联机制允许将块放在Cache中的任意位置，因此每次访问数据项时需要查找Cache中的每一个块，较高的访问成本导致大容量的全相联Cache难以实现。组相联Cache只需要在索引对应的块中找到数据项就行，缺失率比较高，但是访问速度更快。</p>
+<p>因此，Cache性能的比较需要和Cache容量和相联度一起考虑。</p>
+<p>当Cache的容量已经被完全使用时，下次添加新数据项到Cache就存在一个Cache块替换问题。现在最常用的方法是<strong>最近最少使用</strong>（Least Recently Used，LRU）方法，总是替换很长时间没有使用的块。为了实现这个方法，需要对Cache中的每个块进行标记，如果是两路组相联，可以单独保留一位，通过设计该位记录块的访问。当相联度提高时，LRU执行难度也会增加。</p>
+<p>就现代计算机而言，都是有多层次Cache的。当一级Cache缺失时，会访问二级Cache，如果数据项能够在二级Cache找到，那么缺失代价就是二级Cache的访问时间，这样比直接访问主存快了很多。如果一级和二级Cache都缺失，那么缺失代价非常大。在多层次Cache中，一级Cache致力于减少命中时间获取较短的时钟周期或者流水级，二级Cache主要针对改善缺失率以减少长时间的访问代价。</p>
+<h3 id="5-5-Dependable-Memory-Hierarchy"><a href="#5-5-Dependable-Memory-Hierarchy" class="headerlink" title="5.5 Dependable Memory Hierarchy"></a>5.5 Dependable Memory Hierarchy</h3><p>对于存储器层次而言，性能不是唯一衡量标准，还有可信性。它要求存储器提供稳定和可靠的服务。有两个术语用来描述：可靠性和可用性。</p>
+<ul>
+<li>可靠性：一个系统或者模块能够持续提供用户需求的服务的度量。平均无故障时间（mean time to failure，MTTF）是一个可靠性的度量办法。</li>
+<li>可用性：一年中服务器有多少时间是正常运行的度量。维修平均时间（mean time to repair，MTTR）是一个度量的办法。</li>
+</ul>
+<p>使用了SEC/DED的技术完成存储器的冗余。<a href="https://zh.wikipedia.org/zh-hans/%E6%B1%89%E6%98%8E%E7%A0%81" target="_blank" rel="noopener">维基百科</a></p>
+<h3 id="5-6-Virtual-Machine"><a href="#5-6-Virtual-Machine" class="headerlink" title="5.6 Virtual Machine"></a>5.6 Virtual Machine</h3><p>可以先查看一些VM的相关解释（<a href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E6%A9%9F%E5%99%A8" target="_blank" rel="noopener">维基百科</a>）。</p>
+<p>系统虚拟机（System Virtual Machine）是指在二进制<strong>指令集系统结构</strong>（ISA）的层次上提供一个完成的系统级操作。一台运行多个虚拟机的计算机，可以支持多个不同的操作系统。比如：VMware Fusion。</p>
+<p>支持虚拟机的软件被称为<strong>虚拟机监视器</strong>（Virtual Machine Monitor，VMM）或者管理程序（Hypervisor），底层的硬件平台被称为主机（Host），主机的资源被客户端（Guest）虚拟机共享。VMM决定如何将虚拟机资源映射到物理资源上。</p>
+<p>为了对处理器进行“虚拟化”，VMM必须能控制一切——访问特权状态、I/O、异常和中断。VMM需要挂起当前正在运行的客户虚拟机，保存其状态，处理中断，然后决定该运行哪个虚拟机，并读取状态。系统级虚拟机必备条件：</p>
+<ul>
+<li>至少两个处理器模式，系统级和用户级</li>
+<li>特权级指令集只能在系统模式下使用，如果在用户模式下执行将会产生trap中断。</li>
+</ul>
+<h3 id="5-7-Virtual-Memory"><a href="#5-7-Virtual-Memory" class="headerlink" title="5.7 Virtual Memory"></a>5.7 Virtual Memory</h3><p>虚拟内存（Virtual Memory）是一种将主存用作辅助存储器高速缓存的技术。使用虚拟内存的动机有两个：<strong>允许云计算在多个虚拟机之间有效而安全地共享内存</strong>；消除一个小而受限的主存容量对程序设计造成的影响。</p>
+<p>由于在编译的时候无法确定哪些虚拟机之间共享内存，所以希望将每个程序都编译到虚拟机自己的地址空间（Address space），内存中只能有该程序访问的独立的一连串地址。虚拟内存实现程序地址空间到<strong>物理地址</strong>（Physical address）的转换。这种地址转换的方式使各个程序地址空间之间的<strong>保护</strong>（Protection）得到了增强。</p>
+<ul>
+<li>物理地址：主存储器的地址。</li>
+<li>保护：一组确保共享处理器、主存、I/O设备的多个进程之间没有故意地、无意地读写其他进程的数据机制。</li>
+</ul>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.9_Virtual%26PhysicalAddress.png" alt=".9_Virtual%26PhysicalAddress.png"></p>
+<p>在虚拟内存中，块被称为页（Page），访问缺失被称为缺页（Page fault），处理器产生一个虚拟地址（Virtual address），再结合软硬件转换成一个物理地址（Physical address），用物理地址来访问主存。如果在物理地址中发生缺页，则会去访问硬盘地址（Disk address）。<strong>虚拟内存就相当于主存（DRAM）和硬盘的控制器。</strong></p>
+<p>同时虚拟内存还提供了重定位来简化执行时的程序加载过程，允许程序加载到主存中的任何位置。将程序重定位成一组固定大小的块（页），减少了主存中连续的块来放置程序的必要。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.10_MappingFromAVirtualToAPhysicalAddress.png" alt="5.10_MappingFromAVirtualToAPhysicalAddress.png"></p>
+<p>在虚拟内存中地址被划分为虚拟页号（Virtual page number）和页偏移（Page offset），物理地址被划分为物理页号（Physical page number）和页偏移（Page offset）。页偏移的位数决定了页的大小，虚拟地址可寻址的页数与物理地址可寻址的页数可以不同，虚拟页号比物理页号多得多，可以制造出一种没有容量限制的虚拟内存假象。</p>
+<p>当发生一次缺页时，会造成非常大的缺失代价，因此在设计虚拟内存需要考虑一些关键因素：</p>
+<ul>
+<li>为了弥补较长的访问时间，页应该足够大。</li>
+<li>使用全相联方式，降低页的缺失率。</li>
+<li>缺页可以用软件处理。</li>
+<li>由于写时间太长，因此采用写回机制。</li>
+</ul>
+<h4 id="Placing-a-Page-and-Finding-It-Again"><a href="#Placing-a-Page-and-Finding-It-Again" class="headerlink" title="Placing a Page and Finding It Again"></a>Placing a Page and Finding It Again</h4><p>由于虚拟内存的缺页代价非常高，因此采用全相联映射，发生缺页时，操作系统可以选择任意一个页进行替换。使用全相联映射最主要的困难在于检索，在虚拟内存中使用页表（Page table）作为存储结构。<strong>页表使用虚拟地址中的页号作索引，找到对应的物理页号。</strong>每个程序拥有自己的页表，用来将程序的虚拟地址空间映射到主存中。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.11_PageTableToPhysicalAddress.png" alt="5.11_PageTableToPhysicalAddress.png"></p>
+<p>为了指出页表在存储器中的位置，需要有一个指向页表首地址的寄存器，也就是页表寄存器（Page table register）。每个页表项使用1位有效位，如果该位无效，则说明该页不存在主存中，发生缺页。如果有效，该页就存在于主存中。由于页表包含了每个可能虚拟页的映射，因此不需要标记。</p>
+<h4 id="Page-Faults"><a href="#Page-Faults" class="headerlink" title="Page Faults"></a>Page Faults</h4><p>当发生缺页（Page fault）时，由操作系统获取控制权，必须在下一级存储器层次（闪存或者磁盘）中找到该页，然后存入到主存中。在虚拟内存中，必须保持跟踪记录虚拟地址空间的每一页在磁盘上的位置。</p>
+<p>由于无法提前知道存储器中的某一页什么时候被替换出去，所以会创建一个交换区（swap space），用来记录每个虚拟页在磁盘上的存放位置。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.12_ThePageTableMaps.png" alt="5.12_ThePageTableMaps.png"></p>
+<p>页表（Page table）中的有效位（Valid）为1时，表示该页存在于物理地址中（也就是主存上）；为0时，表示该页存在于磁盘上。物理内存和磁盘存储在逻辑上是相同的，但是存在时分开两张表。</p>
+<p>当发生缺页时，如果页表已经填满，那么操作系统就必须替换掉某一页。这里的替换原则和5.4节中的最近最少使用（LRU）一样。</p>
+<h4 id="What-about-Writes"><a href="#What-about-Writes" class="headerlink" title="What about Writes"></a>What about Writes</h4><p>在虚拟内存系统中，对存储器层次结构中下一层（Disk）的写操作需要数百万个处理器时钟周期，因此创建一个缓冲区用来允许系统用写直达的方式是完全不行的。必须采用写回机制，对存储器中的页进行单独的写操作，并且在该页被替换出存储器时再被复制到磁盘中。</p>
+<h4 id="Making-Address-Translation-Fast-the-TLB"><a href="#Making-Address-Translation-Fast-the-TLB" class="headerlink" title="Making Address Translation Fast : the TLB"></a>Making Address Translation Fast : the TLB</h4><p>因为页表存在于主存中，所以程序每次访问存储器都需要两次：第一次访问获取到物理地址；第二次访问才获取到数据。现代处理器都包含一个特殊的Cache用来跟踪最近使用过的地址变换。这个特殊的Cache叫做<strong>快表</strong>（<a href="https://zh.wikipedia.org/wiki/%E8%BD%89%E8%AD%AF%E5%BE%8C%E5%82%99%E7%B7%A9%E8%A1%9D%E5%8D%80" target="_blank" rel="noopener">Translation-Lookaside Buffer</a>，TLB），用于记录最近使用地址的映射信息的高速缓存，从而避免每次都要访问页表。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.13_TheTLBActsAsACache.png" alt="5.13_TheTLBActsAsACache.png"></p>
+<p>在TLB中，每个标记（Tag）存放虚拟页号（Virtual page number）的一部分，每个数据项（Data）存放物理页号（Physical page number）。同时还存在有效位（Valid）、脏位（Dirty）和引用位（Ref）。有效位在缺页（Page Fault）的时候已经解释过。<strong>如果TLB命中，那么引用位（Ref）置为1。如果处理器执行的是写操作，那么脏位（Dirty）置为1。</strong></p>
+<p>当TLB发生缺失时，有两种情况：TLB缺失，但是存在于页表中；TLB和页表都缺失，需要访问磁盘（Disk storage）。由于TLB比页表小很多，因此TLB缺失比较频繁。<strong>当TLB缺失并且需要替换时</strong>，会把TLB中的脏位和引用位写回到页表中。</p>
+<p>由于TLB的缺失比较频繁，因此需要用较低的代价来处理缺失，而不能像缺页那样选择一个开销大的算法。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.14_TLBAndCacheReadOperations.png" alt="5.14_TLBAndCacheReadOperations.png"></p>
+<p>上图是TLB和Cache的读操作。存储系统页大小为4KB，地址空间32位，因此虚拟页号为20位。虚拟地址和物理地址长度相同。TLB包含了16项，采用全相联映射。每个表项为64位，包含20位的Tag，20位的Physical page number，以及Valid、Dirty和其他管理操作位。Cache采用直接映射。（这里缺少了页表，结合之前的图一起观看和思考）</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.15_ProcessingAReadOrAWrite-through.png" alt="5.15_ProcessingAReadOrAWrite-through.png"></p>
+<p>虚拟地址通过TLB转换成物理地址，<strong>如果不是写操作</strong>，从Cache中获取数据，Cache命中之后把数据送给CPU，没有命中就等待Cache缺失；<strong>如果是写操作</strong>，试图将数据写入Cache，Cache命中之后把数据写入，更新脏位，同时把数据和地址写入缓存，没有命中Cache，这部分操作和读操作一样。</p>
+<p>对于写操作而言，必须检查TLB的写访问位（Write access bit）。</p>
+<h4 id="Implementing-Protection-with-Virtual-Memory"><a href="#Implementing-Protection-with-Virtual-Memory" class="headerlink" title="Implementing Protection with Virtual Memory"></a>Implementing Protection with Virtual Memory</h4><p>保护机制必须确保：尽管多个进程共享同一个主存，无论是有意或者无意，一个恶意进程不能写另一个进程或者操作系统的地址空间。可以在TLB中添加一个<strong>写访问位</strong>（Write access bit）防止一个页被改写。</p>
+<p>每个进程有自己的虚拟地址空间，如果有操作系统来管理页表，使独立的虚拟页映射到不相交（Disjoint）的物理页上，这样就能使一个进程无法访问另一个进程的数据。</p>
+<p>有时候希望以受限的方式共享信息，可以通过写访问位来把共享限制为<strong>只读</strong>，只有操作系统才能修改该位。由于TLB缺失才会访问页表，任何决定页的访问权限的位不仅要存在于TLB中，也要存在于页表中。</p>
+<h4 id="Handing-TLB-Misses-and-Page-Faults"><a href="#Handing-TLB-Misses-and-Page-Faults" class="headerlink" title="Handing TLB Misses and Page Faults"></a>Handing TLB Misses and Page Faults</h4><p>TLB缺失有两种情况：第一种是<strong>页在主存中</strong>，只需要创建缺失的TLB表项。第二种是<strong>页不在主存中</strong>，需要将控制权交给操作系统来解决缺页。</p>
+<p>MIPS使用软件来处理TLB缺失，对于第一种情况而言，先从主存中取出页表项装入TLB，然后重新执行引起TLB缺失的指令；对于第二种情况而言，页不在主存中会引起缺页异常，将控制权交给操作系统，当缺页处理完毕后重新启动引起缺页的指令，因此需要有一个程序计数器（Exception Program Counter，EPC）来保持该指令。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.16_MIPSControlRegisters.png" alt="5.16_MIPSControlRegisters.png"></p>
+<p>当操作系统知道了引起缺页的虚拟地址后，需要完成三个操作：</p>
+<ol>
+<li>使用虚拟地址找到对应的页表项，并且在磁盘上被访问的页的位置。</li>
+<li>选择替换一个物理页；如果被选择的页被修改过，就需要把这个页写回到磁盘上。</li>
+<li>启动读操作，将从磁盘上访问到的数据放入物理页中。</li>
+</ol>
+<p>最后一个操作需要花费数百万个时钟周期，因此操作系统会开启另外一条线程来执行这个操作；在开启另一条线程前，操作系统会先保存当前线程的相关信息，等读操作完成以后，恢复该线程，重新执行引起缺页的那条指令。</p>
+<p>当TLB发生缺失时，MIPS的硬件将被引用的页号保存在BadVAddr的特殊寄存器中，为了能够快速检索，MIPS将所需的一切信息都放在Context的特殊寄存器中。</p>
+<p>因为发生TLB表项<strong>缺失异常</strong>比<strong>缺页异常</strong>要频繁地多，所以操作系统对页表中的表项并不作检测就直接装入TLB并重新执行指令。如果表项无效，则发生缺页异常。这样的方法可以让频繁发生的缺失容易处理些，但是对于缺页来说就会有一些性能上的损失。对于缺页异常，操作系统会保存活动进程的全部状态。</p>
+<h3 id="5-8-A-Common-Framework-for-Memeory-Hierarchy"><a href="#5-8-A-Common-Framework-for-Memeory-Hierarchy" class="headerlink" title="5.8 A Common Framework for Memeory Hierarchy"></a>5.8 A Common Framework for Memeory Hierarchy</h3><p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.17_L1L2PagedMemeoryTLBFeature.png" alt="5.17_L1L2PagedMemeoryTLBFeature.png"></p>
+<p>尽管存储器层次结构中很多方面都有量的区别，但是决定层次结构如何运作的许多策略和特征在本质上是相同的，一般的处理器中还有L3-Cache，容量通常为2-8MB，块数比L2-Cache多很多，有L3后使得L2的缺失代价降低到30-40个时钟周期。</p>
+<h4 id="Where-Can-a-Block-Be-Placed"><a href="#Where-Can-a-Block-Be-Placed" class="headerlink" title="Where Can a Block Be Placed?"></a>Where Can a Block Be Placed?</h4><p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.18_CacheStorageType.png" alt="5.18_CacheStorageType.png"></p>
+<p>Cache主要的存储机制是直接映射、组相连和全相联。这些机制可以看成是组数和每组块数各不相同的组相连方案的特例（直接映射和全相连）。</p>
+<p>增加相连度的好处在于能降低缺失率，缺失率的改进来自于减少竞争同一位置而产生的缺失。增加相连度具有潜在的代价以及增加访问时间。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.19TheCacheMissRatesForCache.png" alt="5.19TheCacheMissRatesForCache.png"></p>
+<p>当Cache容量增加时，相连度的增加对提高缺失率的影响很小。因为大容量的Cache总体缺失率低，没有什么机会可以改进缺失率，因此提高Cache的相连度作用减少。小容量的Cache正好相反。</p>
+<h4 id="How-is-a-Block-Found"><a href="#How-is-a-Block-Found" class="headerlink" title="How is a Block Found?"></a>How is a Block Found?</h4><p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.20_CacheLocationMethod.png" alt="5.20_CacheLocationMethod.png"></p>
+<p>选择什么样的相连方式由缺失代价和相连度权衡决定。除非容量很小的Cache，否则不采用全相连的方式，因为比较器的开销并不是压倒性的因素，其绝对<strong>缺失率的改进</strong>才是最明显的。</p>
+<p>在虚拟存储系统（Virtual Memory System）中，页表（Page Table）是独立的映射表，用来索引存储器。该系统通常使用全相连方式，因为：</p>
+<ol>
+<li>全相连的优越性，因为缺失的代价非常高</li>
+<li>全相联允许软件使用复杂的替换策略以降低缺失率</li>
+<li>全相连容易被索引，不需要额外的硬件以及进行查找</li>
+</ol>
+<p>至于Cache和TLB通常采用组相连。</p>
+<h4 id="Which-Block-Should-Be-Replaced-On-a-Cache-Miss"><a href="#Which-Block-Should-Be-Replaced-On-a-Cache-Miss" class="headerlink" title="Which Block Should Be Replaced On a Cache Miss?"></a>Which Block Should Be Replaced On a Cache Miss?</h4><p>在直接映射中，Cache替换的候选者只有一个，因此无需考虑替换哪一块。在组相连和全相连中，必须决定替换哪一块，有两种替换策略：</p>
+<ol>
+<li>随机法：随机选择候选者替换，使用一些硬件来实现。</li>
+<li>最近最少使用算法：在之前的章节有解释。</li>
+</ol>
+<p>一般而言，相连度过低（相连度：2-4）的层次结构中使用LRU的代价太高。对于更高的相连度，采用近似LRU或者随机法。随着Cache变得更大，所有的替换策略作用都会下降。</p>
+<h4 id="What-Happens-on-a-Write"><a href="#What-Happens-on-a-Write" class="headerlink" title="What Happens on a Write?"></a>What Happens on a Write?</h4><p>对于存储器结构层次而言，有两种写策略：</p>
+<ol>
+<li>写直达：数据被同时写入Cache和Cache的下一级存储器结构中（对于Cache来说是主存）。</li>
+<li>写回：数据只写入到Cache中，只有当Cache中的块被替换时，才写入到Cache的下一级存储器结构中。</li>
+</ol>
+<p>写回优点：</p>
+<ul>
+<li>处理器以Cache的接收速度写单个字，而不以存储器的接收速度。</li>
+<li>多次写同一块中的字，只用对下一级存储器结构执行一次写操作。</li>
+<li>当块被写回时，由于是写一整块，系统可以利用高带宽传输。</li>
+</ul>
+<p>写直达优点：</p>
+<ul>
+<li>缺失比较简单，缺失代价较小，不需要把整个块写回。</li>
+<li>写直达需要一个写缓存区，相较于写回机制更容易实现。</li>
+</ul>
+<p>在虚拟存储系统中，由于写入磁盘的代价非常大，因此只能采用写回策略。</p>
+<h4 id="The-Three-Cs-An-Intuitive-Model-for-Understanding-the-Behavior-of-Memory-Hierarchies"><a href="#The-Three-Cs-An-Intuitive-Model-for-Understanding-the-Behavior-of-Memory-Hierarchies" class="headerlink" title="The Three Cs : An Intuitive Model for Understanding the Behavior of Memory Hierarchies"></a>The Three Cs : An Intuitive Model for Understanding the Behavior of Memory Hierarchies</h4><p>在存储器层次结构中，所有的缺失分为三个类型（Three Categories，首字母都是C，3C）。</p>
+<ul>
+<li><strong>强制缺失（compulsory miss）</strong>：对从没有在Cache中出现的块第一次进行访问引起的缺失。</li>
+<li><strong>容量缺失（capacity miss）</strong>：由于Cache容纳不了一个程序执行所需要的所有块而引起的Cache缺失，当某些块被替换出去，随后再被调入时，将发生容量缺失。</li>
+<li><strong>冲突缺失（conflict miss）</strong>：在组相连或者直接映射中，多个块竞争同一个组时而引起的Cache缺失。</li>
+</ul>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.21_TheMissRateCanBeBrokenIntoThreeSourcesOfMisses.png" alt="5.21_TheMissRateCanBeBrokenIntoThreeSourcesOfMisses.png"></p>
+<p>强制缺失部分只占0.006%，显示不出来。下半部分是容量缺失，取决于Cache容量大小。冲突缺失既取决于相连度，又取决于Cache的容量，四路和八路之间的变化太小，难以显示。</p>
+<p>冲突缺失是因为争用同一个Cache块而引起的，因此提高相连读就可以减少冲突缺失。然而，提高相连度会延伸访问时间，导致整个性能的降低。</p>
+<p>容量缺失可以简单的通过增大Cache容量来减少，在增大Cache容量的同时，访问时间也一起增加，导致整个性能的降低。</p>
+<p>由于强制缺失是对块的一次访问产生的，因此减少强制缺失的主要办法就是增加块的大小。程序由较少的Cache组成，因此减少了对程序每一块都要访问的总次数。这样做的代价是缺失代价的增加。</p>
+<h3 id="5-9-Using-a-Finite-State-Machine-to-Control-a-Simple-Cache"><a href="#5-9-Using-a-Finite-State-Machine-to-Control-a-Simple-Cache" class="headerlink" title="5.9 Using a Finite-State Machine to Control a Simple Cache"></a>5.9 Using a Finite-State Machine to Control a Simple Cache</h3><p>对于Cache而言，操作是一系列的步骤，控制信号既要指定在任何步骤中信息的设置，又要依次指出下一步的步骤。最常见的多部控制方法基于<strong>有限状态机</strong>（Finite-State Machine），由一组输入和输出，以及下一状态函数和输出函数组成的时序逻辑函数。方向由<strong>下一状态函数</strong>（Next-State Function）来定义，根据当前状态以及当前输入来确定有限状态机下一状态的组合函数。</p>
+<p>一个有限状态机的实现包括：一个保持当前状态的临时寄存器和一个组合逻辑，组合逻辑用来决定有效的数据通路信号和下一状态。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.22_FourStatesOfTheSimpleController.png" alt="5.22_FourStatesOfTheSimpleController.png"></p>
+<ul>
+<li>空闲（Idle）：这个状态等待处理器发出有效的读/写请求，将有限状态机转移到比较比较。</li>
+<li>标记比较（Compare Tag）：该状态主要作用是检测是读/写请求是命中还是丢失。</li>
+<li>分配（Allocate）：新的块从存储器中取回。等待存储器给出准备信号，状态转入到标记比较状态。</li>
+<li>写回（Write-Back）：这个状态根据标记和Cache索引组合的地址，将128位的块写回存储器。等待存储器给出准备信号，状态转入到分配状态。</li>
+</ul>
+<p>在5.12节中更深入的有限状态机的研究。</p>
+<h3 id="5-10-Parallelism-and-Memory-Hierarchy-Cache-Coherence"><a href="#5-10-Parallelism-and-Memory-Hierarchy-Cache-Coherence" class="headerlink" title="5.10 Parallelism and Memory Hierarchy : Cache Coherence"></a>5.10 Parallelism and Memory Hierarchy : Cache Coherence</h3><p>在多核多处理器的芯片上，可能会发生多个处理器共享一个物理地址空间，如果没有什么防范措施，那么两个处理器可能分别得到两个不同的值。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.23_TheCacheCoherenceProblem.png" alt="5.23_TheCacheCoherenceProblem.png"></p>
+<p>当X的值被A改写后，A的Cache和存储器中的数据做了更新，而B的Cache还是原来的，如果B读X，那么会得到0。这里假设是写直达，如果是写回，情况更加复杂些。</p>
+<p>如果在一个存储器系统中读取任何一个数据项的返回结果总是最近写入的值，那么可以认为该<strong>存储器具有一致性</strong>。有两个特性对于编写正确的共享存储程序是至关重要的：<strong>一致性（Coherence）</strong>定义了读操作可以返回什么样的数值；<strong>连贯性（Consistency）</strong>定义了写入的数据什么时候才能被读操作返回。</p>
+<p>在支持Cache一致性的多处理器中，提供两种共享数据的方案。</p>
+<ul>
+<li>迁移（Migration）：数据项可以移入本地Cache并以透明的方式使用。不但减少了访问远程共享数据项的延迟，而且减少了对共享存储器带宽的需求。</li>
+<li>复制（Replication）：当共享数据被同时读取时，Cache在本地对数据项做了备份。复制减少了访问延迟和读取共享数据时的竞争现象。</li>
+</ul>
+<p>许多处理器使用硬件协议来完成Cache的一致性，这个协议被称为<strong>Cache一致性协议（Cache Coherence Protocol）</strong>。最常用的Cache一致性协议的是监听（Snooping）协议，Cache可以使用广播媒介或者网络，所有的Cache控制器对媒介进行监视或者监听，来确定Cache是否有总线或者交换机上请求的数据块。</p>
+<p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1_%E7%A1%AC%E4%BB%B6%5C%E8%BD%AF%E4%BB%B6%E6%8E%A5%E5%8F%A3/5.24_WriteInvalidateProtocolWithWriteBack.png" alt="5.24_WriteInvalidateProtocolWithWriteBack.png"></p>
+<p>实现一致性的一种办法是：使用<strong>写无效协议（Write Invalidate Protocol）</strong>，在执行写操作的时候令其他副本无效。由于写操作需要独占访问，执行读操作的处理器中保持的任何副本都要被置为无效。当执行读操作的时候，Cache中发生缺失，需要重新去Cache中读取，这样就能够获取到写入之后的数据项。</p>
+<h3 id="5-11-Parallelism-and-Memory-Hierarchy-Redundant-Arrays-of-Inexpensive-Disks"><a href="#5-11-Parallelism-and-Memory-Hierarchy-Redundant-Arrays-of-Inexpensive-Disks" class="headerlink" title="5.11 Parallelism and Memory Hierarchy : Redundant Arrays of Inexpensive Disks"></a>5.11 Parallelism and Memory Hierarchy : Redundant Arrays of Inexpensive Disks</h3><p>本节内容在网站上，讲述了采用许多磁盘并行工作来提高吞吐率，使用的是冗余廉价磁盘阵列（Redundant Arrays of Inexpensive Disks，RAID）。</p>
+<h3 id="5-12-Advenced-Material-Implementing-Cache-Controllers"><a href="#5-12-Advenced-Material-Implementing-Cache-Controllers" class="headerlink" title="5.12 Advenced Material : Implementing Cache Controllers"></a>5.12 Advenced Material : Implementing Cache Controllers</h3><p>本节内容在网站上，讲述了如何实现Cache的控制。</p>
+<h3 id="5-13-Real-Stuff-The-ARM-Cortex-A8-and-Intel-Core-i7-Memory-Hierarchies"><a href="#5-13-Real-Stuff-The-ARM-Cortex-A8-and-Intel-Core-i7-Memory-Hierarchies" class="headerlink" title="5.13 Real Stuff: The ARM Cortex-A8 and Intel Core i7 Memory Hierarchies"></a>5.13 Real Stuff: The ARM Cortex-A8 and Intel Core i7 Memory Hierarchies</h3><p>本节内容基于《计算机体系结构：量化研究方法》的2.6节。感兴趣的同学可以去看看。</p>
+<h3 id="5-14-Going-Faster-Cache-Blocking-and-Matrix-Multiply"><a href="#5-14-Going-Faster-Cache-Blocking-and-Matrix-Multiply" class="headerlink" title="5.14 Going Faster: Cache Blocking and Matrix Multiply"></a>5.14 Going Faster: Cache Blocking and Matrix Multiply</h3><p>在硬件上使用Cache分块技术来进行性能的提升。</p>
+<h3 id="5-15-Fallacies-and-Pitfalls"><a href="#5-15-Fallacies-and-Pitfalls" class="headerlink" title="5.15 Fallacies and Pitfalls"></a>5.15 Fallacies and Pitfalls</h3><p>陷阱（Pitfalls）：在写程序或者编译器生成代码时忽略存储系统的行为。</p>
+<p>陷阱（Pitfalls）：在模拟Cache的时候，忘记说明字节编址或者Cache块大小。</p>
+<p>陷阱（Pitfalls）：对于共享Cache，组相连度少于核的数量或者共享该Cache的线程数。</p>
+<p>陷阱（Pitfalls）：用存储器平均访问时间来评估乱序处理器的存储器层次结构。</p>
+<p>陷阱（Pitfalls）：通过在未分段地址空间的顶部增加段来扩展地址空间。</p>
+<p>谬误（Fallacies）：实际的磁盘故障率和规格书中声明的一致。</p>
+<p>谬误（Fallacies）：操作系统是调度磁盘访问的最好地方。</p>
+<p>陷阱（Pitfalls）：在不为虚拟化设计的指令集体系结构上实现虚拟机监视器。</p>
+<h3 id="5-16-Concluding-Remarks"><a href="#5-16-Concluding-Remarks" class="headerlink" title="5.16 Concluding Remarks"></a>5.16 Concluding Remarks</h3><p>在构建存储器层次结构中，需要利用局部性原理来克服存储器访问的延迟。</p>
+<p>多次Cache可以更方便的优化：第一，低级Cache和一级Cache的设计参数不一样，二级Cache容量更大；第二，低级Cache不像一级Cache那样经常被访问。</p>
+<h3 id="5-17-Historical-Perspective-and-Further-Reading"><a href="#5-17-Historical-Perspective-and-Further-Reading" class="headerlink" title="5.17 Historical Perspective and Further Reading"></a>5.17 Historical Perspective and Further Reading</h3><p>本节网站上的内容描述了存储器技术的概况，从汞延迟线到DRAM，存储器层次结构的发明，保护机制以及虚拟机，最后以操作系统的一个简单发展历史作为总结。</p>
+<h3 id="5-18-Exercises"><a href="#5-18-Exercises" class="headerlink" title="5.18 Exercises"></a>5.18 Exercises</h3><p>~</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/05/计算机组成与设计（一）/" rel="next" title="计算机组成与设计 硬件/软件接口（一）">
+                <i class="fa fa-chevron-left"></i> 计算机组成与设计 硬件/软件接口（一）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/08/计算机组成与设计（三）/" rel="prev" title="计算机组成与设计 硬件/软件接口（三）">
+                计算机组成与设计 硬件/软件接口（三） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg"
+                alt="Dong Yan" />
+            
+              <p class="site-author-name" itemprop="name">Dong Yan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cave19941023@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Chapter-5-Large-and-Fast-Exploiting-Memory-Hierarchy"><span class="nav-text">Chapter 5 Large and Fast: Exploiting Memory Hierarchy</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-Introduction"><span class="nav-text">5.1 Introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-Memory-Technologies"><span class="nav-text">5.2 Memory Technologies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-The-Basics-of-Caches"><span class="nav-text">5.3 The Basics of Caches</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-Measuring-and-Improving-Cache-Performance"><span class="nav-text">5.4 Measuring and Improving Cache Performance</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-Dependable-Memory-Hierarchy"><span class="nav-text">5.5 Dependable Memory Hierarchy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-6-Virtual-Machine"><span class="nav-text">5.6 Virtual Machine</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-7-Virtual-Memory"><span class="nav-text">5.7 Virtual Memory</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Placing-a-Page-and-Finding-It-Again"><span class="nav-text">Placing a Page and Finding It Again</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Page-Faults"><span class="nav-text">Page Faults</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#What-about-Writes"><span class="nav-text">What about Writes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Making-Address-Translation-Fast-the-TLB"><span class="nav-text">Making Address Translation Fast : the TLB</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Implementing-Protection-with-Virtual-Memory"><span class="nav-text">Implementing Protection with Virtual Memory</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Handing-TLB-Misses-and-Page-Faults"><span class="nav-text">Handing TLB Misses and Page Faults</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-8-A-Common-Framework-for-Memeory-Hierarchy"><span class="nav-text">5.8 A Common Framework for Memeory Hierarchy</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Where-Can-a-Block-Be-Placed"><span class="nav-text">Where Can a Block Be Placed?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#How-is-a-Block-Found"><span class="nav-text">How is a Block Found?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Which-Block-Should-Be-Replaced-On-a-Cache-Miss"><span class="nav-text">Which Block Should Be Replaced On a Cache Miss?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#What-Happens-on-a-Write"><span class="nav-text">What Happens on a Write?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#The-Three-Cs-An-Intuitive-Model-for-Understanding-the-Behavior-of-Memory-Hierarchies"><span class="nav-text">The Three Cs : An Intuitive Model for Understanding the Behavior of Memory Hierarchies</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-9-Using-a-Finite-State-Machine-to-Control-a-Simple-Cache"><span class="nav-text">5.9 Using a Finite-State Machine to Control a Simple Cache</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-10-Parallelism-and-Memory-Hierarchy-Cache-Coherence"><span class="nav-text">5.10 Parallelism and Memory Hierarchy : Cache Coherence</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-11-Parallelism-and-Memory-Hierarchy-Redundant-Arrays-of-Inexpensive-Disks"><span class="nav-text">5.11 Parallelism and Memory Hierarchy : Redundant Arrays of Inexpensive Disks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-12-Advenced-Material-Implementing-Cache-Controllers"><span class="nav-text">5.12 Advenced Material : Implementing Cache Controllers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-13-Real-Stuff-The-ARM-Cortex-A8-and-Intel-Core-i7-Memory-Hierarchies"><span class="nav-text">5.13 Real Stuff: The ARM Cortex-A8 and Intel Core i7 Memory Hierarchies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-14-Going-Faster-Cache-Blocking-and-Matrix-Multiply"><span class="nav-text">5.14 Going Faster: Cache Blocking and Matrix Multiply</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-15-Fallacies-and-Pitfalls"><span class="nav-text">5.15 Fallacies and Pitfalls</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-16-Concluding-Remarks"><span class="nav-text">5.16 Concluding Remarks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-17-Historical-Perspective-and-Further-Reading"><span class="nav-text">5.17 Historical Perspective and Further Reading</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-18-Exercises"><span class="nav-text">5.18 Exercises</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dong Yan</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.0.5</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.5"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.5"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.5"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.5"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.5"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
