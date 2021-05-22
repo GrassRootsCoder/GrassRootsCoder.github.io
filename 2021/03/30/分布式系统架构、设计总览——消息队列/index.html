@@ -103,23 +103,23 @@
   <meta name="keywords" content="Hexo, NexT" />
 
 
-<meta name="description" content="一个孤独漫步者的遐想卢梭生前最后一本书籍，一个60岁的老人，回忆自己经历的种种往事，将人生领悟的哲理写入书籍，在生命最后之际仿佛得到了自由一般，渡过了最后的时光。 从卢梭的领悟中我感受到了“人性”，200多年前的人与现在的人其实并没有多少区别，他所经历的往事，放在现在也依然如此，“虚假的谎言”、“理所应当的认为”以及“何为幸福”。我没有想着能够成为一个圣人，也不想成为一个传统意义上的好人，我想成为">
+<meta name="description" content="分布式系统架构、设计总览——消息队列 RabbitMQ 进阶&amp;原理">
 <meta property="og:type" content="article">
-<meta property="og:title" content="《一个孤独漫步者的遐想》">
-<meta property="og:url" content="http://yoursite.com/2018/05/10/一个孤独漫步者的遐想/index.html">
+<meta property="og:title" content="分布式系统架构、设计总览——消息队列">
+<meta property="og:url" content="http://yoursite.com/2021/03/30/分布式系统架构、设计总览——消息队列/index.html">
 <meta property="og:site_name" content="Dong Yan Blog">
-<meta property="og:description" content="一个孤独漫步者的遐想卢梭生前最后一本书籍，一个60岁的老人，回忆自己经历的种种往事，将人生领悟的哲理写入书籍，在生命最后之际仿佛得到了自由一般，渡过了最后的时光。 从卢梭的领悟中我感受到了“人性”，200多年前的人与现在的人其实并没有多少区别，他所经历的往事，放在现在也依然如此，“虚假的谎言”、“理所应当的认为”以及“何为幸福”。我没有想着能够成为一个圣人，也不想成为一个传统意义上的好人，我想成为">
-<meta property="og:updated_time" content="2018-05-09T16:00:00.000Z">
+<meta property="og:description" content="分布式系统架构、设计总览——消息队列 RabbitMQ 进阶&amp;原理">
+<meta property="og:updated_time" content="2021-03-29T16:00:00.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="《一个孤独漫步者的遐想》">
-<meta name="twitter:description" content="一个孤独漫步者的遐想卢梭生前最后一本书籍，一个60岁的老人，回忆自己经历的种种往事，将人生领悟的哲理写入书籍，在生命最后之际仿佛得到了自由一般，渡过了最后的时光。 从卢梭的领悟中我感受到了“人性”，200多年前的人与现在的人其实并没有多少区别，他所经历的往事，放在现在也依然如此，“虚假的谎言”、“理所应当的认为”以及“何为幸福”。我没有想着能够成为一个圣人，也不想成为一个传统意义上的好人，我想成为">
+<meta name="twitter:title" content="分布式系统架构、设计总览——消息队列">
+<meta name="twitter:description" content="分布式系统架构、设计总览——消息队列 RabbitMQ 进阶&amp;原理">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/05/10/一个孤独漫步者的遐想/"/>
+  <link rel="canonical" href="http://yoursite.com/2021/03/30/分布式系统架构、设计总览——消息队列/"/>
 
 
 
@@ -128,7 +128,7 @@
     sidebar: "",
   };
 </script>
-  <title>《一个孤独漫步者的遐想》 | Dong Yan Blog</title>
+  <title>分布式系统架构、设计总览——消息队列 | Dong Yan Blog</title>
   
 
 
@@ -275,7 +275,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/10/一个孤独漫步者的遐想/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/30/分布式系统架构、设计总览——消息队列/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dong Yan">
@@ -292,7 +292,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">《一个孤独漫步者的遐想》</h1>
+          <h1 class="post-title" itemprop="name headline">分布式系统架构、设计总览——消息队列</h1>
         
 
         <div class="post-meta">
@@ -304,7 +304,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-05-10T00:00:00+08:00">2018-05-10</time>
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-03-30T00:00:00+08:00">2021-03-30</time>
             
 
             
@@ -325,7 +325,7 @@
               
                 <span class="post-meta-item-text">Post modified&#58;</span>
               
-              <time title="Post modified" itemprop="dateModified" datetime="2018-05-10T00:00:00+08:00">2018-05-10</time>
+              <time title="Post modified" itemprop="dateModified" datetime="2021-03-30T00:00:00+08:00">2021-03-30</time>
             
           </span>
 
@@ -341,7 +341,14 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/所思所想/" itemprop="url" rel="index"><span itemprop="name">所思所想</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Message-Queue/" itemprop="url" rel="index"><span itemprop="name">Message Queue</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Distributed-Architecture/" itemprop="url" rel="index"><span itemprop="name">Distributed Architecture</span></a></span>
 
                 
                 
@@ -375,32 +382,8 @@
       
 
       
-        <h2 id="一个孤独漫步者的遐想"><a href="#一个孤独漫步者的遐想" class="headerlink" title="一个孤独漫步者的遐想"></a>一个孤独漫步者的遐想</h2><p>卢梭生前最后一本书籍，一个60岁的老人，回忆自己经历的种种往事，将人生领悟的哲理写入书籍，在生命最后之际仿佛得到了自由一般，渡过了最后的时光。</p>
-<p>从卢梭的领悟中我感受到了“人性”，200多年前的人与现在的人其实并没有多少区别，他所经历的往事，放在现在也依然如此，“虚假的谎言”、“理所应当的认为”以及“何为幸福”。我没有想着能够成为一个圣人，也不想成为一个传统意义上的好人，我想成为一个“自由”的人，认清世界，认清自己。</p>
-<p>从中挑选3个我感悟最深的段落，它们展现了人性的善良和邪恶，以及我的悲观观点，“人世间是不会有圣人的，因为人性中本来就夹藏着善良和邪恶，所有事物只说正面而不说反面的，都是带有利益的偏见。”</p>
-<a id="more"></a><br>
-
-
-
-<h3 id="谎言与真相"><a href="#谎言与真相" class="headerlink" title="谎言与真相"></a>谎言与真相</h3><p>为什么人会说谎，那肯定因为背后涉及利益，谎言相比真相更加有利，否则何必让自己的内心愧疚？在人性中总有邪恶的一面，我不相信有哪一个人一辈子没有一个谎言，如果TA坚持说自己没有谎言，那么内心简直就是太虚伪了，不愿意承认邪恶的一面，更加看不清楚现实。</p>
-<p>很多的谎言都是因为说出真相的代价太大，让人不得不说谎，因为不愿意承受真相的代价，同时自己的未来和这件事情密切相关，所以，整个职场上充满着谎言。我时常在想，那些说自己正直的人，他们会在每一个场合都说出真相吗？如果说出真相的代价太小，那么还不足以考验人，当真相的代价足够大时，人性才会体现出来。当然，在这种时候，考验人性就没有多大意义，因为在人性中，善良和邪恶总是共存的。如果对面这样的场合，都能够说出真相，那么TA的品德是多么的高尚。</p>
-<p>虚构是因为背后没有利益，讲一个虚构的故事是为了表达出某种思想，如果是为了利益，那么这就是谎言。对于虚构的分界比较模糊，人都是为了达成某种目的而去行动的，如果目的背后没有利益，其实这件事情没有必要去做。我这样的想法有点危险，将人完全邪恶化，其实还是有很多人不求利益的。</p>
-<p>至于善意的谎言，我与卢梭的观点相似，认为都是谎言，这些善意的背后依然是为了利益，不可能挂上了善意这个词以后，谎言就得到了肯定，变成一个正直的谎言。我不想给自己戴上高贵的帽子，明明就是利益驱使，还要带上一个这么高尚的借口。</p>
-<p>我的灵魂肯定不是高贵的，在我犯了很多错误的时候就已经开始变得暗淡，但是我仍然希望在今后的时间中能够变得耀眼，我说的谎确实为了一些利益，在很多场合中由于真相的代价太大，谎言成为了我唯一的选择，因此我不能算是完全光明的。但是以后的场合中，当我足够承受真相的代价时，真相肯定会出现，我不会用谎言去获得我自己的利益。但这些理由都不足以开脱我的谎言，所以我内心是煎熬的，我想成为如此高尚的人，但是我知道自己的灵魂没有那么高尚，只是想要得到救赎。我并不会在任何场合下说我自己是如何的正直，因为我知道人性的存在，明明知道人性的存在，却还是要说自己正直，无视了客观存在的事实，那么这个人未免也太傲慢了。</p>
-<br>
-
-
-
-<h3 id="理所应当"><a href="#理所应当" class="headerlink" title="理所应当"></a>理所应当</h3><p>当一个人做了件好事，或者是额外的付出，得到这份善意的受益者在最初的时候会是感激，随着时间的流逝，受益者会把这份善意当成是理所应当的。原本是额外的付出，变成理所应当的付出，这让那些想要做好事的人，变得越来越“自私”。在我们受到别人善行时，会自然而然的把这份善行当成是理所当然的，渐渐的也就失去了原本善行的初衷。想要去除这样的理所当然，只有反思自己，改变自己的观点。</p>
-<p>对于一件事情，先要看清楚这事情的基本要求，完成时满足基本要求，那就是圆满结束。如果额外完成了，应该奖励或者感激，同时下次再做相同的事情时，要用基本要求来规定，而不是在基本要求之上添加额外的要求，否则会挫伤当事人。受益者总会把期望慢慢往上增加，直至无法达成期望。</p>
-<p>多数情况下，我自己也会把对自己和对他人的期望慢慢增加，最后的结果不言而喻。希望自己时长能自省，不要做过多理所应当的期望。</p>
-<br>
-
-
-
-<h3 id="苦难与独处"><a href="#苦难与独处" class="headerlink" title="苦难与独处"></a>苦难与独处</h3><p>“只能同享福，无法共患难”。当自己经历苦难时，想必多数人都是一个人挺过来。对于那些在自己困难时离开的人，没有必要感到失望，人都是不想惹是生非，自己与TA之间的关系太浅。对于那些伸出援手的人，要心存感激，TA相信你能渡过难关，那自己也需要给TA回应。或许，我们都很难碰上共患难的人，注定需要事情要一个人完成，不过不要放弃，未来都是不确定的。</p>
-<p>既然多数人都是孤独的，那么与孤独相伴就变成了一件平常事，想要与孤独做朋友，就必须有一个强大的内心，知道自己想要什么，知道自己想要成为什么样的人，一路走下去，直至终点。途中会与人相识，也会与人离别，相识时高兴，离别时祝福，无论相处的时间多久，这都是缘分。一个人还是一群人，只是数量上的区别，关键在于自己的内心是否得到满足。</p>
-<br>
+        <p>分布式系统架构、设计总览——消息队列</p>
+<a href="/2021/03/23/RabbitMQ进阶&原理/" title="RabbitMQ 进阶&原理">RabbitMQ 进阶&原理</a> <br>
 
 
       
@@ -429,8 +412,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/05/08/计算机组成与设计（三）/" rel="next" title="计算机组成与设计 硬件/软件接口（三）">
-                <i class="fa fa-chevron-left"></i> 计算机组成与设计 硬件/软件接口（三）
+              <a href="/2021/03/23/RabbitMQ进阶&原理/" rel="next" title="RabbitMQ 进阶&原理">
+                <i class="fa fa-chevron-left"></i> RabbitMQ 进阶&原理
               </a>
             
           </div>
@@ -438,10 +421,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/05/16/深入理解Java虚拟机（一）/" rel="prev" title="深入理解Java虚拟机（一）">
-                深入理解Java虚拟机（一） <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -490,17 +469,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -599,22 +569,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一个孤独漫步者的遐想"><span class="nav-text">一个孤独漫步者的遐想</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#谎言与真相"><span class="nav-text">谎言与真相</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理所应当"><span class="nav-text">理所应当</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#苦难与独处"><span class="nav-text">苦难与独处</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
