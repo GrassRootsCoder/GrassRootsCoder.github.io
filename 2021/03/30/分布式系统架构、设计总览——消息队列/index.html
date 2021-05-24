@@ -103,17 +103,17 @@
   <meta name="keywords" content="Hexo, NexT" />
 
 
-<meta name="description" content="分布式环境下的消息队列  描述，TODO">
+<meta name="description" content="分布式环境下的消息队列">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式系统架构、设计总览——消息队列">
 <meta property="og:url" content="http://yoursite.com/2021/03/30/分布式系统架构、设计总览——消息队列/index.html">
 <meta property="og:site_name" content="Dong Yan Blog">
-<meta property="og:description" content="分布式环境下的消息队列  描述，TODO">
+<meta property="og:description" content="分布式环境下的消息队列">
 <meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%80%BB%E8%A7%88/01_Distributed%20Architecture.jpg">
 <meta property="og:updated_time" content="2021-03-29T16:00:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分布式系统架构、设计总览——消息队列">
-<meta name="twitter:description" content="分布式环境下的消息队列  描述，TODO">
+<meta name="twitter:description" content="分布式环境下的消息队列">
 <meta name="twitter:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%80%BB%E8%A7%88/01_Distributed%20Architecture.jpg">
 
 
@@ -386,45 +386,85 @@
       
         <h3 id="分布式环境下的消息队列"><a href="#分布式环境下的消息队列" class="headerlink" title="分布式环境下的消息队列"></a>分布式环境下的消息队列</h3><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%80%BB%E8%A7%88/01_Distributed%20Architecture.jpg" alt="分布式架构-消息队列" style="zoom: 40%;">
 
-<p>描述，TODO</p>
-<a id="more"></a>
+
+
+<a id="more"></a><br>
 
 
 
-<h3 id="消息队列的作用"><a href="#消息队列的作用" class="headerlink" title="消息队列的作用"></a>消息队列的作用</h3><p>​    解藕，异步，削峰（最终一致性等）</p>
-<p>​    解藕：同一份数据如果有多个系统需要，可以自己监听这个消息，而不用数据发送系统一个一个发送，还需要编写代码，每次修改也一样，消费者不想接收时可以自行修改配置，不用生产者再修改代码。通过发布/订阅这个消息模型来实现系统之间解藕。<strong>（思考：以前和现在的项目中有没有地方使用到）</strong></p>
-<p>​    异步：执行一个接口内部实现需要操作多个表，或者消耗大量算力，可以通过消息异步处理，将响应时间大大减少，多线程也能做到，只是消息队列提供了一些功能，比如重试。<strong>（思考：以前和现在的项目中有没有地方使用到）</strong></p>
-<p>​    削峰：在某个时间段内请求次数突然上升，大量的并发请求会导致服务器、数据库崩溃宕机，导致用户无法使用系统，这个时候将请求放入消息队列中，减缓服务器、数据库压力，消费者通过长时间慢慢消费积压的请求。<strong>（思考：以前和现在的项目中有没有地方使用到）</strong></p>
-<h3 id="消息队列的优缺点"><a href="#消息队列的优缺点" class="headerlink" title="消息队列的优缺点"></a>消息队列的优缺点</h3><p>​    优点：就是上面的使用场景，解决了困扰这些场景的问题</p>
-<p>​    缺点：<strong>降低可用性</strong>（当消息队列挂了以后，整个业务将会中断）、<strong>提高复杂度</strong>（项目接入消息队列需要额外的编写代码，同时注意各种异常处理、重复消费、消息丢失、顺序消费等）、<strong>数据一致性</strong>（整个业务分为四块调用，其中有三块处理成功，一个处理失败，这个时候要怎么处理）</p>
-<h3 id="消息队列的选型"><a href="#消息队列的选型" class="headerlink" title="消息队列的选型"></a>消息队列的选型</h3><p>​    ActiveMQ、RabbitMQ、RocketMQ、Kafka</p>
-<h3 id="如何防止消息重复消费"><a href="#如何防止消息重复消费" class="headerlink" title="如何防止消息重复消费"></a>如何防止消息重复消费</h3><p>​        任何消息队列都会存在重复消费的问题，需要考虑的是发生了重复消费以后，怎么不影响业务。在 RabbitMQ 中有一个消费成功 API，如果在执行完业务之后，刚准备调用该 API 告诉 MQ 已经消费，这时重启，会产生重复消费问题</p>
-<p>​        实现幂等性核心思想是唯一标示，每个消息都设置一个唯一标示，消费者在消费前先进行唯一标示校验，校验通过以后才继续执行。这个唯一标示可以是主键、业务唯一键、消息 ID 等。具体如何实现幂等性还需要根据实际场景来做决定</p>
-<h3 id="如何处理消息中数据丢失问题"><a href="#如何处理消息中数据丢失问题" class="headerlink" title="如何处理消息中数据丢失问题"></a>如何处理消息中数据丢失问题</h3><p>​        <strong>RabbitMQ 处理数据丢失问题</strong></p>
-<p>​        在使用消息队列过程中分为三个端，生产者、消息队列和消费者，这三个端都会存在消息丢失的情况</p>
-<p>​            生产者：在发送到消息队列时网络发生波动，导致数据丢失；消息队列内部在接收消息时发生错误等</p>
-<p>​            消息队列：消息数据还在队列内存中，消费者没有来得及消费服务就挂了，导致数据丢失</p>
-<p>​            消费者：在刚消费时还没来得及处理就服务挂了，消息队列误以为该消息数据处理完毕</p>
-<p>​        在三个端都有方法解决数据丢失问题</p>
-<p>​            生产者：消息队列提供了相关API，RabbitMQ 有 ConfrimCallback 机制，生产者向队列发送数据后，会有一个回调在 confrim 方法中，有个参数表明时发送成功还是失败，可以在发送失败时重试，解决生产者数据丢失问题</p>
-<p>​            消息队列：RabbitMQ 开启持久化机制，消息数据必须写入到磁盘才算发送成功，在服务重启后会自动读取磁盘上的消息数据。开启方式是创建 Queue 设置参数，以及在发送消息时设置参数</p>
-<p>​            消费者：关闭 AutoAck 机制，消费者需要手动通知消息队列 Ack，这样发生异常或者宕机时也不会误以为已消费过数据</p>
-<h3 id="如何保证消息顺序消费"><a href="#如何保证消息顺序消费" class="headerlink" title="如何保证消息顺序消费"></a>如何保证消息顺序消费</h3><p>​    RabbitMQ 为什么会发生数据消费顺序不一致问题。一个 Queue 对应多个 Consumer，不同的 Consumer 处理速度会不同（可能有一些网络波动问题），导致数据在插入数据库时的顺序也因此改变</p>
-<p>​    RabbitMQ 解决数据顺序问题。一个 Queue 对应一个 Consumer，Consumer 内部做异步处理（Work），同时需要限制一下时间，异步处理也可能会引发顺序问题。（发送到同一个 Consumer，如果该 Consumer 没有处理完上一个数据，那下个数据还会进来么）</p>
-<h3 id="消息队列生产环境的经典案例"><a href="#消息队列生产环境的经典案例" class="headerlink" title="消息队列生产环境的经典案例"></a>消息队列生产环境的经典案例</h3><p>​        <strong>Consumer 挂了或者逻辑问题，导致消息积压上千万条，如何处理</strong></p>
-<p>​            首先要处理 Consumer 问题，修复代码或者重启；其次，需要临时扩展 Queue 和 Consumer（扩展数量是原来的五倍、十倍或者二十倍），主要目的是快速消减积压的消息；接着，创建临时 Queue 和 Consumer（所创建的临时 Consumer 具有原有 Consumer 的逻辑处理），将原有的 Consumer 逻辑修改为直接把消息发送到临时 Queue 中，让临时 Consumer 做逻辑处理，扩展数量是原来的倍数，所以消息的时间会比原来的快；最后，等积压消息处理完毕后，恢复原来的配置，移除掉临时 Queue 和 Consumer，原有的 Consumer 继续做逻辑处理</p>
-<p>​        <strong>消息处理延迟导致数据丢失问题</strong></p>
-<p>​            RabbitMQ 有参数可以设置消息过期时间，如果消息存在一定时间且没有被消费，那么消息队列会自动丢掉该消息，这样就导致数据丢失。线上 RabbitMQ 不能配置这个参数。如果已经配置消息过期时间且引发了数据丢失，那需要写代码根据日志读取数据库，把丢失掉的数据重新处理一遍</p>
-<p>​        <strong>消息队列磁盘被写满了如何处理</strong></p>
-<p>​            这个问题可以参考第一种处理方式（因为消息积压太多，导致磁盘写满），临时扩展 Queue 和 Consumer 快速处理积压的消息，把磁盘容量空出来，然后再写代码根据日志读取数据库，把丢失掉的数据拿出来重新处理一遍</p>
+<h3 id="消息队列的作用"><a href="#消息队列的作用" class="headerlink" title="消息队列的作用"></a>消息队列的作用</h3><p>主要作用：<strong>解藕，异步，削峰</strong></p>
+<ol>
+<li>解藕：同一份数据如果有多个系统需要，可以自己监听这个消息，而不用数据发送系统一个一个发送，还需要编写代码，每次修改也一样，消费者不想接收时可以自行修改配置，不用生产者再修改代码。通过发布/订阅这个消息模型来实现系统之间解藕</li>
+<li>异步：执行一个接口内部实现需要操作多个表，或者消耗大量算力，可以通过消息异步处理，将响应时间大大减少，多线程也能做到，只是消息队列提供了一些功能，比如重试</li>
+<li>削峰：在某个时间段内请求次数突然上升，大量的并发请求会导致服务器、数据库崩溃宕机，导致用户无法使用系统，这个时候将请求放入消息队列中，减缓服务器、数据库压力，消费者通过长时间慢慢消费积压的请求</li>
+</ol>
+<br>
+
+
+
+<h3 id="消息队列的优缺点"><a href="#消息队列的优缺点" class="headerlink" title="消息队列的优缺点"></a>消息队列的优缺点</h3><p>优点：就是上面的使用场景，解决了困扰这些场景的问题</p>
+<p>缺点：<strong>降低可用性</strong>（当消息队列挂了以后，整个业务将会中断）、<strong>提高复杂度</strong>（项目接入消息队列需要额外的编写代码，同时注意各种异常处理、重复消费、消息丢失、顺序消费等）、<strong>数据一致性</strong>（整个业务分为四块调用，其中有三块处理成功，一个处理失败，这个时候要怎么处理）</p>
+<br>
+
+
+
+<h3 id="消息队列的选型"><a href="#消息队列的选型" class="headerlink" title="消息队列的选型"></a>消息队列的选型</h3><p>ActiveMQ、RabbitMQ、RocketMQ、Kafka</p>
+<p>一般情况下选择 RabbitMQ，如果需要处理高并发，则搭建集群。Kafka 在处理数据高并发情况下使用（大数据方面）</p>
+<p>PS：这部分内容比较多，同时也没什么特别重要的点，所以就不把内容展示出来了</p>
+<br>
+
+
+
+<h3 id="如何防止消息重复消费（★）"><a href="#如何防止消息重复消费（★）" class="headerlink" title="如何防止消息重复消费（★）"></a>如何防止消息重复消费（★）</h3><p>任何消息队列都会存在重复消费的问题，需要考虑的是发生了重复消费以后，怎么不影响业务。在 RabbitMQ 中有一个消费成功 API，如果在执行完业务之后，刚准备调用该 API 告诉 MQ 已经消费，这时重启，会产生重复消费问题</p>
+<p>实现幂等性核心思想是唯一标示，每个消息都设置一个唯一标示，消费者在消费前先进行唯一标示校验，校验通过以后才继续执行。这个唯一标示可以是主键、业务唯一键、消息 ID 等。具体如何实现幂等性还需要根据实际场景来做决定</p>
+<br>
+
+
+
+<h3 id="如何处理消息中数据丢失问题（★）"><a href="#如何处理消息中数据丢失问题（★）" class="headerlink" title="如何处理消息中数据丢失问题（★）"></a>如何处理消息中数据丢失问题（★）</h3><p><strong>RabbitMQ 发生数据丢失问题原因：</strong></p>
+<ol>
+<li>生产者：在发送到消息队列时网络发生波动，导致数据丢失；消息队列内部在接收消息时发生错误等</li>
+<li>消息队列：消息数据还在队列内存中，消费者没有来得及消费服务就挂了，导致数据丢失</li>
+<li>消费者：在刚消费时还没来得及处理就服务挂了，消息队列误以为该消息数据处理完毕</li>
+</ol>
+<p><strong>RabbitMQ 解决数据丢失问题方案：</strong></p>
+<ol>
+<li>生产者：消息队列提供了相关API，RabbitMQ 有 ConfrimCallback 机制，生产者向队列发送数据后，会有一个回调在 confrim 方法中，有个参数表明时发送成功还是失败，可以在发送失败时重试，解决生产者数据丢失问题</li>
+<li>消息队列：RabbitMQ 开启持久化机制，消息数据必须写入到磁盘才算发送成功，在服务重启后会自动读取磁盘上的消息数据。开启方式是创建 Queue 设置参数，以及在发送消息时设置参数</li>
+<li>消费者：关闭 AutoAck 机制，消费者需要手动通知消息队列 Ack，这样发生异常或者宕机时也不会误以为已消费过数据</li>
+</ol>
+<br>
+
+
+
+<h3 id="如何保证消息顺序消费（★）"><a href="#如何保证消息顺序消费（★）" class="headerlink" title="如何保证消息顺序消费（★）"></a>如何保证消息顺序消费（★）</h3><p>RabbitMQ 为什么会发生数据消费顺序不一致问题。一个 Queue 对应多个 Consumer，不同的 Consumer 处理速度会不同（可能有一些网络波动问题），导致数据在插入数据库时的顺序也因此改变</p>
+<p>RabbitMQ 解决数据顺序问题。一个 Queue 对应一个 Consumer，Consumer 内部做异步处理（Work），同时需要限制一下时间，异步处理也可能会引发顺序问题</p>
+<br>
+
+
+
+<h3 id="消息队列生产环境的经典案例（★）"><a href="#消息队列生产环境的经典案例（★）" class="headerlink" title="消息队列生产环境的经典案例（★）"></a>消息队列生产环境的经典案例（★）</h3><p><strong>A.Consumer 挂了或者逻辑问题，导致消息积压上千万条，如何处理</strong></p>
+<p>​    首先要处理 Consumer 问题，修复代码或者重启；其次，需要临时扩展 Queue 和 Consumer（扩展数量是原来的五倍、十倍或者二十倍），主要目的是快速消减积压的消息；接着，创建临时 Queue 和 Consumer（所创建的临时 Consumer 具有原有 Consumer 的逻辑处理），将原有的 Consumer 逻辑修改为直接把消息发送到临时 Queue 中，让临时 Consumer 做逻辑处理，扩展数量是原来的倍数，所以消息的时间会比原来的快；最后，等积压消息处理完毕后，恢复原来的配置，移除掉临时 Queue 和 Consumer，原有的 Consumer 继续做逻辑处理</p>
+<p><strong>B.消息处理延迟导致数据丢失问题</strong></p>
+<p>​    RabbitMQ 有参数可以设置消息过期时间，如果消息存在一定时间且没有被消费，那么消息队列会自动丢掉该消息，这样就导致数据丢失。线上 RabbitMQ 不能配置这个参数。如果已经配置消息过期时间且引发了数据丢失，那需要写代码根据日志读取数据库，把丢失掉的数据重新处理一遍</p>
+<p><strong>C.消息队列磁盘被写满了如何处理</strong></p>
+<p>​    这个问题可以参考第一种处理方式（因为消息积压太多，导致磁盘写满），临时扩展 Queue 和 Consumer 快速处理积压的消息，把磁盘容量空出来，然后再写代码根据日志读取数据库，把丢失掉的数据拿出来重新处理一遍</p>
+<br>
+
+
+
 <h3 id="如何设计一个消息队列"><a href="#如何设计一个消息队列" class="headerlink" title="如何设计一个消息队列"></a>如何设计一个消息队列</h3><p><strong>消息队列必须支持高并发、高可用，还要保证数据不能丢失，从这些角度出发来设计消息队列</strong></p>
 <ol>
 <li>支持高并发必须要具有扩展性，可以设计成分布式消息队列，新增机器就可以提高吞吐量</li>
 <li>支持高可用必须具有备用副本，在某台机器宕机后保证数据不丢失，消息队列还可以正常使用</li>
 <li>保证数据不丢失必须要把数据写入磁盘</li>
 </ol>
-<h3 id="额外补充"><a href="#额外补充" class="headerlink" title="额外补充"></a>额外补充</h3><p>本篇内容不涉及具体的消息队列内容（比如：RabbitMQ、Kafka 等等），可以看看其他博客或者书籍自行补充</p>
-<a href="/2021/03/23/RabbitMQ进阶&原理/" title="RabbitMQ 进阶&原理">RabbitMQ 进阶&原理</a> <br>
+<br>
+
+
+
+<h3 id="额外补充"><a href="#额外补充" class="headerlink" title="额外补充"></a>额外补充</h3><p>本篇内容不涉及具体的消息队列内容（比如：RabbitMQ、Kafka、RocketMQ 等等），可以看看其他博客或者书籍自行补充</p>
+<a href="/2021/03/23/RabbitMQ进阶&原理/" title="RabbitMQ 进阶&原理">RabbitMQ 进阶&原理</a> 
 
 
 
@@ -628,7 +668,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式环境下的消息队列"><span class="nav-text">分布式环境下的消息队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列的作用"><span class="nav-text">消息队列的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列的优缺点"><span class="nav-text">消息队列的优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列的选型"><span class="nav-text">消息队列的选型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何防止消息重复消费"><span class="nav-text">如何防止消息重复消费</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何处理消息中数据丢失问题"><span class="nav-text">如何处理消息中数据丢失问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何保证消息顺序消费"><span class="nav-text">如何保证消息顺序消费</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列生产环境的经典案例"><span class="nav-text">消息队列生产环境的经典案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何设计一个消息队列"><span class="nav-text">如何设计一个消息队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#额外补充"><span class="nav-text">额外补充</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式环境下的消息队列"><span class="nav-text">分布式环境下的消息队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列的作用"><span class="nav-text">消息队列的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列的优缺点"><span class="nav-text">消息队列的优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列的选型"><span class="nav-text">消息队列的选型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何防止消息重复消费（★）"><span class="nav-text">如何防止消息重复消费（★）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何处理消息中数据丢失问题（★）"><span class="nav-text">如何处理消息中数据丢失问题（★）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何保证消息顺序消费（★）"><span class="nav-text">如何保证消息顺序消费（★）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列生产环境的经典案例（★）"><span class="nav-text">消息队列生产环境的经典案例（★）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何设计一个消息队列"><span class="nav-text">如何设计一个消息队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#额外补充"><span class="nav-text">额外补充</span></a></li></ol></div>
             
 
           </div>
