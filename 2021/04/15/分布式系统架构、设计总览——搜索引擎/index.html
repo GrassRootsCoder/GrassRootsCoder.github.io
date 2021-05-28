@@ -103,16 +103,18 @@
   <meta name="keywords" content="Hexo, NexT" />
 
 
-<meta name="description" content="搜索引擎面试点： 了解 Lucene 和倒排索引，ElasticSearch 底层和概念 1.ES 如何实现分布式的 ​    ES 创建 index 后数据会拆分成多个 shard，每个 shard 会存放一部分数据，这些 shard 放在不同的 ES 实例中，这样实现分布式架构同时易扩展。每个 shard 又分为一个 primary shard 和多个 replica shard，数据">
+<meta name="description" content="分布式环境下的搜索引擎  当一个系统需要承受大量的请求时，这个系统的架构就会从简单演变成复杂，从单机部署到分布式/集群部署，同时也会慢慢的引入中间件来稳定系统间的通信。对于一个开发者来说，所要掌握的内容变多，而且复杂程度呈指数级上升，因此对于分布式系统必须要进行系统性的学习和理解，通过一个整体来理解分布式系统。 上图是分布式系统中常用到的中间件、组件以及数据存储，对于一个分布式系统来说这些都是必须">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式系统架构、设计总览——搜索引擎">
 <meta property="og:url" content="http://yoursite.com/2021/04/15/分布式系统架构、设计总览——搜索引擎/index.html">
 <meta property="og:site_name" content="Dong Yan Blog">
-<meta property="og:description" content="搜索引擎面试点： 了解 Lucene 和倒排索引，ElasticSearch 底层和概念 1.ES 如何实现分布式的 ​    ES 创建 index 后数据会拆分成多个 shard，每个 shard 会存放一部分数据，这些 shard 放在不同的 ES 实例中，这样实现分布式架构同时易扩展。每个 shard 又分为一个 primary shard 和多个 replica shard，数据">
+<meta property="og:description" content="分布式环境下的搜索引擎  当一个系统需要承受大量的请求时，这个系统的架构就会从简单演变成复杂，从单机部署到分布式/集群部署，同时也会慢慢的引入中间件来稳定系统间的通信。对于一个开发者来说，所要掌握的内容变多，而且复杂程度呈指数级上升，因此对于分布式系统必须要进行系统性的学习和理解，通过一个整体来理解分布式系统。 上图是分布式系统中常用到的中间件、组件以及数据存储，对于一个分布式系统来说这些都是必须">
+<meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%80%BB%E8%A7%88/01_Distributed%20Architecture.jpg">
 <meta property="og:updated_time" content="2021-04-14T16:00:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分布式系统架构、设计总览——搜索引擎">
-<meta name="twitter:description" content="搜索引擎面试点： 了解 Lucene 和倒排索引，ElasticSearch 底层和概念 1.ES 如何实现分布式的 ​    ES 创建 index 后数据会拆分成多个 shard，每个 shard 会存放一部分数据，这些 shard 放在不同的 ES 实例中，这样实现分布式架构同时易扩展。每个 shard 又分为一个 primary shard 和多个 replica shard，数据">
+<meta name="twitter:description" content="分布式环境下的搜索引擎  当一个系统需要承受大量的请求时，这个系统的架构就会从简单演变成复杂，从单机部署到分布式/集群部署，同时也会慢慢的引入中间件来稳定系统间的通信。对于一个开发者来说，所要掌握的内容变多，而且复杂程度呈指数级上升，因此对于分布式系统必须要进行系统性的学习和理解，通过一个整体来理解分布式系统。 上图是分布式系统中常用到的中间件、组件以及数据存储，对于一个分布式系统来说这些都是必须">
+<meta name="twitter:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%80%BB%E8%A7%88/01_Distributed%20Architecture.jpg">
 
 
 
@@ -382,7 +384,13 @@
       
 
       
-        <a id="more"></a><br>
+        <h3 id="分布式环境下的搜索引擎"><a href="#分布式环境下的搜索引擎" class="headerlink" title="分布式环境下的搜索引擎"></a>分布式环境下的搜索引擎</h3><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%80%BB%E8%A7%88/01_Distributed%20Architecture.jpg" alt="01_Distributed Architecture" style="zoom:40%;">
+
+<p>当一个系统需要承受大量的请求时，这个系统的架构就会从简单演变成复杂，从单机部署到分布式/集群部署，同时也会慢慢的引入中间件来稳定系统间的通信。对于一个开发者来说，所要掌握的内容变多，而且复杂程度呈指数级上升，因此对于分布式系统必须要进行系统性的学习和理解，通过一个整体来理解分布式系统。</p>
+<p>上图是分布式系统中常用到的中间件、组件以及数据存储，对于一个分布式系统来说这些都是必须的，有时候根据一些特定的业务场景还会额外使用到其他中间件，这些额外中间件就不在图中体现出来，在具体使用到时就知道应用场景了。</p>
+<p>针对以上这些必须使用到的中间件都会做一个总览学习，更加理解并在实际中使用到这些。</p>
+<p>这次主要看“<strong>搜索引擎</strong>”内容，其他内容后续慢慢填完。</p>
+<a id="more"></a><br>
 
 
 
@@ -507,8 +515,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -597,6 +614,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式环境下的搜索引擎"><span class="nav-text">分布式环境下的搜索引擎</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

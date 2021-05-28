@@ -103,17 +103,17 @@
   <meta name="keywords" content="Hexo, NexT" />
 
 
-<meta name="description" content="分布式环境下的消息队列  在分布式环境下，一般需要以上几个组件来解决问题，同时也会带来新问题。">
+<meta name="description" content="分布式环境下的消息队列  当一个系统需要承受大量的请求时，这个系统的架构就会从简单演变成复杂，从单机部署到分布式/集群部署，同时也会慢慢的引入中间件来稳定系统间的通信。对于一个开发者来说，所要掌握的内容变多，而且复杂程度呈指数级上升，因此对于分布式系统必须要进行系统性的学习和理解，通过一个整体来理解分布式系统。 上图是分布式系统中常用到的中间件、组件以及数据存储，对于一个分布式系统来说这些都是必须">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式系统架构、设计总览——消息队列">
 <meta property="og:url" content="http://yoursite.com/2021/03/30/分布式系统架构、设计总览——消息队列/index.html">
 <meta property="og:site_name" content="Dong Yan Blog">
-<meta property="og:description" content="分布式环境下的消息队列  在分布式环境下，一般需要以上几个组件来解决问题，同时也会带来新问题。">
+<meta property="og:description" content="分布式环境下的消息队列  当一个系统需要承受大量的请求时，这个系统的架构就会从简单演变成复杂，从单机部署到分布式/集群部署，同时也会慢慢的引入中间件来稳定系统间的通信。对于一个开发者来说，所要掌握的内容变多，而且复杂程度呈指数级上升，因此对于分布式系统必须要进行系统性的学习和理解，通过一个整体来理解分布式系统。 上图是分布式系统中常用到的中间件、组件以及数据存储，对于一个分布式系统来说这些都是必须">
 <meta property="og:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%80%BB%E8%A7%88/01_Distributed%20Architecture.jpg">
 <meta property="og:updated_time" content="2021-03-29T16:00:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分布式系统架构、设计总览——消息队列">
-<meta name="twitter:description" content="分布式环境下的消息队列  在分布式环境下，一般需要以上几个组件来解决问题，同时也会带来新问题。">
+<meta name="twitter:description" content="分布式环境下的消息队列  当一个系统需要承受大量的请求时，这个系统的架构就会从简单演变成复杂，从单机部署到分布式/集群部署，同时也会慢慢的引入中间件来稳定系统间的通信。对于一个开发者来说，所要掌握的内容变多，而且复杂程度呈指数级上升，因此对于分布式系统必须要进行系统性的学习和理解，通过一个整体来理解分布式系统。 上图是分布式系统中常用到的中间件、组件以及数据存储，对于一个分布式系统来说这些都是必须">
 <meta name="twitter:image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%80%BB%E8%A7%88/01_Distributed%20Architecture.jpg">
 
 
@@ -386,7 +386,10 @@
       
         <h3 id="分布式环境下的消息队列"><a href="#分布式环境下的消息队列" class="headerlink" title="分布式环境下的消息队列"></a>分布式环境下的消息队列</h3><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%80%BB%E8%A7%88/01_Distributed%20Architecture.jpg" alt="分布式架构-消息队列" style="zoom: 40%;">
 
-<p>在分布式环境下，一般需要以上几个组件来解决问题，同时也会带来新问题。</p>
+<p>当一个系统需要承受大量的请求时，这个系统的架构就会从简单演变成复杂，从单机部署到分布式/集群部署，同时也会慢慢的引入中间件来稳定系统间的通信。对于一个开发者来说，所要掌握的内容变多，而且复杂程度呈指数级上升，因此对于分布式系统必须要进行系统性的学习和理解，通过一个整体来理解分布式系统。</p>
+<p>上图是分布式系统中常用到的中间件、组件以及数据存储，对于一个分布式系统来说这些都是必须的，有时候根据一些特定的业务场景还会额外使用到其他中间件，这些额外中间件就不在图中体现出来，在具体使用到时就知道应用场景了。</p>
+<p>针对以上这些必须使用到的中间件都会做一个总览学习，更加理解并在实际中使用到这些。</p>
+<p>这次主要看“<strong>消息队列</strong>”内容，其他内容后续慢慢填完。</p>
 <a id="more"></a><br>
 
 
