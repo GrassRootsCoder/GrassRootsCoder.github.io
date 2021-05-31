@@ -390,11 +390,12 @@
 <p>上图是分布式系统中常用到的中间件、组件以及数据存储，对于一个分布式系统来说这些都是必须的，有时候根据一些特定的业务场景还会额外使用到其他中间件，这些额外中间件就不在图中体现出来，在具体使用到时就知道应用场景了。</p>
 <p>针对以上这些必须使用到的中间件都会做一个总览学习，更加理解并在实际中使用到这些。</p>
 <p>这次主要看“<strong>搜索引擎</strong>”内容，其他内容后续慢慢填完。</p>
+<a href="/2021/03/30/分布式系统架构、设计总览——消息队列/" title="消息队列">消息队列</a> 
+
 <a id="more"></a><br>
 
 
 
-<p><strong>搜索引擎面试点：</strong></p>
 <p>了解 Lucene 和倒排索引，ElasticSearch 底层和概念</p>
 <p>1.ES 如何实现分布式的</p>
 <p>​    ES 创建 index 后数据会拆分成多个 shard，每个 shard 会存放一部分数据，这些 shard 放在不同的 ES 实例中，这样实现分布式架构同时易扩展。每个 shard 又分为一个 primary shard 和多个 replica shard，数据写入是写入 primary shard 中，然后数据同步到其他 replica shard，当其中一个 ES 实例挂了也不影响使用，这样实现 ES 高可用</p>
@@ -431,6 +432,16 @@
 <p>​        ES 执行分页操作时，页数越深则查询效率越低，因为查询第100页时（每页10条数据），会查询出每个 shard 上前1000条数据（假设有5个 shard，那么每个 shard 查询1000条，5个就5000条），然后再整合、排序，经过一段处理后返回第100页的数据。这部分操作在页数深的时候非常耗时，因此只能在产品设计上去做限制，比如：不允许跳页，只能一页一页的翻；不允许页数深度超过某个数值等</p>
 <p>4.ES 如何在生产环境部署</p>
 <p>​    TODO：17</p>
+<h3 id="额外补充"><a href="#额外补充" class="headerlink" title="额外补充"></a>额外补充</h3><p>本篇内容不涉及具体 ElasticSearch 相关知识，对 ElasticSearch 想要深入理解的可以看看其他书籍</p>
+<hr>
+<p><strong>留白思考：对于任何一个技术点，有考虑过以下情况么（由浅入深）：</strong></p>
+<ol>
+<li>为什么要使用这个技术（考虑使用场景/背景）</li>
+<li>这个技术有什么优缺点（技术会解决某些问题，同时也会带来某些坑）</li>
+<li>这个技术的使用场景/背景下还有很多别的技术可以选择，他们之间有什么区别（根据使用场景进行技术选型，广度）</li>
+<li>这个技术在生产环境中出现某种具体问题/如何在分布式环境中大规模使用/如何动态扩容（解决生产环境下特定问题，深度）</li>
+<li>如何设计一个该场景下的技术（理解技术设计原理，深度）</li>
+</ol>
 
       
     </div>
@@ -624,7 +635,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式环境下的搜索引擎"><span class="nav-text">分布式环境下的搜索引擎</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式环境下的搜索引擎"><span class="nav-text">分布式环境下的搜索引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#额外补充"><span class="nav-text">额外补充</span></a></li></ol></div>
             
 
           </div>
