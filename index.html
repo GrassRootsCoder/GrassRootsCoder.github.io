@@ -273,6 +273,185 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/24/分布式系统架构、设计总览——缓存/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dong Yan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dong Yan Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/04/24/分布式系统架构、设计总览——缓存/" itemprop="url">分布式系统架构、设计总览——缓存</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-04-24T00:00:00+08:00">2021-04-24</time>
+            
+
+            
+            
+              
+                
+              
+            
+
+            
+              
+              <span class="post-meta-divider">|</span>
+              
+
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Post modified&#58;</span>
+              
+              <time title="Post modified" itemprop="dateModified" datetime="2021-04-24T00:00:00+08:00">2021-04-24</time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Distributed-Architecture/" itemprop="url" rel="index"><span itemprop="name">Distributed Architecture</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Cache/" itemprop="url" rel="index"><span itemprop="name">Cache</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="分布式环境下的缓存"><a href="#分布式环境下的缓存" class="headerlink" title="分布式环境下的缓存"></a>分布式环境下的缓存</h3><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E7%BC%93%E5%AD%98%E6%80%BB%E8%A7%88/01_Distributed%20Architecture.jpg" alt="01_Distributed%20Architecture.jpg" style="zoom:40%;">
+
+<p>当一个系统需要承受大量的请求时，这个系统的架构就会从简单演变成复杂，从单机部署到分布式/集群部署，同时也会慢慢的引入中间件来稳定系统间的通信。对于一个开发者来说，所要掌握的内容变多，而且复杂程度呈指数级上升，因此对于分布式系统必须要进行系统性的学习和理解，通过一个整体来理解分布式系统。</p>
+<p>上图是分布式系统中常用到的中间件、组件以及数据存储，对于一个分布式系统来说这些都是必须的，有时候根据一些特定的业务场景还会额外使用到其他中间件，这些额外中间件就不在图中体现出来，在具体使用到时就知道应用场景了。</p>
+<p>针对以上这些必须使用到的中间件都会做一个总览学习，更加理解并在实际中使用到这些。</p>
+<p>这次主要看“<strong>缓存</strong>”内容，其他内容后续慢慢填完。</p>
+<a href="/2021/04/15/分布式系统架构、设计总览——搜索引擎/" title="搜索引擎">搜索引擎</a> <br>
+
+<a href="/2021/03/30/分布式系统架构、设计总览——消息队列/" title="消息队列">消息队列</a>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2021/04/24/分布式系统架构、设计总览——缓存/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+      
+    
+      
+        
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/15/分布式系统架构、设计总览——搜索引擎/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -341,14 +520,14 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Distributed-Architecture/" itemprop="url" rel="index"><span itemprop="name">Distributed Architecture</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Search-Engine/" itemprop="url" rel="index"><span itemprop="name">Search Engine</span></a></span>
 
                 
                 
                   , 
                 
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Search-Engine/" itemprop="url" rel="index"><span itemprop="name">Search Engine</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Distributed-Architecture/" itemprop="url" rel="index"><span itemprop="name">Distributed Architecture</span></a></span>
 
                 
                 
@@ -1445,177 +1624,11 @@
 
       
     
-      
-        
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/14/Flyway/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Dong Yan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dong Yan Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/07/14/Flyway/" itemprop="url">Flyway</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-07-14T00:00:00+08:00">2020-07-14</time>
-            
-
-            
-            
-              
-                
-              
-            
-
-            
-              
-              <span class="post-meta-divider">|</span>
-              
-
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-check-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Post modified&#58;</span>
-              
-              <time title="Post modified" itemprop="dateModified" datetime="2020-07-14T00:00:00+08:00">2020-07-14</time>
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java-Framework/" itemprop="url" rel="index"><span itemprop="name">Java Framework</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/Flyway/flyway-logo-tm.png" alt="Flyway Log"></p>
-<p>目前公司统一记录数据库变更 SQL 还是采用手动记录的方式，在手动变更表结构之后记录下来，有时候会忘记做记录这件事，导致代码部署到测试环境时总是报错（事情多起来了，心智宽带不够用，忘记记录可以理解）。生产环境因为有测试环境的存在，不会发生这个问题。</p>
-<p>为解决开发数据库同步测试数据库问题，空闲之余找了几个自动管理 SQL 工具，其中发现 Flyway 用起来容易上手并且没有那么复杂，因此本篇博客就介绍一下 Flyway 是如何使用以及相关注意事项。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/07/14/Flyway/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-      
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1662,7 +1675,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">30</span>
+                    <span class="site-state-item-count">31</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -1695,7 +1708,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">11</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
