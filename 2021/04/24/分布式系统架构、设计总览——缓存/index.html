@@ -453,7 +453,6 @@
 <p>​    Redis 读写共用一把锁（锁和队列，这个有什么具体的区别么，我觉得用锁就可以实现），除非业务场景上必须要求数据一致性，否则不使用锁或者队列来处理这个问题，会导致吞吐量降低</p>
 <h3 id="Redis-分布式锁"><a href="#Redis-分布式锁" class="headerlink" title="Redis 分布式锁"></a>Redis 分布式锁</h3><p>​    解决 Redis 并发修改数据问题</p>
 <p>对于 Redis 线上部署情况，我现在确实是不了解，这个要怎么处理呢，只能估算出来？直接问运维不太友好吧</p>
-<h3 id="额外补充"><a href="#额外补充" class="headerlink" title="额外补充"></a>额外补充</h3><p>本篇内容不涉及具体 ElasticSearch 相关知识，对 ElasticSearch 想要深入理解的可以看看其他书籍</p>
 <hr>
 <p><strong>留白思考：对于任何一个技术点，有考虑过以下情况么（由浅入深）：</strong></p>
 <ol>
@@ -499,6 +498,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/05/01/分布式系统架构、设计总览——分布式锁、会话/" rel="prev" title="分布式系统架构、设计总览——分布式锁、会话">
+                分布式系统架构、设计总览——分布式锁、会话 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -576,7 +579,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-count">32</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -658,7 +661,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式环境下的缓存"><span class="nav-text">分布式环境下的缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要使用缓存"><span class="nav-text">为什么要使用缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存有什么优缺点"><span class="nav-text">缓存有什么优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-线程模型"><span class="nav-text">Redis 线程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#文件事件处理器"><span class="nav-text">文件事件处理器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis-效率高原因"><span class="nav-text">Redis 效率高原因</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-数据类型"><span class="nav-text">Redis 数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-过期策略"><span class="nav-text">Redis 过期策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-高并发"><span class="nav-text">Redis 高并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-高可用"><span class="nav-text">Redis 高可用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-部署架构"><span class="nav-text">Redis 部署架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-持久化"><span class="nav-text">Redis 持久化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-Cluster（Redis-原生支持集群模式）"><span class="nav-text">Redis Cluster（Redis 原生支持集群模式）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-雪崩以及穿透"><span class="nav-text">Redis 雪崩以及穿透</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存与数据库的数据一致性"><span class="nav-text">缓存与数据库的数据一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-分布式锁"><span class="nav-text">Redis 分布式锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#额外补充"><span class="nav-text">额外补充</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式环境下的缓存"><span class="nav-text">分布式环境下的缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要使用缓存"><span class="nav-text">为什么要使用缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存有什么优缺点"><span class="nav-text">缓存有什么优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-线程模型"><span class="nav-text">Redis 线程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#文件事件处理器"><span class="nav-text">文件事件处理器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis-效率高原因"><span class="nav-text">Redis 效率高原因</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-数据类型"><span class="nav-text">Redis 数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-过期策略"><span class="nav-text">Redis 过期策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-高并发"><span class="nav-text">Redis 高并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-高可用"><span class="nav-text">Redis 高可用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-部署架构"><span class="nav-text">Redis 部署架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-持久化"><span class="nav-text">Redis 持久化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-Cluster（Redis-原生支持集群模式）"><span class="nav-text">Redis Cluster（Redis 原生支持集群模式）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-雪崩以及穿透"><span class="nav-text">Redis 雪崩以及穿透</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存与数据库的数据一致性"><span class="nav-text">缓存与数据库的数据一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-分布式锁"><span class="nav-text">Redis 分布式锁</span></a></li></ol></div>
             
 
           </div>
