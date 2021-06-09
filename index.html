@@ -273,6 +273,176 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/07/分布式系统架构、设计总览——分布式事务/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dong Yan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E6%9C%88.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dong Yan Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/05/07/分布式系统架构、设计总览——分布式事务/" itemprop="url">分布式系统架构、设计总览——分布式事务</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-05-07T00:00:00+08:00">2021-05-07</time>
+            
+
+            
+            
+              
+                
+              
+            
+
+            
+              
+              <span class="post-meta-divider">|</span>
+              
+
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Post modified&#58;</span>
+              
+              <time title="Post modified" itemprop="dateModified" datetime="2021-05-07T00:00:00+08:00">2021-05-07</time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Distributed-Architecture/" itemprop="url" rel="index"><span itemprop="name">Distributed Architecture</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <a href="/2021/05/01/分布式系统架构、设计总览——分布式锁、会话/" title="分布式锁、会话">分布式锁、会话</a> <br>
+
+<a href="/2021/04/24/分布式系统架构、设计总览——缓存/" title="缓存">缓存</a> <br>
+
+<a href="/2021/04/15/分布式系统架构、设计总览——搜索引擎/" title="搜索引擎">搜索引擎</a> <br>
+
+<a href="/2021/03/30/分布式系统架构、设计总览——消息队列/" title="消息队列">消息队列</a>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2021/05/07/分布式系统架构、设计总览——分布式事务/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+      
+    
+      
+        
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/01/分布式系统架构、设计总览——分布式锁、会话/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -376,7 +546,10 @@
 
       
         
-          <p>分布式锁、会话，单独写</p>
+          <img src="https://dongyanblog.oss-cn-shenzhen.aliyuncs.com/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E6%80%BB%E8%A7%88/01_Distributed%20Architecture.jpg" alt="01_Distributed%20Architecture.jpg" style="zoom:40%;">
+
+<p>在分布式系统中会涉及到多数据源、多服务实例以及资源共享情况，以往单机模式下的处理方式会引发多种问题，其中主要的就是分布式锁以及分布式事务，还有一个重要性不是很大的分布式会话。</p>
+<p>针对<strong>分布式锁</strong>，这里会详细解释分布式锁场景、原理以及实现选型。</p>
 <a href="/2021/04/24/分布式系统架构、设计总览——缓存/" title="缓存">缓存</a> <br>
 
 <a href="/2021/04/15/分布式系统架构、设计总览——搜索引擎/" title="搜索引擎">搜索引擎</a> <br>
@@ -689,14 +862,14 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Search-Engine/" itemprop="url" rel="index"><span itemprop="name">Search Engine</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Distributed-Architecture/" itemprop="url" rel="index"><span itemprop="name">Distributed Architecture</span></a></span>
 
                 
                 
                   , 
                 
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Distributed-Architecture/" itemprop="url" rel="index"><span itemprop="name">Distributed Architecture</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Search-Engine/" itemprop="url" rel="index"><span itemprop="name">Search Engine</span></a></span>
 
                 
                 
@@ -1625,8 +1798,6 @@
 
       
     
-      
-    
   </section>
 
   
@@ -1678,7 +1849,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">32</span>
+                    <span class="site-state-item-count">33</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
