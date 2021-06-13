@@ -391,8 +391,8 @@
 
 
 
-<p>使用 Jmeter 作为测试依据</p>
 <h3 id="共享资源冲突"><a href="#共享资源冲突" class="headerlink" title="共享资源冲突"></a>共享资源冲突</h3><p>说明一下场景，抢购，抢票</p>
+<p>单个服务加锁，是基于线程上的，如果是集群部署，多个服务竞争同一个资源，那么基于线程加锁就不成立，因此需要分布式锁来解决问题，</p>
 <br>
 
 
@@ -459,10 +459,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2021/05/07/分布式系统架构、设计总览——分布式事务/" rel="prev" title="分布式系统架构、设计总览——分布式事务">
-                分布式系统架构、设计总览——分布式事务 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -540,7 +536,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-count">32</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
