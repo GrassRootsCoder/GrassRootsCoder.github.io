@@ -403,6 +403,15 @@
 
 
 
+<h3 id="ES-基本概念"><a href="#ES-基本概念" class="headerlink" title="ES 基本概念"></a>ES 基本概念</h3><p>Index（索引）：索引是一些具有相似特征的文档集合，相当于 MySQL 中的数据库</p>
+<p>Type（类型）：类型是索引的逻辑类别分区，通常，为具有一组公共字段的文档类型，相当于 MySQL 中的表</p>
+<p>Document（文档）：文档是可被索引的基本信息单位，以 JSON 格式存储，相当于 MySQL 中的行</p>
+<p>Shards（分片）：当索引存储大量数据时，可能会超出单个节点的硬件限制，为了解决这个问题，ES 提供了将索引细分为分片的概念。分片机制赋予了索引水平扩容的能力、并允许跨分片分发和并行化操作（水平扩容 - 高性能）</p>
+<p>Replicas（副本）：当 ES 宕机时，需要有一个故障切换机制，ES 提供了将索引的分片复制为一个或多个副本的功能，副本在某些节点失效的情况下提供高可用性（主从备份 - 高可用）</p>
+<br>
+
+
+
 <h3 id="ES-如何实现分布式的"><a href="#ES-如何实现分布式的" class="headerlink" title="ES 如何实现分布式的"></a>ES 如何实现分布式的</h3><p>​    ES 创建 index 后数据会拆分成多个 shard，每个 shard 会存放一部分数据，这些 shard 放在不同的 ES 实例中，这样实现分布式架构同时易扩展。每个 shard 又分为一个 primary shard 和多个 replica shard，数据写入是写入 primary shard 中，然后数据同步到其他 replica shard，当其中一个 ES 实例挂了也不影响使用，这样实现 ES 高可用</p>
 <p>​    其次由多个 ES 实例组成一个 ES 集群，集群会选举出一个 master node 作为集群管理者，可以实现 primary 和 replica 切换以及维护索引元数据等功能。当 master node 宕机后，集群会重新选举出新的 master node，如果宕机实例上存在 primary shard 身份则会让其他正在运行实例上的 replica shard 转变为 primary shard，当宕机实例重启后会执行数据同步，弥补丢失的数据，让集群恢复正常</p>
 <br>
@@ -433,14 +442,14 @@
 
 
 
-<h3 id="ES-在数亿量级情况下如何进行查询优化"><a href="#ES-在数亿量级情况下如何进行查询优化" class="headerlink" title="ES 在数亿量级情况下如何进行查询优化"></a>ES 在数亿量级情况下如何进行查询优化</h3><h4 id="OperatingSystem-Cache（操作系统内存）"><a href="#OperatingSystem-Cache（操作系统内存）" class="headerlink" title="OperatingSystem Cache（操作系统内存）"></a>OperatingSystem Cache（操作系统内存）</h4><p>​        ES 写入的数据是存放在磁盘上的，当需要读取数据时先从磁盘读取到操作系统内存中，再从操作系统内存返回给 ES，最后返回给客户端。从磁盘读取数据的效率和性能很低（磁盘读取速度是秒级别），尽量让数据从内存中读取（内存读取速度是毫秒级别），这就需要内存容量大于磁盘数据量，将所有数据放入内存中，这样读取效率和性能会快非常多</p>
+<h3 id="ES-在数亿量级情况下如何进行查询优化"><a href="#ES-在数亿量级情况下如何进行查询优化" class="headerlink" title="ES 在数亿量级情况下如何进行查询优化"></a>ES 在数亿量级情况下如何进行查询优化</h3><h4 id="OperatingSystem-Cache（操作系统内存）（★）"><a href="#OperatingSystem-Cache（操作系统内存）（★）" class="headerlink" title="OperatingSystem Cache（操作系统内存）（★）"></a>OperatingSystem Cache（操作系统内存）（★）</h4><p>​        ES 写入的数据是存放在磁盘上的，当需要读取数据时先从磁盘读取到操作系统内存中，再从操作系统内存返回给 ES，最后返回给客户端。从磁盘读取数据的效率和性能很低（磁盘读取速度是秒级别），尽量让数据从内存中读取（内存读取速度是毫秒级别），这就需要内存容量大于磁盘数据量，将所有数据放入内存中，这样读取效率和性能会快非常多</p>
 <p>​        假设：磁盘数据量50 GB，4个 ES 实例集群，每台机器内存32 GB，其中16 GB 用于 ES 运行内存，剩下16 GB 用来存放 ES 读取数据，那么4 * 16 = 64 GB 可以作为操作系统内存，64 GB &gt; 50 GB，这个时候所有读取操作全部只经过内存，效率和性能非常高。如果磁盘数据量增加到640 GB，只有十分之一的数据是走内存，这样效率肯定低。至少需要一半的读取数据要经过内存，这个时候就需要增加内存容量或者减少磁盘数据量</p>
 <p>​        增加内存容量比较简单，在资金允许范围内提高机器配置即可。减少磁盘数据量则需要控制 ES 写入数据量，比如 ES 中只存放需要搜索的字段，其他没有搜索需要的字段则不存放。一份数据可能有50个字段，其中只有10个字段是有搜索需要的，那么就只把这10个字段写入 ES，其他40个字段放在数据库中（一般用于搜索的字段内容不会很多，所占用的数据量很少，因此可以大大减少磁盘数据量）。在后台逻辑中就不能直接把 ES 返回的数据返回给客户端，需要根据 id 查询数据库，把剩下40个字段内容补全后再返回给客户端。因为是用 id 查询数据库效率也是很高的</p>
 <br>
 
 
 
-<h4 id="缓存预热"><a href="#缓存预热" class="headerlink" title="缓存预热"></a>缓存预热</h4><p>​        一般来说，一个网站的绝大部分流量都集中在小部分内容上，比如：微博和知乎的热榜、大 V 这些内容，几乎是流量的主要来源，这部分数据一定要放入内存中。可以写一个缓存预热系统，定时去请求这些高访问的数据，将数据一直保留在内存中。至于其他访问量不高的数据，响应时间慢一点也没什么关系</p>
+<h4 id="缓存预热（★）"><a href="#缓存预热（★）" class="headerlink" title="缓存预热（★）"></a>缓存预热（★）</h4><p>​        一般来说，一个网站的绝大部分流量都集中在小部分内容上，比如：微博和知乎的热榜、大 V 这些内容，几乎是流量的主要来源，这部分数据一定要放入内存中。可以写一个缓存预热系统，定时去请求这些高访问的数据，将数据一直保留在内存中。至于其他访问量不高的数据，响应时间慢一点也没什么关系</p>
 <br>
 
 
@@ -450,7 +459,7 @@
 
 
 
-<h4 id="document-设计"><a href="#document-设计" class="headerlink" title="document 设计"></a>document 设计</h4><p>​        ES 在设计 document 时尽量往简单方向设计，在读取数据时也不要进行复杂操作来增加读取时间。比如：在写入数据已经计算好结果，而不是搜索的时候来计算；在应用层面进行计算、整合，ES 只做数据搜索</p>
+<h4 id="document-设计（★）"><a href="#document-设计（★）" class="headerlink" title="document 设计（★）"></a>document 设计（★）</h4><p>​        ES 在设计 document 时尽量往简单方向设计，在读取数据时也不要进行复杂操作来增加读取时间。比如：在写入数据已经计算好结果，而不是搜索的时候来计算；在应用层面进行计算、整合，ES 只做数据搜索</p>
 <br>
 
 
@@ -674,7 +683,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式环境下的搜索引擎"><span class="nav-text">分布式环境下的搜索引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES-底层以及-Lucene"><span class="nav-text">ES 底层以及 Lucene</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES-如何实现分布式的"><span class="nav-text">ES 如何实现分布式的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES-写入、读取和搜索流程"><span class="nav-text">ES 写入、读取和搜索流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#写入流程"><span class="nav-text">写入流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读取流程"><span class="nav-text">读取流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查询流程"><span class="nav-text">查询流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES-在数亿量级情况下如何进行查询优化"><span class="nav-text">ES 在数亿量级情况下如何进行查询优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OperatingSystem-Cache（操作系统内存）"><span class="nav-text">OperatingSystem Cache（操作系统内存）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存预热"><span class="nav-text">缓存预热</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#冷热分离"><span class="nav-text">冷热分离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#document-设计"><span class="nav-text">document 设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ES-分页"><span class="nav-text">ES 分页</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES-如何在生产环境部署"><span class="nav-text">ES 如何在生产环境部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#额外补充"><span class="nav-text">额外补充</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式环境下的搜索引擎"><span class="nav-text">分布式环境下的搜索引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES-底层以及-Lucene"><span class="nav-text">ES 底层以及 Lucene</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES-基本概念"><span class="nav-text">ES 基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES-如何实现分布式的"><span class="nav-text">ES 如何实现分布式的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES-写入、读取和搜索流程"><span class="nav-text">ES 写入、读取和搜索流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#写入流程"><span class="nav-text">写入流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读取流程"><span class="nav-text">读取流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查询流程"><span class="nav-text">查询流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES-在数亿量级情况下如何进行查询优化"><span class="nav-text">ES 在数亿量级情况下如何进行查询优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OperatingSystem-Cache（操作系统内存）（★）"><span class="nav-text">OperatingSystem Cache（操作系统内存）（★）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存预热（★）"><span class="nav-text">缓存预热（★）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#冷热分离"><span class="nav-text">冷热分离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#document-设计（★）"><span class="nav-text">document 设计（★）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ES-分页"><span class="nav-text">ES 分页</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES-如何在生产环境部署"><span class="nav-text">ES 如何在生产环境部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#额外补充"><span class="nav-text">额外补充</span></a></li></ol></div>
             
 
           </div>

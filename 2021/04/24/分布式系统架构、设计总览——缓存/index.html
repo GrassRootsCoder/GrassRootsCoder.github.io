@@ -398,29 +398,41 @@
 
 
 
-<h3 id="为什么要使用缓存"><a href="#为什么要使用缓存" class="headerlink" title="为什么要使用缓存"></a>为什么要使用缓存</h3><p>​    高性能：查询缓存比查询数据库速度快很多</p>
-<p>​    高并发：缓存比数据库支持更多的并发请求</p>
-<h3 id="缓存有什么优缺点"><a href="#缓存有什么优缺点" class="headerlink" title="缓存有什么优缺点"></a>缓存有什么优缺点</h3><p>​    优点：就是上面的使用场景，解决了困扰这些场景的问题</p>
-<p>​    缺点：<strong>数据一致性</strong>（缓存和数据库数据没有保持一致）、<strong>降低可用性</strong>（缓存挂了导致系统雪崩）、<strong>缓存穿透</strong>（每次查询缓存数据都不一致需要重新查询数据库）</p>
-<h3 id="Redis-线程模型"><a href="#Redis-线程模型" class="headerlink" title="Redis 线程模型"></a>Redis 线程模型</h3><p>​    （题外话，Memcached 至今没用过，只做大致了解）</p>
-<h4 id="文件事件处理器"><a href="#文件事件处理器" class="headerlink" title="文件事件处理器"></a>文件事件处理器</h4><h4 id="Redis-效率高原因"><a href="#Redis-效率高原因" class="headerlink" title="Redis 效率高原因"></a>Redis 效率高原因</h4><p>​        纯内存操作</p>
-<p>​        基于非阻塞的 IO 多路复用机制</p>
-<p>​        单线程没有多线程频繁切换上下文问题</p>
-<h3 id="Redis-数据类型"><a href="#Redis-数据类型" class="headerlink" title="Redis 数据类型"></a>Redis 数据类型</h3><p>​    比较简单</p>
-<h3 id="Redis-过期策略"><a href="#Redis-过期策略" class="headerlink" title="Redis 过期策略"></a>Redis 过期策略</h3><p>设置过期时间，当时间到了以后不会自动删除数据（定期删除 以及 惰性删除）</p>
-<p>​    定期删除：Redis 每隔 100ms 随机抽取 key 来检查，如果过期了就删除</p>
-<p>​    惰性删除：如果获取某个 key 是设置了过期时间，那么在获取该 key 时会直接删除数据，不会返回数据</p>
-<p>当 Redis 内存使用满了，如何继续存储数据（内存淘汰机制）</p>
-<p>​    通过定期删除以及惰性删除，也不会把所有过期时间数据删除，因此在 Redis 内存爆满以后，会有内存淘汰机制来处理数据（淘汰机制有多种，这里只列出一种）</p>
-<p>​    <strong>allkeys-lru</strong>：当内存不足以写入新数据时，会自动删除最近最少使用的key</p>
-<p>LRU 算法实现</p>
-<p>​    可以参考一下 kafka 实现的 LRUCache（org.apache.kafka.common.cache.LRUCache）</p>
+<h3 id="缓存有什么优缺点"><a href="#缓存有什么优缺点" class="headerlink" title="缓存有什么优缺点"></a>缓存有什么优缺点</h3><p>优点：<strong>高性能</strong>（查询缓存比查询数据库速度快很多）、<strong>高并发</strong>（缓存比数据库支持更多的并发请求）</p>
+<p>缺点：<strong>数据一致性</strong>（缓存和数据库数据没有保持一致）、<strong>降低可用性</strong>（缓存挂了导致系统雪崩）、<strong>缓存穿透</strong>（每次查询缓存数据都不一致需要重新查询数据库）</p>
+<br>
+
+
+
+<h3 id="Redis-线程模型"><a href="#Redis-线程模型" class="headerlink" title="Redis 线程模型"></a>Redis 线程模型</h3><h4 id="文件事件处理器"><a href="#文件事件处理器" class="headerlink" title="文件事件处理器"></a>文件事件处理器</h4><h4 id="Redis-效率高原因"><a href="#Redis-效率高原因" class="headerlink" title="Redis 效率高原因"></a>Redis 效率高原因</h4><p>纯内存操作</p>
+<p>基于非阻塞的 IO 多路复用机制</p>
+<p>单线程没有多线程频繁切换上下文问题</p>
+<br>
+
+
+
+<h3 id="Redis-过期策略"><a href="#Redis-过期策略" class="headerlink" title="Redis 过期策略"></a>Redis 过期策略</h3><p>设置过期时间，当时间到了以后不会自动删除数据，有两种删除方式</p>
+<ol>
+<li>定期删除：Redis 每隔 100ms 随机抽取 key 来检查，如果过期了就删除</li>
+<li>惰性删除：如果获取某个 key 是设置了过期时间，那么在获取该 key 时会直接删除数据，不会返回数据</li>
+</ol>
+<p>当 Redis 内存使用满了，如何继续存储数据（内存淘汰机制）。通过定期删除以及惰性删除，也不会把所有过期时间数据删除，因此在 Redis 内存爆满以后，会有内存淘汰机制来处理数据（淘汰机制有多种，这里只列出一种）</p>
+<p><strong>allkeys-lru</strong>：当内存不足以写入新数据时，会自动删除最近最少使用的key</p>
+<p>LRU 算法实现：参考一下 <strong>kafka 实现的 LRUCache</strong>（org.apache.kafka.common.cache.LRUCache）</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LRUCache</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">Cache</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> LinkedHashMap&lt;K, V&gt; cache;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LRUCache</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> maxSize)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.cache = <span class="keyword">new</span> LinkedHashMap&lt;K, V&gt;(<span class="number">16</span>, <span class="number">0.75F</span>, <span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">removeEldestEntry</span><span class="params">(Entry&lt;K, V&gt; eldest)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">this</span>.size() &gt; maxSize;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>​        实现 LRU 算法主要是 LinkedHashMap 两个方法，java.util.LinkedHashMap#LinkedHashMap(int, float, boolean)，java.util.LinkedHashMap#removeEldestEntry。第一个有参构造表示按照数据访问顺序来排序，最近访问的放在头，最远访问的放在尾；第二个方法表示当 Map 数据大于指定数据个数时，自动删除最远访问的数据。（LinkedHashMap 源码中有大量的解释，可以去看看源码，这里就不贴了）</p>
+<br>
+
+
+
 <h3 id="Redis-高并发"><a href="#Redis-高并发" class="headerlink" title="Redis 高并发"></a>Redis 高并发</h3><p>​    当请求量一直增大时，单个 Redis 会支撑不住（单机 Redis 大概等承载几万 QPS），当请求量超过 Redis 承载上限时会挂掉，系统的瓶颈就是单机 Redis 瓶颈。<strong>Redis 使用主从架构（redis replication），读写分离，通过水平动态扩容，可以实现自定义 QPS 支撑</strong></p>
 <p>​    Redis Replication：写请求只写入 Master Node 返回成功，Master Node 异步复制数据到 Slave Node。通过横向扩容来支撑 Redis 高 QPS 请求。Master Node 建议开启持久化，Slave Node 不建议使用 Master Node 数据热备，因为 Master Node 没有持久化并且当机的话，重启后 Master 是没有数据的，这是 Slave Node 复制数据的话会导致所有 Slave Node 数据全部清空。可以通过 Slave Node 备份数据恢复 Master Node 数据，确保 Master Node 重启后是有数据的</p>
 <p>​    复制完整流程：TODO：23_05</p>
+<br>
+
+
+
 <h3 id="Redis-高可用"><a href="#Redis-高可用" class="headerlink" title="Redis 高可用"></a>Redis 高可用</h3><p>​    保证各种服务当机后，系统也依然可用。主从模式，Slave Node 挂了不影响整个系统的使用，Master Node 挂了立马在剩下的 Slave Node 中选举出新的 Master Node（选举出新的 Master Node 这个就是哨兵架构）</p>
 <p>​    Redis 哨兵架构主要功能：</p>
 <p>​        a.集群监控：负责监控 Redis Master 和 Slave 是否正常工作</p>
@@ -432,27 +444,49 @@
 <p>​        a.当 Master Node 异步复制数据到 Slave Node 时，突然宕机了，这个时候丢失了还没有复制过去的数据</p>
 <p>​        b.Master Node 因为网络波动问题丢失了和其他 Slave Node 的连接，导致哨兵认为 Master Node 宕机了，选举出新的 Master Node，这个时候集群就出现了两个 Master Node（两个大脑，脑裂）</p>
 <p>​        通过配置 min-slaves-to-write 1 和 min-slaves-max-lag 10 这两个参数可以减少上述问题带来的影响</p>
+<br>
+
+
+
 <h3 id="Redis-部署架构"><a href="#Redis-部署架构" class="headerlink" title="Redis 部署架构"></a>Redis 部署架构</h3><p>​    单机架构无法实现高并发和高可用，一主多从，可以实现高并发和高可用。多从可以保证某个实例宕机后没有影响，保证可用性。多个Redis 实例对外提供服务可以实现高并发。搭建多个集群，可以接受高 QPS 访问，同时可以容纳更大的缓存数据<strong>（由于从节点的数据和主节点的数据是一样的，因此想要容纳更多的数据必须要多个主节点，这就是 Redis Cluster）</strong></p>
+<br>
+
+
+
 <h3 id="Redis-持久化"><a href="#Redis-持久化" class="headerlink" title="Redis 持久化"></a>Redis 持久化</h3><p>​    <strong>（测试环境中 Redis 没有持久化，导致每次重启 Redis 数据都丢失，这个我可以本地复现出来）</strong></p>
-<p>​    Redis 数据放在内存中，每次写入数据时异步写入到磁盘上（Redis 持久化机制），同时再把磁盘上的数据同步到云服务上，这样就能防止数据全面丢失</p>
-<p>​    <strong>RDB 和 AOF 持久化机制</strong>。RDB：对 Redis 中数据进行周期性持久化；AOF：对每条写入命令作为日志内容，以 append-only 模式写入一个日志文件中（AOF 数据保存得更全面一些），由于 Redis 内存是有限的，而日志文件是可以无限追加内容的，因此当日志文件大到一定程度时会根据当前 Redis 中数据 rewrite 一份新的 AOF 日志文件</p>
-<p>​    RDB 优缺点：1.RDB 会基于某个时间点生成一份备份文件，可以生成多份，适合冷备。2.每次写入数据，RDB 备份不会对 Redis 性能产生很大影响。3.RDB 备份能够快速让 Redis 恢复数据。a.RDB 备份会丢失一部分数据，如果是间隔5分钟备份一次，那么最大程度上会丢失5分钟以内的数据。b.如果 Redis 本身保存的数据很多，那么在进行 RDB 备份是会影响 Redis 服务</p>
-<p>​    AOF 优缺点：1.AOF 会每隔1秒进行一次 fsyns 操作，最多只会丢失1秒数据。2.AOF 日志文件不容易损坏。3.AOF 日志文件在保存了很多数据时会自动进行优化，减少日志文件大小。4.AOF 以命令方式进行存储，可以进行误操作恢复。a.AOF 日志文件比较大。b.AOF 机制在进行 Redis 写操作时性能要比 RDB 慢一些</p>
-<p>​    Redis 可以同时启用两种持久化机制，针对不同场景下使用</p>
-<h3 id="Redis-Cluster（Redis-原生支持集群模式）"><a href="#Redis-Cluster（Redis-原生支持集群模式）" class="headerlink" title="Redis Cluster（Redis 原生支持集群模式）"></a>Redis Cluster（Redis 原生支持集群模式）</h3><p>​    支撑 N 个 Master Node 连接在一起对外提供服务，每个 Master Node 可以挂载 M 个 Slave Node（基于主从架构可以实现读写分离，多个 Slave Node 保证高可用，多个 Master Node 保证海量数据存储）</p>
-<p>​    如果数据不是很多，使用 Redis Replication + Sentinal；如果是海量数据，使用 Redis Cluster</p>
-<p>​    多 Master Node 数据 Hash 算法，TODO：25_03</p>
-<p>​    Redis Cluster 核心机制，TODO：25_04</p>
-<h3 id="Redis-雪崩以及穿透"><a href="#Redis-雪崩以及穿透" class="headerlink" title="Redis 雪崩以及穿透"></a>Redis 雪崩以及穿透</h3><p>​    雪崩：Redis 服务挂了，导致所有请求都走数据库，最后把数据库也搞挂了，最后整个系统不可用</p>
-<p>​        搭建高可用 Redis 服务，限流以及降级，启用 Redis 持久化保证重启后恢复数据</p>
-<p>​    穿透：故意请求数据库以及缓存中没有的数据，导致每次都走数据库，但是又查询不到数据</p>
-<p>​        针对数据库没有的数据，直接在 Redis 中存放一个标识，表示无数据，让请求不要每次都走数据库</p>
-<p>​    </p>
-<h3 id="缓存与数据库的数据一致性"><a href="#缓存与数据库的数据一致性" class="headerlink" title="缓存与数据库的数据一致性"></a>缓存与数据库的数据一致性</h3><p>​    Cache Aside Pattern：读数据时，先读缓存，如果没有数据再读数据库，并且把数据写入缓存。更新数据库数据时，直接删除缓存</p>
-<p>​    至于更新数据时，是直接删除缓存还是更新缓存需要根据场景</p>
-<p>​    Redis 读写共用一把锁（锁和队列，这个有什么具体的区别么，我觉得用锁就可以实现），除非业务场景上必须要求数据一致性，否则不使用锁或者队列来处理这个问题，会导致吞吐量降低</p>
-<h3 id="Redis-分布式锁"><a href="#Redis-分布式锁" class="headerlink" title="Redis 分布式锁"></a>Redis 分布式锁</h3><p>​    解决 Redis 并发修改数据问题</p>
-<p>对于 Redis 线上部署情况，我现在确实是不了解，这个要怎么处理呢，只能估算出来？直接问运维不太友好吧</p>
+<p>Redis 数据放在内存中，每次写入数据时异步写入到磁盘上（Redis 持久化机制），同时再把磁盘上的数据同步到云服务上，这样就能防止数据全面丢失</p>
+<p><strong>RDB 和 AOF 持久化机制</strong>。RDB：对 Redis 中数据进行周期性持久化；AOF：对每条写入命令作为日志内容，以 append-only 模式写入一个日志文件中（AOF 数据保存得更全面一些），由于 Redis 内存是有限的，而日志文件是可以无限追加内容的，因此当日志文件大到一定程度时会根据当前 Redis 中数据 rewrite 一份新的 AOF 日志文件</p>
+<p>RDB 优缺点：1.RDB 会基于某个时间点生成一份备份文件，可以生成多份，适合冷备。2.每次写入数据，RDB 备份不会对 Redis 性能产生很大影响。3.RDB 备份能够快速让 Redis 恢复数据。a.RDB 备份会丢失一部分数据，如果是间隔5分钟备份一次，那么最大程度上会丢失5分钟以内的数据。b.如果 Redis 本身保存的数据很多，那么在进行 RDB 备份是会影响 Redis 服务</p>
+<p>AOF 优缺点：1.AOF 会每隔1秒进行一次 fsyns 操作，最多只会丢失1秒数据。2.AOF 日志文件不容易损坏。3.AOF 日志文件在保存了很多数据时会自动进行优化，减少日志文件大小。4.AOF 以命令方式进行存储，可以进行误操作恢复。a.AOF 日志文件比较大。b.AOF 机制在进行 Redis 写操作时性能要比 RDB 慢一些</p>
+<p>Redis 可以同时启用两种持久化机制，针对不同场景下使用</p>
+<br>
+
+
+
+<h3 id="Redis-Cluster（Redis-原生支持集群模式）"><a href="#Redis-Cluster（Redis-原生支持集群模式）" class="headerlink" title="Redis Cluster（Redis 原生支持集群模式）"></a>Redis Cluster（Redis 原生支持集群模式）</h3><p>支撑 N 个 Master Node 连接在一起对外提供服务，每个 Master Node 可以挂载 M 个 Slave Node（基于主从架构可以实现读写分离，多个 Slave Node 保证高可用，多个 Master Node 保证海量数据存储）</p>
+<p>如果数据不是很多，使用 Redis Replication + Sentinal；如果是海量数据，使用 Redis Cluster</p>
+<p>多 Master Node 数据 Hash 算法，TODO：25_03</p>
+<p>Redis Cluster 核心机制，TODO：25_04</p>
+<br>
+
+
+
+<h3 id="Redis-雪崩以及穿透"><a href="#Redis-雪崩以及穿透" class="headerlink" title="Redis 雪崩以及穿透"></a>Redis 雪崩以及穿透</h3><p>雪崩：Redis 服务挂了，导致所有请求都走数据库，最后把数据库也搞挂了，最后整个系统不可用</p>
+<p>雪崩解决方案：搭建高可用 Redis 服务，限流以及降级，启用 Redis 持久化保证重启后恢复数据</p>
+<p>穿透：故意请求数据库以及缓存中没有的数据，导致每次都走数据库，但是又查询不到数据</p>
+<p>穿透解决方案：针对数据库没有的数据，直接在 Redis 中存放一个标识，表示无数据，让请求不要每次都走数据库</p>
+<br>
+
+
+
+<h3 id="缓存与数据库的数据一致性"><a href="#缓存与数据库的数据一致性" class="headerlink" title="缓存与数据库的数据一致性"></a>缓存与数据库的数据一致性</h3><p>Cache Aside Pattern：读数据时，先读缓存，如果没有数据再读数据库，并且把数据写入缓存。更新数据库数据时，直接删除缓存</p>
+<p>至于更新数据时，是直接删除缓存还是更新缓存需要根据场景</p>
+<p>Redis 读写共用一把锁（锁和队列，这个有什么具体的区别么，我觉得用锁就可以实现），除非业务场景上必须要求数据一致性，否则不使用锁或者队列来处理这个问题，会导致吞吐量降低</p>
+<br>
+
+
+
+<h3 id="Redis-分布式锁"><a href="#Redis-分布式锁" class="headerlink" title="Redis 分布式锁"></a>Redis 分布式锁</h3><p>解决 Redis 并发修改数据问题</p>
 <hr>
 <p><strong>留白思考：对于任何一个技术点，有考虑过以下情况么（由浅入深）：</strong></p>
 <ol>
@@ -661,7 +695,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式环境下的缓存"><span class="nav-text">分布式环境下的缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要使用缓存"><span class="nav-text">为什么要使用缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存有什么优缺点"><span class="nav-text">缓存有什么优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-线程模型"><span class="nav-text">Redis 线程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#文件事件处理器"><span class="nav-text">文件事件处理器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis-效率高原因"><span class="nav-text">Redis 效率高原因</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-数据类型"><span class="nav-text">Redis 数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-过期策略"><span class="nav-text">Redis 过期策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-高并发"><span class="nav-text">Redis 高并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-高可用"><span class="nav-text">Redis 高可用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-部署架构"><span class="nav-text">Redis 部署架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-持久化"><span class="nav-text">Redis 持久化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-Cluster（Redis-原生支持集群模式）"><span class="nav-text">Redis Cluster（Redis 原生支持集群模式）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-雪崩以及穿透"><span class="nav-text">Redis 雪崩以及穿透</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存与数据库的数据一致性"><span class="nav-text">缓存与数据库的数据一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-分布式锁"><span class="nav-text">Redis 分布式锁</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式环境下的缓存"><span class="nav-text">分布式环境下的缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存有什么优缺点"><span class="nav-text">缓存有什么优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-线程模型"><span class="nav-text">Redis 线程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#文件事件处理器"><span class="nav-text">文件事件处理器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis-效率高原因"><span class="nav-text">Redis 效率高原因</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-过期策略"><span class="nav-text">Redis 过期策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-高并发"><span class="nav-text">Redis 高并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-高可用"><span class="nav-text">Redis 高可用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-部署架构"><span class="nav-text">Redis 部署架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-持久化"><span class="nav-text">Redis 持久化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-Cluster（Redis-原生支持集群模式）"><span class="nav-text">Redis Cluster（Redis 原生支持集群模式）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-雪崩以及穿透"><span class="nav-text">Redis 雪崩以及穿透</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存与数据库的数据一致性"><span class="nav-text">缓存与数据库的数据一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-分布式锁"><span class="nav-text">Redis 分布式锁</span></a></li></ol></div>
             
 
           </div>
