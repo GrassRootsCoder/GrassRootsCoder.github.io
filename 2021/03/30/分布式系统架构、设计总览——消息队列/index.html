@@ -417,8 +417,10 @@
 
 
 
-<h3 id="如何防止消息重复消费（★）"><a href="#如何防止消息重复消费（★）" class="headerlink" title="如何防止消息重复消费（★）"></a>如何防止消息重复消费（★）</h3><p>任何消息队列都会存在重复消费的问题，需要考虑的是发生了重复消费以后，怎么不影响业务。在 RabbitMQ 中有一个消费成功 API，如果在执行完业务之后，刚准备调用该 API 告诉 MQ 已经消费，这时重启，会产生重复消费问题</p>
-<p>实现幂等性核心思想是唯一标示，每个消息都设置一个唯一标示，消费者在消费前先进行唯一标示校验，校验通过以后才继续执行。这个唯一标示可以是主键、业务唯一键、消息 ID 等。具体如何实现幂等性还需要根据实际场景来做决定</p>
+<h3 id="如何防止消息重复消费（★）"><a href="#如何防止消息重复消费（★）" class="headerlink" title="如何防止消息重复消费（★）"></a>如何防止消息重复消费（★）</h3><p>任何消息队列都会存在重复消费的问题，需要考虑的是发生了重复消费以后，怎么不影响业务</p>
+<p>在 RabbitMQ 中有一个消费成功 API，如果在执行完业务之后，刚准备调用该 API 告诉 MQ 已经消费，这时重启，会产生重复消费问题</p>
+<p>用户在页面上操作时，不小心快速点击了两下，产生了两个同样的消息，这样的情况也是存在的</p>
+<p>实现幂等性核心思想是唯一标示，每个消息都设置一个唯一标示，消费者在消费前先进行唯一标示校验，校验通过以后才继续执行。<strong>这个唯一标示可以是主键、业务唯一键、消息 ID 等。</strong>具体如何实现幂等性还需要根据实际场景来做决定</p>
 <br>
 
 
@@ -455,6 +457,12 @@
 
 
 
+<h3 id="消息队列重试机制"><a href="#消息队列重试机制" class="headerlink" title="消息队列重试机制"></a>消息队列重试机制</h3><p>如果在 Consumer 端执行逻辑时，发生异常，导致消息没有被消费，这个时候消息队列会重新把没有消费的消息再入推送给 Consumer 进行处理。当一个消息被重试很多次还没有被消费掉，那么会严重影响系统的性能，一直把资源浪费在错误的消息上</p>
+<p>解决办法时给消息设置重试次数，当重试达到一定次数后，自动抛弃该消息，可以将这个消息放入数据库或者打印日志，后续由开发手动处理这种情况的消息</p>
+<br>
+
+
+
 <h3 id="如何设计一个消息队列"><a href="#如何设计一个消息队列" class="headerlink" title="如何设计一个消息队列"></a>如何设计一个消息队列</h3><p><strong>消息队列必须支持高并发、高可用，还要保证数据不能丢失，从这些角度出发来设计消息队列</strong></p>
 <ol>
 <li>支持高并发必须要具有扩展性，可以设计成分布式消息队列，新增机器就可以提高吞吐量</li>
@@ -466,10 +474,6 @@
 
 
 <h3 id="额外补充"><a href="#额外补充" class="headerlink" title="额外补充"></a>额外补充</h3><p>本篇内容不涉及具体的消息队列内容（比如：RabbitMQ、Kafka、RocketMQ 等等），可以看看其他博客或者书籍自行补充</p>
-<a href="/2021/03/23/RabbitMQ进阶&原理/" title="RabbitMQ 进阶&原理">RabbitMQ 进阶&原理</a> 
-
-
-
 <hr>
 <p><strong>留白思考：对于任何一个技术点，有考虑过以下情况么（由浅入深）：</strong></p>
 <ol>
@@ -678,7 +682,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式环境下的消息队列"><span class="nav-text">分布式环境下的消息队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列的作用"><span class="nav-text">消息队列的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列的优缺点"><span class="nav-text">消息队列的优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列的选型"><span class="nav-text">消息队列的选型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何防止消息重复消费（★）"><span class="nav-text">如何防止消息重复消费（★）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何处理消息中数据丢失问题（★）"><span class="nav-text">如何处理消息中数据丢失问题（★）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何保证消息顺序消费（★）"><span class="nav-text">如何保证消息顺序消费（★）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列生产环境的经典案例（★）"><span class="nav-text">消息队列生产环境的经典案例（★）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何设计一个消息队列"><span class="nav-text">如何设计一个消息队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#额外补充"><span class="nav-text">额外补充</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式环境下的消息队列"><span class="nav-text">分布式环境下的消息队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列的作用"><span class="nav-text">消息队列的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列的优缺点"><span class="nav-text">消息队列的优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列的选型"><span class="nav-text">消息队列的选型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何防止消息重复消费（★）"><span class="nav-text">如何防止消息重复消费（★）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何处理消息中数据丢失问题（★）"><span class="nav-text">如何处理消息中数据丢失问题（★）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何保证消息顺序消费（★）"><span class="nav-text">如何保证消息顺序消费（★）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列生产环境的经典案例（★）"><span class="nav-text">消息队列生产环境的经典案例（★）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列重试机制"><span class="nav-text">消息队列重试机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何设计一个消息队列"><span class="nav-text">如何设计一个消息队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#额外补充"><span class="nav-text">额外补充</span></a></li></ol></div>
             
 
           </div>
